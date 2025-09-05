@@ -22,7 +22,9 @@
       "Bash(npm run typecheck:*)",
       "Bash(npm run deploy:check:*)",
       "Bash(timeout 10 npm run dev)",
-      "Bash(git reset:*)"
+      "Bash(git reset:*)",
+      "Bash(npx vercel:*)",
+      "Bash(node:*)"
     ],
     "deny": [],
     "ask": []
