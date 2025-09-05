@@ -1,0 +1,660 @@
+// Prisma schema for AstralCore V5 - Mental Health Support Platform
+// Designed with HIPAA compliance, privacy-first architecture, and crisis intervention in mind
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Anonymous User model - privacy-first approach
+model User {
+  id                String    @id @default(cuid())
+  anonymousId       String    @unique @default(cuid()) // For complete anonymity
+  email             String?   @unique // Optional for helpers/professionals
+  hashedPassword    String?   // Optional authentication
+  isHelper          Boolean   @default(false)
+  isProfessional    Boolean   @default(false)
+  isVerified        Boolean   @default(false)
+  
+  // Privacy settings
+  dataRetentionDays Int       @default(90)
+  allowAnalytics    Boolean   @default(false)
+  
+  // Profile (encrypted)
+  encryptedProfile  Json?     // Stores encrypted personal data
+  publicAlias       String?   // Public display name (anonymous)
+  avatarUrl         String?
+  timezone          String    @default("UTC")
+  preferredLanguage String    @default("en")
+  
+  // Timestamps
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  lastActiveAt      DateTime  @default(now())
+  
+  // Relations
+  sessions          Session[]
+  crisisReports     CrisisReport[]
+  safetyPlans       SafetyPlan[]
+  moodEntries       MoodEntry[]
+  journalEntries    JournalEntry[]
+  supportSessions   SupportSession[] @relation("UserSessions")
+  helperSessions    SupportSession[] @relation("HelperSessions")
+  communityPosts    CommunityPost[]
+  appointments      Appointment[]
+  notifications     Notification[]
+  anonymousIdentity AnonymousIdentity?
+  
+  @@index([anonymousId])
+  @@index([email])
+  @@index([lastActiveAt])
+}
+
+// Session management for authentication
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+}
+
+// Crisis intervention and detection
+model CrisisReport {
+  id              String   @id @default(cuid())
+  userId          String?  // Can be anonymous
+  severityLevel   Int      // 1-5 scale
+  triggerType     String   // What triggered the crisis
+  interventionType String  // Type of intervention provided
+  
+  // Encrypted crisis details
+  encryptedDetails Json    // Sensitive information encrypted
+  
+  // Response tracking
+  responseTime    Int      // In seconds
+  resolved        Boolean  @default(false)
+  resolvedAt      DateTime?
+  
+  // Emergency contact used
+  emergencyContactUsed Boolean @default(false)
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  user            User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  
+  @@index([userId])
+  @@index([severityLevel])
+  @@index([createdAt])
+}
+
+// Safety planning for crisis prevention
+model SafetyPlan {
+  id                  String   @id @default(cuid())
+  userId              String
+  
+  // Plan components (encrypted)
+  warningSignsEncrypted        Json     // Encrypted warning signs
+  copingStrategiesEncrypted    Json     // Encrypted coping strategies
+  supportContactsEncrypted     Json     // Encrypted support contacts
+  safeEnvironmentEncrypted     Json     // Encrypted safe environment steps
+  reasonsToLiveEncrypted       Json?    // Encrypted reasons to live
+  
+  isActive            Boolean  @default(true)
+  lastReviewedAt      DateTime @default(now())
+  
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+}
+
+// Mood tracking for pattern detection
+model MoodEntry {
+  id              String   @id @default(cuid())
+  userId          String
+  
+  moodScore       Int      // 1-10 scale
+  anxietyLevel    Int?     // 1-10 scale
+  energyLevel     Int?     // 1-10 scale
+  
+  // Encrypted details
+  encryptedNotes  Json?    // User notes encrypted
+  encryptedTags   Json?    // Tags/triggers encrypted
+  
+  createdAt       DateTime @default(now())
+  
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([createdAt])
+  @@index([moodScore])
+}
+
+// Journal entries for therapeutic writing
+model JournalEntry {
+  id              String   @id @default(cuid())
+  userId          String
+  
+  // Encrypted content
+  encryptedTitle   String?
+  encryptedContent String   // Main journal content encrypted
+  encryptedTags    Json?    // Tags encrypted
+  
+  isPrivate       Boolean  @default(true)
+  sentiment       Float?   // AI-analyzed sentiment score
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([createdAt])
+}
+
+// Peer support sessions
+model SupportSession {
+  id              String   @id @default(cuid())
+  userId          String?  // Can be anonymous
+  helperId        String?  // Helper/peer supporter
+  
+  sessionType     String   // chat, voice, video
+  status          String   // waiting, active, completed, cancelled
+  
+  // Encrypted session data
+  encryptedNotes  Json?    // Session notes encrypted
+  
+  rating          Int?     // 1-5 star rating
+  
+  startedAt       DateTime?
+  endedAt         DateTime?
+  createdAt       DateTime @default(now())
+  
+  user            User?    @relation("UserSessions", fields: [userId], references: [id], onDelete: SetNull)
+  helper          User?    @relation("HelperSessions", fields: [helperId], references: [id], onDelete: SetNull)
+  
+  @@index([userId])
+  @@index([helperId])
+  @@index([status])
+}
+
+// Community posts for peer support
+model CommunityPost {
+  id              String   @id @default(cuid())
+  authorId        String?  // Can be anonymous
+  
+  title           String
+  content         String   // Public content (moderated)
+  category        String   // Category of post
+  
+  isAnonymous     Boolean  @default(true)
+  isPinned        Boolean  @default(false)
+  isModerated     Boolean  @default(false)
+  
+  viewCount       Int      @default(0)
+  likeCount       Int      @default(0)
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  author          User?    @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  
+  @@index([authorId])
+  @@index([category])
+  @@index([createdAt])
+}
+
+// Professional appointments
+model Appointment {
+  id              String   @id @default(cuid())
+  userId          String
+  professionalId  String   // ID of the professional
+  
+  scheduledAt     DateTime
+  duration        Int      // In minutes
+  type            String   // therapy, psychiatry, counseling
+  status          String   // scheduled, confirmed, completed, cancelled
+  
+  // Encrypted details
+  encryptedNotes  Json?    // Appointment notes encrypted
+  
+  meetingUrl      String?  // For virtual appointments
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([professionalId])
+  @@index([scheduledAt])
+  @@index([status])
+}
+
+// Notification system
+model Notification {
+  id              String   @id @default(cuid())
+  userId          String
+  
+  type            String   // crisis_alert, appointment_reminder, etc.
+  title           String
+  message         String
+  
+  isRead          Boolean  @default(false)
+  isPriority      Boolean  @default(false)
+  
+  metadata        Json?    // Additional data
+  
+  createdAt       DateTime @default(now())
+  readAt          DateTime?
+  
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([isRead])
+  @@index([createdAt])
+}
+
+// ============= COMMUNITY & PEER SUPPORT MODELS =============
+
+// Anonymous identity for community interactions
+model AnonymousIdentity {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  displayName     String
+  avatar          String
+  colorTheme      String
+  trustScore      Float    @default(0)
+  badges          Json[]   // Array of badge objects
+  languages       String[]
+  timezone        String?
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Community relations
+  chatMessages    ChatMessage[]
+  moderatorActions ModerationAction[] @relation("ModeratorActions")
+  targetedActions ModerationAction[] @relation("TargetedActions")
+  mentorProfile   MentorProfile?
+  groupMemberships GroupMembership[]
+  challengeParticipations ChallengeParticipation[]
+  
+  @@index([userId])
+  @@index([trustScore])
+}
+
+// Chat rooms for peer support
+model ChatRoom {
+  id              String   @id @default(cuid())
+  name            String
+  topic           String   // Support topic
+  description     String
+  maxParticipants Int      @default(20)
+  isActive        Boolean  @default(true)
+  language        String   @default("en")
+  rules           String[]
+  settings        Json     // Room settings object
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  lastActivity    DateTime @default(now())
+  
+  messages        ChatMessage[]
+  participants    ChatParticipant[]
+  moderators      ChatModerator[]
+  
+  @@index([topic])
+  @@index([language])
+  @@index([isActive])
+}
+
+// Chat participants tracking
+model ChatParticipant {
+  id              String   @id @default(cuid())
+  roomId          String
+  userId          String
+  joinedAt        DateTime @default(now())
+  leftAt          DateTime?
+  isActive        Boolean  @default(true)
+  
+  room            ChatRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  
+  @@unique([roomId, userId])
+  @@index([userId])
+  @@index([roomId])
+}
+
+// Chat moderators
+model ChatModerator {
+  id              String   @id @default(cuid())
+  roomId          String
+  userId          String
+  assignedAt      DateTime @default(now())
+  permissions     String[] // List of permissions
+  
+  room            ChatRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  
+  @@unique([roomId, userId])
+  @@index([userId])
+  @@index([roomId])
+}
+
+// Chat messages
+model ChatMessage {
+  id              String   @id @default(cuid())
+  roomId          String
+  authorId        String
+  content         String   // Encrypted
+  type            String   // text, system, resource, crisis_alert
+  edited          Boolean  @default(false)
+  editedAt        DateTime?
+  reactions       Json[]   // Array of reaction objects
+  flags           Json[]   // Array of flag objects
+  metadata        Json?    // Sentiment, toxicity scores
+  
+  createdAt       DateTime @default(now())
+  
+  room            ChatRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  author          AnonymousIdentity @relation(fields: [authorId], references: [id])
+  
+  @@index([roomId])
+  @@index([authorId])
+  @@index([createdAt])
+}
+
+// Support groups with scheduling
+model SupportGroup {
+  id              String   @id @default(cuid())
+  name            String
+  topic           String
+  description     String
+  facilitatorId   String?
+  maxMembers      Int      @default(12)
+  type            String   // peer_support, therapy_guided, educational
+  privacy         String   // public, private, invite-only
+  schedule        Json     // Schedule object
+  requirements    Json     // Requirements object
+  resources       Json[]   // Array of resource objects
+  tags            String[]
+  
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  members         GroupMembership[]
+  sessions        GroupSession[]
+  activities      GroupActivity[]
+  
+  @@index([topic])
+  @@index([type])
+  @@index([isActive])
+}
+
+// Group membership
+model GroupMembership {
+  id              String   @id @default(cuid())
+  groupId         String
+  userId          String
+  role            String   @default("member") // member, facilitator, co-facilitator
+  joinedAt        DateTime @default(now())
+  leftAt          DateTime?
+  isActive        Boolean  @default(true)
+  
+  group           SupportGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  identity        AnonymousIdentity @relation(fields: [userId], references: [id])
+  
+  @@unique([groupId, userId])
+  @@index([userId])
+  @@index([groupId])
+}
+
+// Group sessions
+model GroupSession {
+  id              String   @id @default(cuid())
+  groupId         String
+  scheduledAt     DateTime
+  duration        Int      // minutes
+  actualStart     DateTime?
+  actualEnd       DateTime?
+  attendees       String[] // User IDs
+  notes           Json?    // Encrypted session notes
+  recordings      String[] // URLs if recorded
+  
+  status          String   @default("scheduled") // scheduled, in_progress, completed, cancelled
+  
+  group           SupportGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  
+  @@index([groupId])
+  @@index([scheduledAt])
+  @@index([status])
+}
+
+// Group activities
+model GroupActivity {
+  id              String   @id @default(cuid())
+  groupId         String
+  type            String   // discussion, exercise, meditation, journaling
+  title           String
+  description     String
+  instructions    String[]
+  duration        Int      // minutes
+  completedBy     String[] // User IDs who completed
+  
+  createdAt       DateTime @default(now())
+  
+  group           SupportGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  
+  @@index([groupId])
+}
+
+// Mentor profiles
+model MentorProfile {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  specializations String[] // Topics they can help with
+  experience      String
+  approach        String
+  availability    Json[]   // Array of availability slots
+  languages       String[]
+  maxMentees      Int      @default(5)
+  currentMentees  String[] // User IDs
+  rating          Float    @default(0)
+  verified        Boolean  @default(false)
+  trainingCompleted String[]
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  identity        AnonymousIdentity @relation(fields: [userId], references: [id])
+  mentorships     Mentorship[]
+  reviews         MentorReview[]
+  
+  @@index([userId])
+  @@index([rating])
+  @@index([verified])
+}
+
+// Mentorship relationships
+model Mentorship {
+  id              String   @id @default(cuid())
+  mentorId        String
+  menteeId        String
+  topics          String[]
+  goals           String[]
+  status          String   @default("active") // pending, active, paused, completed
+  matchedAt       DateTime @default(now())
+  endedAt         DateTime?
+  
+  mentor          MentorProfile @relation(fields: [mentorId], references: [id])
+  sessions        MentorshipSession[]
+  
+  @@unique([mentorId, menteeId])
+  @@index([mentorId])
+  @@index([menteeId])
+  @@index([status])
+}
+
+// Mentorship sessions
+model MentorshipSession {
+  id              String   @id @default(cuid())
+  mentorshipId    String
+  scheduledAt     DateTime
+  duration        Int      // minutes
+  topic           String
+  goals           String[]
+  notes           Json?    // Encrypted
+  resources       Json[]   // Shared resources
+  feedback        Json?    // Session feedback
+  status          String   @default("scheduled")
+  
+  createdAt       DateTime @default(now())
+  
+  mentorship      Mentorship @relation(fields: [mentorshipId], references: [id])
+  
+  @@index([mentorshipId])
+  @@index([scheduledAt])
+}
+
+// Mentor reviews
+model MentorReview {
+  id              String   @id @default(cuid())
+  mentorId        String
+  reviewerId      String
+  rating          Int      // 1-5
+  comment         String
+  helpful         Int      @default(0) // Helpful votes
+  verified        Boolean  @default(false)
+  
+  createdAt       DateTime @default(now())
+  
+  mentor          MentorProfile @relation(fields: [mentorId], references: [id])
+  
+  @@index([mentorId])
+  @@index([rating])
+}
+
+// Wellness challenges
+model WellnessChallenge {
+  id              String   @id @default(cuid())
+  title           String
+  description     String
+  category        String   // mindfulness, physical, sleep, etc.
+  difficulty      String   // beginner, intermediate, advanced
+  duration        Int      // days
+  goals           Json[]   // Array of goal objects
+  rewards         Json[]   // Array of reward objects
+  dailyTasks      Json[]   // Array of daily task objects
+  
+  startDate       DateTime
+  endDate         DateTime
+  isActive        Boolean  @default(true)
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  participants    ChallengeParticipation[]
+  
+  @@index([category])
+  @@index([isActive])
+  @@index([startDate])
+}
+
+// Challenge participation
+model ChallengeParticipation {
+  id              String   @id @default(cuid())
+  challengeId     String
+  userId          String
+  points          Int      @default(0)
+  streak          Int      @default(0)
+  completionRate  Float    @default(0)
+  completedTasks  String[] // Task IDs
+  achievements    String[] // Achievement IDs
+  
+  joinedAt        DateTime @default(now())
+  lastActivityAt  DateTime @default(now())
+  
+  challenge       WellnessChallenge @relation(fields: [challengeId], references: [id])
+  identity        AnonymousIdentity @relation(fields: [userId], references: [id])
+  
+  @@unique([challengeId, userId])
+  @@index([challengeId])
+  @@index([userId])
+  @@index([points])
+}
+
+// Moderation actions
+model ModerationAction {
+  id              String   @id @default(cuid())
+  type            String   // warning, mute, kick, ban, content_removal
+  targetUserId    String
+  moderatorId     String
+  reason          String
+  evidence        String[] // Message IDs or screenshots
+  duration        Int?     // minutes for temporary actions
+  appealable      Boolean  @default(true)
+  appealed        Boolean  @default(false)
+  
+  createdAt       DateTime @default(now())
+  expiresAt       DateTime?
+  
+  target          AnonymousIdentity @relation("TargetedActions", fields: [targetUserId], references: [id])
+  moderator       AnonymousIdentity @relation("ModeratorActions", fields: [moderatorId], references: [id])
+  
+  @@index([targetUserId])
+  @@index([moderatorId])
+  @@index([type])
+  @@index([createdAt])
+}
+
+// Safety alerts for crisis detection
+model SafetyAlert {
+  id              String   @id @default(cuid())
+  type            String   // crisis, harassment, self_harm, violence
+  severity        String   // low, medium, high, critical
+  userId          String
+  context         String   // Where it was detected
+  indicators      String[] // What triggered the alert
+  handled         Boolean  @default(false)
+  handledBy       String?
+  actions         String[] // Actions taken
+  notes           String?  // Moderator notes
+  
+  detectedAt      DateTime @default(now())
+  handledAt       DateTime?
+  
+  @@index([userId])
+  @@index([type])
+  @@index([severity])
+  @@index([handled])
+  @@index([detectedAt])
+}
+
+// Trust metrics
+model TrustMetric {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  score           Float    @default(0)
+  level           String   @default("new") // new, basic, trusted, veteran, expert
+  factors         Json     // Trust factor details
+  history         Json[]   // Trust events history
+  restrictions    String[] // Any restrictions
+  
+  lastUpdated     DateTime @default(now())
+  
+  @@index([userId])
+  @@index([score])
+  @@index([level])
+}
