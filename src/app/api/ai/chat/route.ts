@@ -5,6 +5,7 @@ import { NextRequest } from 'next/server';
 import { aiService, AIMessage } from '@/lib/ai-service';
 import { createCachedResponse, CacheDurations } from '@/lib/cache';
 import { createApiErrorHandler } from '@/lib/api-error-handler';
+import { NeonDatabaseService } from '@/lib/neon-database';
 
 interface ChatRequest {
   message: string;
@@ -17,6 +18,9 @@ export async function POST(request: NextRequest) {
   try {
     const body: ChatRequest = await request.json();
     const { message, conversationHistory = [], provider = 'openai', sessionId } = body;
+    
+    // Initialize database service
+    const dbService = new NeonDatabaseService();
 
     // Validate input
     if (!message || typeof message !== 'string') {
@@ -55,6 +59,25 @@ export async function POST(request: NextRequest) {
 
     console.log(`AI Chat request: provider=${provider}, message length=${message.length}`);
 
+    // Create or get session ID
+    const currentSessionId = sessionId || `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    // Log user message to database
+    try {
+      await dbService.saveAIChatMessage({
+        sessionId: currentSessionId,
+        role: 'user',
+        content: message,
+        metadata: {
+          provider,
+          timestamp: new Date().toISOString(),
+          messageLength: message.length
+        }
+      });
+    } catch (dbError) {
+      console.error('Failed to log user message to database:', dbError);
+    }
+
     // Generate AI response
     const aiResponse = await aiService.getTherapyResponse(
       message,
@@ -65,9 +88,51 @@ export async function POST(request: NextRequest) {
     // Log for monitoring (without sensitive content)
     console.log(`AI Response: model=${aiResponse.model}, risk=${aiResponse.riskLevel}, confidence=${aiResponse.confidence}`);
 
+    // Log AI response to database
+    try {
+      await dbService.saveAIChatMessage({
+        sessionId: currentSessionId,
+        role: 'assistant',
+        content: aiResponse.content,
+        aiModel: aiResponse.model,
+        confidenceScore: aiResponse.confidence,
+        riskAssessment: aiResponse.riskLevel,
+        metadata: {
+          provider,
+          tokens: aiResponse.tokens,
+          processingTime: Date.now(),
+          timestamp: new Date().toISOString()
+        }
+      });
+    } catch (dbError) {
+      console.error('Failed to log AI response to database:', dbError);
+    }
+
     // Check for crisis situations
     if (aiResponse.riskLevel === 'critical') {
-      console.warn(`CRISIS DETECTED: Session ${sessionId || 'unknown'} - Risk Level: ${aiResponse.riskLevel}`);
+      console.warn(`CRISIS DETECTED: Session ${currentSessionId} - Risk Level: ${aiResponse.riskLevel}`);
+      
+      // Log crisis event to database
+      try {
+        await dbService.logCrisisEvent({
+          sessionId: currentSessionId,
+          triggerContent: message,
+          riskLevel: aiResponse.riskLevel as 'medium' | 'high' | 'critical',
+          aiAssessment: {
+            response: aiResponse.content,
+            model: aiResponse.model,
+            confidence: aiResponse.confidence,
+            provider
+          },
+          interventionType: 'automated',
+          interventionData: {
+            action: 'crisis_resources_added',
+            timestamp: new Date().toISOString()
+          }
+        });
+      } catch (dbError) {
+        console.error('Failed to log crisis event to database:', dbError);
+      }
       
       // Add crisis resources to response
       aiResponse.content += `\n\n🚨 **Immediate Support Available**\n\nIf you're having thoughts of self-harm, please reach out for immediate help:\n• Crisis Text Line: Text HOME to 741741\n• National Suicide Prevention Lifeline: 988\n• Emergency Services: 911\n\nYou don't have to go through this alone. Professional help is available 24/7.`;
@@ -84,7 +149,7 @@ export async function POST(request: NextRequest) {
         riskLevel: aiResponse.riskLevel,
         tokens: aiResponse.tokens,
         timestamp: new Date().toISOString(),
-        sessionId,
+        sessionId: currentSessionId,
       },
       metadata: {
         aiConfigured: aiConfig,

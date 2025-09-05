@@ -3,6 +3,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { ensureInitialized, checkSystemHealth } from '@/lib/auto-init';
+import { NeonDatabaseService } from '@/lib/neon-database';
 
 export const dynamic = 'force-dynamic';
 
@@ -18,13 +19,23 @@ export async function GET(request: NextRequest) {
     // Get system health status
     const health = await checkSystemHealth();
     
+    // Initialize database service and check health
+    const dbService = new NeonDatabaseService();
+    const dbHealthStart = Date.now();
+    const dbHealth = await dbService.checkDatabaseHealth();
+    const dbResponseTime = Date.now() - dbHealthStart;
+    
     // Additional health checks
     const detailedHealth = {
       ...health,
       checks: {
         database: {
-          connected: true, // Replace with actual database check
-          responseTime: Date.now(), // Replace with actual response time
+          connected: dbHealth.connected,
+          responseTime: dbResponseTime,
+          status: dbHealth.status,
+          tables: dbHealth.tableCount,
+          users: dbHealth.userCount,
+          lastMaintenance: dbHealth.lastMaintenance,
         },
         memory: {
           used: process.memoryUsage().heapUsed,

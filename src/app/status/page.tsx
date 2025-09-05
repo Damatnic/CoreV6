@@ -68,6 +68,17 @@ interface SystemInfo {
   initializationTime?: string;
   version: string;
   build: string;
+  aiServices?: {
+    openai: {
+      configured: boolean;
+      status: string;
+    };
+    gemini: {
+      configured: boolean;
+      status: string;
+    };
+    defaultProvider: string;
+  };
 }
 
 export default function StatusPage() {
@@ -543,9 +554,9 @@ export default function StatusPage() {
                 <div className="p-4 bg-yellow-50 rounded-lg">
                   <h3 className="font-medium text-yellow-900 mb-2">Demo Prompts</h3>
                   <div className="text-sm text-yellow-700 space-y-1">
-                    <p><strong>Low risk:</strong> "I'm feeling a bit stressed about work"</p>
-                    <p><strong>Medium risk:</strong> "I've been feeling really anxious lately"</p>
-                    <p><strong>High risk:</strong> "I feel completely hopeless"</p>
+                    <p><strong>Low risk:</strong> &quot;I&apos;m feeling a bit stressed about work&quot;</p>
+                    <p><strong>Medium risk:</strong> &quot;I&apos;ve been feeling really anxious lately&quot;</p>
+                    <p><strong>High risk:</strong> &quot;I feel completely hopeless&quot;</p>
                   </div>
                 </div>
               </div>

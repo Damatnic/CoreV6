@@ -229,6 +229,32 @@ export function createSuccessResponse(
   return NextResponse.json(response, { status, headers });
 }
 
+// Simple error response helper
+export function createApiErrorHandler(
+  code: string,
+  message: string,
+  status: number = 500
+): NextResponse {
+  return NextResponse.json(
+    {
+      error: {
+        code,
+        message,
+        status,
+      },
+      success: false,
+      timestamp: new Date().toISOString(),
+    },
+    { 
+      status,
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Error-Code': code,
+      },
+    }
+  );
+}
+
 // CORS helper
 export function handleCors(request: NextRequest): NextResponse | null {
   if (request.method === 'OPTIONS') {

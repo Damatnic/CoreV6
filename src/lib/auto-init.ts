@@ -2,6 +2,7 @@
 // Ensures database is properly set up on first deployment
 
 import bcrypt from 'bcryptjs';
+import { NeonDatabaseService } from './neon-database';
 
 // Demo users for automatic initialization
 const DEMO_USERS = [
@@ -88,16 +89,19 @@ let initializationPromise: Promise<boolean> | null = null;
  */
 async function checkInitializationStatus(): Promise<boolean> {
   try {
-    // In a real app, this would check your database
-    // For now, we'll use a simple memory flag with localStorage fallback
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('astral_core_initialized');
-      return stored === 'true';
+    // Initialize database service
+    const dbService = new NeonDatabaseService();
+    
+    // First check if database is properly set up and has users
+    const health = await dbService.checkDatabaseHealth();
+    if (!health.connected || health.userCount === 0) {
+      return false;
     }
     
-    // Server-side: check for existence of demo user
-    // This is a placeholder - implement actual database check
-    return isInitialized;
+    // Check if demo users exist in database
+    const demoUserExists = await dbService.findUserByEmail('demo@astralcore.app');
+    return !!demoUserExists;
+    
   } catch (error) {
     console.error('Error checking initialization status:', error);
     return false;
@@ -110,29 +114,44 @@ async function checkInitializationStatus(): Promise<boolean> {
 async function createDemoUsers(): Promise<void> {
   console.log('🔄 Creating demo users...');
   
+  const dbService = new NeonDatabaseService();
+  
   for (const userData of DEMO_USERS) {
     try {
+      // Check if user already exists
+      const existingUser = await dbService.findUserByEmail(userData.email);
+      if (existingUser) {
+        console.log(`⏭️ User ${userData.email} already exists, skipping...`);
+        continue;
+      }
+      
       // Hash password
       const hashedPassword = await bcrypt.hash(userData.password, 10);
       
-      // In a real implementation, this would use your database
-      // For now, we'll simulate the creation
-      const user = {
-        ...userData,
-        password_hash: hashedPassword,
-        id: `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
+      // Create user in database
+      const user = await dbService.createUser({
+        email: userData.email,
+        username: userData.username,
+        displayName: userData.displayName,
+        passwordHash: hashedPassword,
+        isVerified: userData.isVerified,
+        role: userData.role as 'user' | 'admin' | 'helper',
+        isHelper: userData.isHelper || false,
+        isAdmin: userData.isAdmin || false,
+        profile: {
+          firstName: userData.displayName.split(' ')[0] || userData.displayName,
+          lastName: userData.displayName.split(' ')[1] || '',
+          bio: `Demo ${userData.role} account for testing and demonstration purposes.`,
+          preferences: {
+            theme: 'system',
+            notifications: true,
+            privacy: 'public'
+          }
+        }
+      });
       
-      console.log(`✅ Demo user created: ${user.email}`);
+      console.log(`✅ Demo user created: ${user.email} (ID: ${user.id})`);
       
-      // Store in localStorage for demo purposes
-      if (typeof window !== 'undefined') {
-        const existingUsers = JSON.parse(localStorage.getItem('demo_users') || '[]');
-        existingUsers.push(user);
-        localStorage.setItem('demo_users', JSON.stringify(existingUsers));
-      }
     } catch (error) {
       console.error(`❌ Failed to create user ${userData.email}:`, error);
     }
@@ -145,13 +164,39 @@ async function createDemoUsers(): Promise<void> {
 async function initializeCrisisResources(): Promise<void> {
   console.log('🔄 Initializing crisis resources...');
   
+  const dbService = new NeonDatabaseService();
+  
   try {
-    // In a real implementation, this would store in your database
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('crisis_resources', JSON.stringify(CRISIS_RESOURCES));
+    for (const resource of CRISIS_RESOURCES) {
+      // Check if resource already exists
+      const existing = await dbService.findMentalHealthResourceById(resource.id);
+      if (existing) {
+        console.log(`⏭️ Crisis resource ${resource.id} already exists, skipping...`);
+        continue;
+      }
+      
+      // Create crisis resource in database
+      await dbService.createMentalHealthResource({
+        id: resource.id,
+        type: resource.type,
+        name: resource.name,
+        description: resource.description,
+        contact: resource.contact,
+        available247: resource.available24x7,
+        languages: resource.languages,
+        countries: resource.countries,
+        specializations: resource.specializations,
+        verified: true,
+        metadata: {
+          source: 'system_initialization',
+          createdAt: new Date().toISOString()
+        }
+      });
+      
+      console.log(`✅ Crisis resource created: ${resource.name}`);
     }
     
-    console.log(`✅ ${CRISIS_RESOURCES.length} crisis resources initialized`);
+    console.log(`✅ ${CRISIS_RESOURCES.length} crisis resources processed`);
   } catch (error) {
     console.error('❌ Failed to initialize crisis resources:', error);
   }
@@ -163,13 +208,15 @@ async function initializeCrisisResources(): Promise<void> {
 async function initializeSampleContent(): Promise<void> {
   console.log('🔄 Initializing sample content...');
   
+  const dbService = new NeonDatabaseService();
+  
   try {
-    // In a real implementation, this would store in your database
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('sample_content', JSON.stringify(SAMPLE_CONTENT));
-    }
+    // Initialize database first to ensure tables exist
+    await dbService.initializeDatabase();
     
-    console.log(`✅ ${SAMPLE_CONTENT.length} sample content items initialized`);
+    // For now, we'll skip content creation as it requires a more complex content system
+    // In a full implementation, you would create wellness articles, exercises, etc.
+    console.log(`✅ Sample content initialization completed (database ready for content)`);
   } catch (error) {
     console.error('❌ Failed to initialize sample content:', error);
   }
@@ -202,18 +249,17 @@ async function performInitialization(): Promise<boolean> {
   try {
     console.log('🚀 Starting Astral Core initialization...');
     
-    // Initialize in parallel for better performance
-    await Promise.all([
-      createDemoUsers(),
-      initializeCrisisResources(),
-      initializeSampleContent(),
-    ]);
+    // Initialize database first to ensure all tables exist
+    const dbService = new NeonDatabaseService();
+    await dbService.initializeDatabase();
+    
+    // Initialize in sequence to avoid database conflicts
+    await initializeSampleContent(); // This also initializes the database
+    await createDemoUsers();
+    await initializeCrisisResources();
     
     // Mark as initialized
     isInitialized = true;
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('astral_core_initialized', 'true');
-    }
     
     console.log('✅ Astral Core initialization completed successfully!');
     return true;
@@ -235,11 +281,14 @@ export async function forceReinitialize(): Promise<boolean> {
   isInitialized = false;
   initializationPromise = null;
   
-  if (typeof window !== 'undefined') {
-    localStorage.removeItem('astral_core_initialized');
-    localStorage.removeItem('demo_users');
-    localStorage.removeItem('crisis_resources');
-    localStorage.removeItem('sample_content');
+  // Clean up any existing state
+  const dbService = new NeonDatabaseService();
+  try {
+    // You might want to clear/reset database tables here in development
+    // For production, this should be more careful
+    console.log('🧹 Cleaning up for re-initialization...');
+  } catch (error) {
+    console.error('Error during cleanup:', error);
   }
   
   return ensureInitialized();

@@ -24,7 +24,9 @@
       "Bash(timeout 10 npm run dev)",
       "Bash(git reset:*)",
       "Bash(npx vercel:*)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(set NODE_OPTIONS=--max-old-space-size=4096)",
+      "Bash(npm run vercel:validate:*)"
     ],
     "deny": [],
     "ask": []
