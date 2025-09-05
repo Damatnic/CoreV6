@@ -169,9 +169,5 @@
       "schedule": "0 */6 * * *"
     }
   ],
-  "env": {
-    "NEXT_PUBLIC_VERCEL_ENV": "@vercel-env",
-    "NEXT_PUBLIC_VERCEL_URL": "@vercel-url",
-    "NEXT_PUBLIC_VERCEL_REGION": "@vercel-region"
-  }
+  "env": {}
 }
