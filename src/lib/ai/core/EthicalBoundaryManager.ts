@@ -57,7 +57,7 @@ interface BoundaryRule {
 
 export class EthicalBoundaryManager extends EventEmitter {
   private boundaries: EthicalBoundaries;
-  private boundaryRules: BoundaryRule[];
+  private boundaryRules!: BoundaryRule[];
   private violationHistory: Map<string, BoundaryViolation[]>;
 
   constructor(boundaries: EthicalBoundaries) {
@@ -464,10 +464,11 @@ export class EthicalBoundaryManager extends EventEmitter {
       diagnosis_attempt: "I notice you're wondering about specific conditions. A mental health professional would be best equipped to provide proper assessment and diagnosis.",
       boundary_crossing: "I appreciate your trust, but I need to maintain professional boundaries as an AI support tool. Let's focus on how I can best support you within my role.",
       harmful_suggestion: "I'm concerned about what you're suggesting. Let's explore healthier coping strategies that can help you feel better without causing harm.",
-      cultural_insensitivity: "I respect your cultural background and beliefs. Let's work within your cultural context to find approaches that feel right for you."
+      cultural_insensitivity: "I respect your cultural background and beliefs. Let's work within your cultural context to find approaches that feel right for you.",
+      inappropriate_relationship: "I appreciate your trust, but I need to maintain appropriate boundaries in our therapeutic relationship. Let's keep our conversation focused on your wellbeing and support."
     };
 
-    return alternatives[violation.type] || "Let me rephrase that in a more appropriate way.";
+    return alternatives[violation.type as keyof typeof alternatives] || "Let me rephrase that in a more appropriate way.";
   }
 
   private async logEthicalCheck(checkResult: any): Promise<void> {

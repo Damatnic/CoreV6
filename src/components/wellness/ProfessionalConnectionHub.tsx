@@ -25,7 +25,8 @@ import {
   Stethoscope,
   Download,
   Upload,
-  Send
+  Send,
+  Target
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 

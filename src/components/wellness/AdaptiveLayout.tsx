@@ -49,6 +49,7 @@ const AdaptiveLayout: React.FC<AdaptiveLayoutProps> = ({
 }) => {
   const [currentLayout, setCurrentLayout] = useState<LayoutPattern | null>(null);
   const [isCustomizing, setIsCustomizing] = useState(false);
+  const [touchStartPos, setTouchStartPos] = useState<{ x: number; y: number } | null>(null);
   
   const containerRef = useRef<HTMLDivElement>(null);
   const isMobile = useMediaQuery('(max-width: 768px)');
@@ -221,11 +222,15 @@ const AdaptiveLayout: React.FC<AdaptiveLayoutProps> = ({
 
   const cycleLayoutMode = (direction: 'next' | 'prev') => {
     const modes: Array<'adaptive' | 'grid' | 'focus'> = ['adaptive', 'grid', 'focus'];
-    const currentIndex = modes.indexOf(mode);
+    const currentMode = mode || 'adaptive';
+    const currentIndex = modes.indexOf(currentMode);
     const newIndex = direction === 'next' 
       ? (currentIndex + 1) % modes.length
       : (currentIndex - 1 + modes.length) % modes.length;
-    onLayoutChange(modes[newIndex]);
+    const newMode = modes[newIndex];
+    if (newMode) {
+      onLayoutChange(newMode);
+    }
   };
 
   // Render layout mode selector
@@ -451,7 +456,12 @@ const AdaptiveLayout: React.FC<AdaptiveLayoutProps> = ({
       
       <motion.div
         ref={containerRef}
-        {...(isMobile ? bind() : {})}
+        {...(isMobile ? { 
+          onPointerDown: bind().onPointerDown,
+          onPointerUp: bind().onPointerUp,
+          onPointerMove: bind().onPointerMove,
+          onPointerCancel: bind().onPointerCancel
+        } : {})}
         style={getLayoutStyles()}
         className="relative"
         layout

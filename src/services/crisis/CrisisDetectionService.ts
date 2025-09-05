@@ -749,7 +749,9 @@ export class CrisisDetectionService extends EventEmitter {
     
     let increasingCount = 0;
     for (let i = 1; i < severities.length; i++) {
-      if (severities[i] && severities[i - 1] && severities[i] > severities[i - 1]) {
+      const current = severities[i];
+      const previous = severities[i - 1];
+      if (current && previous && current > previous) {
         increasingCount++;
       }
     }
@@ -876,7 +878,9 @@ export class CrisisDetectionService extends EventEmitter {
     // Calculate escalation rate
     let escalations = 0;
     for (let i = 1; i < assessments.length; i++) {
-      if (assessments[i - 1] && assessments[i] && this.monitorEscalation(assessments[i - 1], assessments[i])) {
+      const prevAssessment = assessments[i - 1];
+      const currAssessment = assessments[i];
+      if (prevAssessment && currAssessment && this.monitorEscalation(prevAssessment, currAssessment)) {
         escalations++;
       }
     }

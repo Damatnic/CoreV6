@@ -403,7 +403,7 @@ export class AuditLogger extends EventEmitter {
       .sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
     
     const logIndex = sortedLogs.findIndex(l => l.id === logId);
-    const previousHash = logIndex > 0 ? sortedLogs[logIndex - 1].hash : null;
+    const previousHash = logIndex > 0 ? sortedLogs[logIndex - 1]?.hash : null;
 
     // Recalculate hash
     const content = JSON.stringify({

@@ -42,6 +42,8 @@ export function useTheme(): UseThemeReturn {
       mediaQuery.addEventListener('change', handleChange);
       return () => mediaQuery.removeEventListener('change', handleChange);
     }
+    
+    return undefined;
   }, [theme, setTheme]);
 
   return { theme, setTheme, isDark };

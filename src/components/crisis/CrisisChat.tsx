@@ -153,7 +153,7 @@ export default function CrisisChat({
     ];
     
     const greeting = templates && templates.length > 0 
-      ? templates[Math.floor(Math.random() * templates.length)]
+      ? templates[Math.floor(Math.random() * templates.length)] || 'Hello, I\'m here to support you. How are you feeling right now?'
       : 'Hello, I\'m here to support you. How are you feeling right now?';
     
     const aiMessage: CrisisChatMessage = {

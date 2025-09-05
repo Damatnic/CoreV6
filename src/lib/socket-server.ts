@@ -5,7 +5,7 @@ import { parse } from 'cookie';
 import jwt from 'jsonwebtoken';
 import { PrismaClient } from '@prisma/client';
 import { z } from 'zod';
-import * as BadWordsFilter from 'bad-words';
+const BadWordsFilter = require('bad-words');
 import CryptoJS from 'crypto-js';
 import { Redis } from '@upstash/redis';
 import { Ratelimit } from '@upstash/ratelimit';

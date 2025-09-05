@@ -465,7 +465,8 @@ export class CrisisInterventionService {
         if (action.automated) {
           switch (action.type) {
             case 'notify_moderator':
-              await CrisisInterventionService.notifyModerators(userId, action.priority as 'immediate' | 'urgent' | 'standard');
+              const priorityLevel = action.priority === 1 ? 'immediate' : action.priority === 2 ? 'urgent' : 'standard';
+              await CrisisInterventionService.notifyModerators(userId, priorityLevel);
               break;
             
             case 'provide_resources':

@@ -7,7 +7,7 @@
 import { EventEmitter } from 'events';
 import { CrisisDetector } from './CrisisDetector';
 import { EthicalBoundaryManager } from './EthicalBoundaryManager';
-import { InterventionSelector } from './InterventionSelector';
+import { InterventionSelector, InterventionType } from './InterventionSelector';
 import { PrivacyManager } from './PrivacyManager';
 import { AuditLogger } from './AuditLogger';
 import { HumanOversightManager } from './HumanOversightManager';
@@ -69,15 +69,6 @@ export interface Intervention {
   evidenceBase: EvidenceLevel;
   implementation: () => Promise<InterventionResult>;
 }
-
-export type InterventionType = 
-  | 'cbt' 
-  | 'mindfulness' 
-  | 'breathing' 
-  | 'grounding' 
-  | 'safety_planning'
-  | 'crisis_escalation'
-  | 'human_handoff';
 
 export type EvidenceLevel = 'strong' | 'moderate' | 'emerging' | 'expert_consensus';
 
@@ -186,13 +177,13 @@ export interface PrivacyCheckResult {
 }
 
 export class AITherapyAssistant extends EventEmitter {
-  private crisisDetector: CrisisDetector;
-  private ethicalBoundaryManager: EthicalBoundaryManager;
-  private interventionSelector: InterventionSelector;
-  private privacyManager: PrivacyManager;
-  private auditLogger: AuditLogger;
-  private humanOversightManager: HumanOversightManager;
-  private languageProcessor: LanguageProcessor;
+  private crisisDetector!: CrisisDetector;
+  private ethicalBoundaryManager!: EthicalBoundaryManager;
+  private interventionSelector!: InterventionSelector;
+  private privacyManager!: PrivacyManager;
+  private auditLogger!: AuditLogger;
+  private humanOversightManager!: HumanOversightManager;
+  private languageProcessor!: LanguageProcessor;
   
   private readonly MAX_SESSION_DURATION = 60 * 60 * 1000; // 1 hour
   private readonly ETHICAL_BOUNDARIES = {
@@ -289,11 +280,16 @@ export class AITherapyAssistant extends EventEmitter {
       await this.auditLogger.log({
         sessionId: context.sessionId,
         userId: context.userId,
-        message: processedMessage,
-        response: sanitizedResponse,
-        interventions,
-        riskLevel: crisisAssessment.level,
-        timestamp: new Date()
+        action: 'therapy_response',
+        category: 'conversation' as const,
+        severity: 'info' as const,
+        timestamp: new Date(),
+        details: {
+          message: processedMessage,
+          response: sanitizedResponse,
+          interventions,
+          riskLevel: crisisAssessment.level
+        }
       });
 
       // 9. Check if human oversight is needed
@@ -323,9 +319,8 @@ export class AITherapyAssistant extends EventEmitter {
     } catch (error) {
       // Log error and provide safe fallback response
       await this.auditLogger.logError({
-        error: error.message,
-        context,
-        timestamp: new Date()
+        error: error instanceof Error ? error.message : String(error),
+        context
       });
 
       return this.createSafetyFallbackResponse();
@@ -426,8 +421,9 @@ export class AITherapyAssistant extends EventEmitter {
       ]
     };
 
-    const selectedTemplate = templates[strategy]?.[
-      Math.floor(Math.random() * templates[strategy].length)
+    const templateArray = templates[strategy as keyof typeof templates];
+    const selectedTemplate = templateArray?.[
+      Math.floor(Math.random() * templateArray.length)
     ] || "I'm here to support you. How can I help?";
 
     return {
@@ -494,7 +490,7 @@ export class AITherapyAssistant extends EventEmitter {
     };
 
     const violation = ethicalCheck.violations?.[0] || 'boundary';
-    const message = boundaryMessages[violation] || 
+    const message = boundaryMessages[violation as keyof typeof boundaryMessages] || 
                    "I want to be helpful, but I need to stay within my capabilities as an AI support tool. " +
                    "Let's focus on what I can help with - providing emotional support and coping strategies.";
 

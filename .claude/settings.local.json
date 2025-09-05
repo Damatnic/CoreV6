@@ -18,7 +18,8 @@
       "Bash(npm uninstall:*)",
       "Bash(git rm:*)",
       "Bash(vercel:*)",
-      "Bash(sed:*)"
+      "Bash(sed:*)",
+      "Bash(npm run typecheck:*)"
     ],
     "deny": [],
     "ask": []

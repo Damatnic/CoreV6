@@ -3,14 +3,6 @@ const nextConfig = {
   // Performance optimizations for Vercel
   experimental: {
     optimizePackageImports: ['lucide-react', 'framer-motion', 'date-fns'],
-    turbo: {
-      rules: {
-        '*.svg': {
-          loaders: ['@svgr/webpack'],
-          as: '*.js',
-        },
-      },
-    },
   },
 
   // Image optimization
@@ -62,8 +54,8 @@ const nextConfig = {
     },
   }),
 
-  // Static exports for better performance (if not using server features)
-  output: process.env.NODE_ENV === 'production' ? 'standalone' : undefined,
+  // Output configuration for Vercel
+  // output: 'standalone', // Enable for self-hosting, disable for Vercel
 
   // Error handling
   onDemandEntries: {

@@ -19,7 +19,9 @@ import {
   Award,
   HandHeart,
   Share2,
-  Send
+  Send,
+  CheckCircle,
+  Calendar
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 

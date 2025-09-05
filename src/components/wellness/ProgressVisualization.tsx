@@ -98,7 +98,7 @@ const ProgressVisualization: React.FC<ProgressVisualizationProps> = ({ data, onM
   const checkForNewMilestones = () => {
     // Check if any new milestones are achieved
     const newlyAchieved = milestones.filter(m => !m.achieved && m.progress >= 100);
-    if (newlyAchieved.length > 0) {
+    if (newlyAchieved.length > 0 && newlyAchieved[0]) {
       celebrateMilestone(newlyAchieved[0]);
     }
   };

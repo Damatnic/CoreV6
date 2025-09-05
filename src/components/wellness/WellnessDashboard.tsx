@@ -91,8 +91,18 @@ interface DashboardWidget {
 const WellnessDashboard: React.FC = () => {
   const { theme } = useTheme();
   const { user } = useAuth();
-  const { trackEvent } = useAnalytics();
-  const { subscribe, unsubscribe } = useWebSocket();
+  const { track } = useAnalytics();
+  // TODO: Fix WebSocket implementation - current hook expects URL parameter
+  // const { subscribe, unsubscribe } = useWebSocket();
+  
+  // Placeholder functions until WebSocket is properly implemented
+  const subscribe = (channel: string, callback: (data: any) => void) => {
+    console.log(`Would subscribe to ${channel}`);
+  };
+  
+  const unsubscribe = (channel: string) => {
+    console.log(`Would unsubscribe from ${channel}`);
+  };
   
   const [wellnessData, setWellnessData] = useState<WellnessData | null>(null);
   const [widgets, setWidgets] = useState<DashboardWidget[]>([]);
@@ -129,7 +139,7 @@ const WellnessDashboard: React.FC = () => {
       const configuredWidgets = configureWidgets(userData, layoutPreferences);
       setWidgets(configuredWidgets);
       
-      trackEvent('wellness_dashboard_loaded', {
+      track('wellness_dashboard_loaded', {
         userId: user?.id,
         wellnessScore: userData.wellnessScore,
         crisisRisk: userData.crisisRisk
@@ -310,7 +320,7 @@ const WellnessDashboard: React.FC = () => {
   };
 
   const handleWidgetInteraction = useCallback((widgetId: string, action: string) => {
-    trackEvent('widget_interaction', {
+    track('widget_interaction', {
       widgetId,
       action,
       timestamp: Date.now()
@@ -333,7 +343,7 @@ const WellnessDashboard: React.FC = () => {
       default:
         break;
     }
-  }, [trackEvent]);
+  }, [track]);
 
   const toggleVoiceNavigation = () => {
     setVoiceNavigationEnabled(prev => !prev);
@@ -505,7 +515,7 @@ const WellnessDashboard: React.FC = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <LoadingSpinner size="large" />
+        <LoadingSpinner size="lg" />
       </div>
     );
   }

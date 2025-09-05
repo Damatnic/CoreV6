@@ -268,7 +268,11 @@ export class PrivacyManager extends EventEmitter {
         resource: 'ai_therapy',
         success: false,
         violations: ['missing_consent'],
-        timestamp: new Date()
+        timestamp: new Date(),
+        details: {
+          missingConsents,
+          reason: 'User has not provided required consent for AI therapy access'
+        }
       });
     }
 

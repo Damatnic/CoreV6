@@ -779,7 +779,7 @@ export class InterventionSelector extends EventEmitter {
     if (criteria.riskLevel === 'high') {
       const safetyPlan = rankedInterventions.find(i => i.type === 'safety_planning');
       const other = rankedInterventions.find(i => i.type !== 'safety_planning');
-      return [safetyPlan, other].filter(Boolean);
+      return [safetyPlan, other].filter((intervention): intervention is Intervention => Boolean(intervention));
     }
     
     // Normal selection: top 2-3 interventions
