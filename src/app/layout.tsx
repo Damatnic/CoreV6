@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import CrisisButton from "@/components/crisis/CrisisButton";
+import PerformanceMonitor from "@/components/ui/PerformanceMonitor";
+import DemoModeToggle from "@/components/ui/DemoModeToggle";
+import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
 
 const inter = Inter({ 
   subsets: ["latin"],
@@ -72,10 +75,20 @@ export default function RootLayout({
         {/* Always-visible crisis button */}
         <CrisisButton variant="floating" />
         
-        {/* Main application */}
-        <main id="main-content">
-          {children}
-        </main>
+        {/* Demo mode toggle for easy testing */}
+        <DemoModeToggle compact={true} position="top-right" />
+        
+        {/* Performance monitoring in development/staging */}
+        {process.env.NODE_ENV !== 'production' && (
+          <PerformanceMonitor compact={true} position="bottom-left" />
+        )}
+        
+        {/* Main application with error boundary */}
+        <ErrorBoundary>
+          <main id="main-content">
+            {children}
+          </main>
+        </ErrorBoundary>
       </body>
     </html>
   );

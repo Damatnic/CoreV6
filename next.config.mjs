@@ -7,12 +7,23 @@ const nextConfig = {
 
   // Image optimization
   images: {
-    formats: ['image/webp', 'image/avif'],
+    formats: ['image/avif', 'image/webp'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     dangerouslyAllowSVG: true,
     contentDispositionType: 'attachment',
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**.vercel.app',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.astralcore.app',
+      },
+    ],
+    minimumCacheTTL: 60,
   },
 
   // Security headers
@@ -75,23 +86,86 @@ const nextConfig = {
 
   // Webpack customizations
   webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
+    // Fix Windows symlink issues
+    config.resolve.symlinks = false;
+    
+    // Handle ESM modules
+    config.resolve.extensionAlias = {
+      '.js': ['.ts', '.tsx', '.js', '.jsx'],
+      '.jsx': ['.tsx', '.jsx'],
+    };
     // Optimize bundle size
-    config.optimization = {
-      ...config.optimization,
-      splitChunks: {
-        ...config.optimization.splitChunks,
-        cacheGroups: {
-          ...config.optimization.splitChunks.cacheGroups,
-          vendor: {
-            test: /[\\/]node_modules[\\/]/,
-            name: 'vendors',
-            chunks: 'all',
+    if (!dev && !isServer) {
+      config.optimization = {
+        ...config.optimization,
+        splitChunks: {
+          ...config.optimization.splitChunks,
+          chunks: 'all',
+          minSize: 20000,
+          maxSize: 244000,
+          cacheGroups: {
+            ...config.optimization.splitChunks.cacheGroups,
+            vendor: {
+              test: /[\\/]node_modules[\\/]/,
+              name: 'vendors',
+              chunks: 'all',
+              priority: 10,
+              reuseExistingChunk: true,
+            },
+            common: {
+              minChunks: 2,
+              chunks: 'all',
+              priority: 5,
+              reuseExistingChunk: true,
+              enforce: true,
+            },
+            lucide: {
+              test: /[\\/]node_modules[\\/]lucide-react[\\/]/,
+              name: 'lucide',
+              chunks: 'all',
+              priority: 20,
+            },
+            framerMotion: {
+              test: /[\\/]node_modules[\\/]framer-motion[\\/]/,
+              name: 'framer-motion',
+              chunks: 'all',
+              priority: 20,
+            },
+            chart: {
+              test: /[\\/]node_modules[\\/](chart\.js|react-chartjs-2)[\\/]/,
+              name: 'chart',
+              chunks: 'all',
+              priority: 20,
+            },
           },
         },
-      },
-    };
+        usedExports: true,
+        providedExports: true,
+        sideEffects: false,
+      };
+
+      // Tree shaking optimization
+      config.optimization.providedExports = true;
+      config.optimization.usedExports = true;
+    }
+
+    // Enable source maps in production for debugging
+    if (!dev) {
+      config.devtool = 'source-map';
+    }
 
     return config;
+  },
+
+  // Production optimizations
+  swcMinify: true,
+  poweredByHeader: false,
+  
+  // Generate optimized builds
+  generateBuildId: async () => {
+    const timestamp = Date.now();
+    const shortHash = timestamp.toString(36);
+    return `build_${shortHash}`;
   },
 };
 

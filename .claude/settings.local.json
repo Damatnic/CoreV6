@@ -19,7 +19,9 @@
       "Bash(git rm:*)",
       "Bash(vercel:*)",
       "Bash(sed:*)",
-      "Bash(npm run typecheck:*)"
+      "Bash(npm run typecheck:*)",
+      "Bash(npm run deploy:check:*)",
+      "Bash(timeout 10 npm run dev)"
     ],
     "deny": [],
     "ask": []

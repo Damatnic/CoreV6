@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit",
     "build:analyze": "ANALYZE=true npm run build",
     "vercel:build": "npm run typecheck && npm run lint && npm run build",
+    "deploy:check": "node scripts/deployment-check.mjs",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
