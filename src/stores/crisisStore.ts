@@ -170,7 +170,7 @@ interface CrisisState {
 export const useCrisisStore = create<CrisisState>()(
   devtools(
     persist(
-      (set, get) => ({
+      (set, _get) => ({
         // Initial state
         isInCrisis: false,
         currentAssessment: null,

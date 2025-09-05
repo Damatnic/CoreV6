@@ -3,15 +3,12 @@
  * Automatically adjusts widget placement based on user behavior and wellness state
  */
 
-import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { motion, AnimatePresence, Reorder } from 'framer-motion';
+import React, { useEffect, useState, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
 import { useGesture } from '@use-gesture/react';
 import { 
   Grid3x3, 
-  Maximize2, 
-  Minimize2, 
-  Move, 
   Settings,
   Sparkles,
   Layout,
@@ -52,8 +49,6 @@ const AdaptiveLayout: React.FC<AdaptiveLayoutProps> = ({
 }) => {
   const [currentLayout, setCurrentLayout] = useState<LayoutPattern | null>(null);
   const [isCustomizing, setIsCustomizing] = useState(false);
-  const [draggedWidget, setDraggedWidget] = useState<string | null>(null);
-  const [touchStartPos, setTouchStartPos] = useState({ x: 0, y: 0 });
   
   const containerRef = useRef<HTMLDivElement>(null);
   const isMobile = useMediaQuery('(max-width: 768px)');
@@ -352,11 +347,6 @@ const AdaptiveLayout: React.FC<AdaptiveLayoutProps> = ({
     return {};
   };
 
-  // Handle widget reordering
-  const handleReorder = (newOrder: any[]) => {
-    // Update widget order in state
-    console.log('New widget order:', newOrder);
-  };
 
   // Render customization overlay
   const renderCustomizationOverlay = () => {

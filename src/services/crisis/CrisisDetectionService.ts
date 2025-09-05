@@ -720,7 +720,7 @@ export class CrisisDetectionService extends EventEmitter {
     
     // Keep cache size manageable
     if (this.assessmentCache.size > 1000) {
-      const oldestKey = this.assessmentCache.keys().next().value;
+      const oldestKey = this.assessmentCache.keys().next().value as string;
       this.assessmentCache.delete(oldestKey);
     }
   }
@@ -732,11 +732,11 @@ export class CrisisDetectionService extends EventEmitter {
     const cutoffTime = Date.now() - (hoursBack * 60 * 60 * 1000);
     const assessments: CrisisAssessment[] = [];
     
-    for (const [key, assessment] of this.assessmentCache.entries()) {
+    Array.from(this.assessmentCache.entries()).forEach(([key, assessment]) => {
       if (key.startsWith(userId) && assessment.timestamp.getTime() > cutoffTime) {
         assessments.push(assessment);
       }
-    }
+    });
     
     return assessments.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
   }
@@ -749,7 +749,7 @@ export class CrisisDetectionService extends EventEmitter {
     
     let increasingCount = 0;
     for (let i = 1; i < severities.length; i++) {
-      if (severities[i] > severities[i - 1]) {
+      if (severities[i] && severities[i - 1] && severities[i] > severities[i - 1]) {
         increasingCount++;
       }
     }
@@ -777,7 +777,7 @@ export class CrisisDetectionService extends EventEmitter {
     }
     
     const detectedLang = Object.entries(scores).reduce((a, b) => a[1] > b[1] ? a : b)[0];
-    return scores[detectedLang] > 2 ? detectedLang : 'en';
+    return scores[detectedLang] && scores[detectedLang] > 2 ? detectedLang : 'en';
   }
 
   /**
@@ -820,11 +820,11 @@ export class CrisisDetectionService extends EventEmitter {
   private cleanupCache(): void {
     const cutoffTime = Date.now() - (24 * 60 * 60 * 1000); // 24 hours
     
-    for (const [key, assessment] of this.assessmentCache.entries()) {
+    Array.from(this.assessmentCache.entries()).forEach(([key, assessment]) => {
       if (assessment.timestamp.getTime() < cutoffTime) {
         this.assessmentCache.delete(key);
       }
-    }
+    });
   }
 
   /**
@@ -876,7 +876,7 @@ export class CrisisDetectionService extends EventEmitter {
     // Calculate escalation rate
     let escalations = 0;
     for (let i = 1; i < assessments.length; i++) {
-      if (this.monitorEscalation(assessments[i - 1], assessments[i])) {
+      if (assessments[i - 1] && assessments[i] && this.monitorEscalation(assessments[i - 1], assessments[i])) {
         escalations++;
       }
     }

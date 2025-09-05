@@ -118,8 +118,10 @@ export default function CrisisInterventionSystem({
     // Check for escalation
     if (crisisHistory.length > 0) {
       const previousAssessment = crisisHistory[crisisHistory.length - 1];
-      const isEscalating = CrisisDetectionService.monitorEscalation(previousAssessment, assessment);
-      setEscalationDetected(isEscalating);
+      if (previousAssessment) {
+        const isEscalating = CrisisDetectionService.monitorEscalation(previousAssessment, assessment);
+        setEscalationDetected(isEscalating);
+      }
     }
   }, [setAssessment, addToHistory, crisisHistory]);
 
@@ -201,7 +203,7 @@ export default function CrisisInterventionSystem({
   /**
    * Track keystroke patterns
    */
-  const trackKeystroke = useCallback((event: KeyboardEvent) => {
+  const trackKeystroke = useCallback((event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     const now = Date.now();
     const interval = now - lastKeyPressTime.current;
     

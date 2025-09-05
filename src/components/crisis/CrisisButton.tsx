@@ -11,6 +11,7 @@ interface CrisisButtonProps {
 
 export default function CrisisButton({ variant = "floating", className = "" }: CrisisButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isUrgent, setIsUrgent] = useState(false);
 
   // Keyboard shortcut for crisis help (Ctrl/Cmd + H)
   useEffect(() => {

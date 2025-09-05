@@ -111,7 +111,7 @@ test.describe('Crisis Intervention Flow', () => {
     await expect(page.getByText('988')).toBeVisible()
   })
 
-  test('Crisis intervention respects user privacy', async ({ page, context }) => {
+  test('Crisis intervention respects user privacy', async ({ page }) => {
     // Enable privacy mode
     await page.goto('/settings')
     await page.getByLabel(/Privacy mode/i).check()

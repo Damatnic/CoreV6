@@ -65,7 +65,6 @@ const AI_SUPPORT_TEMPLATES = {
 
 export default function CrisisChat({
   userId,
-  userName = 'User',
   initialSeverity = CrisisSeverity.MODERATE,
   className = ''
 }: CrisisChatProps) {
@@ -75,7 +74,6 @@ export default function CrisisChat({
     isConnectedToCounselor,
     addChatMessage,
     connectToCounselor,
-    endChatSession,
     preferences
   } = useCrisisStore();
   
@@ -154,7 +152,9 @@ export default function CrisisChat({
       currentSeverity >= CrisisSeverity.MODERATE ? 'moderate' : 'low'
     ];
     
-    const greeting = templates[Math.floor(Math.random() * templates.length)];
+    const greeting = templates && templates.length > 0 
+      ? templates[Math.floor(Math.random() * templates.length)]
+      : 'Hello, I\'m here to support you. How are you feeling right now?';
     
     const aiMessage: CrisisChatMessage = {
       id: `msg_${Date.now()}`,

@@ -41,6 +41,7 @@ const SupportGroups: React.FC<SupportGroupsProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState<SupportGroup | null>(null);
+  const [showCreateGroup, setShowCreateGroup] = useState(false);
 
   // Topic definitions with colors and descriptions
   const topicInfo: Record<GroupTopic, { color: string; description: string; icon: React.ReactNode }> = {
@@ -130,7 +131,7 @@ const SupportGroups: React.FC<SupportGroupsProps> = ({
           maxMembers: 50,
           currentMembers: 23,
           moderators: ['mod_1', 'mod_2'],
-          isPrivate: false,
+          privacy: 'public',
           requiresApproval: false,
           guidelines: [
             'Be respectful and supportive',
@@ -152,7 +153,7 @@ const SupportGroups: React.FC<SupportGroupsProps> = ({
           maxMembers: 40,
           currentMembers: 31,
           moderators: ['mod_3'],
-          isPrivate: false,
+          privacy: 'public',
           requiresApproval: false,
           guidelines: [
             'Share at your comfort level',
@@ -174,7 +175,7 @@ const SupportGroups: React.FC<SupportGroupsProps> = ({
           maxMembers: 25,
           currentMembers: 18,
           moderators: ['mod_4', 'mod_5'],
-          isPrivate: true,
+          privacy: 'private',
           requiresApproval: true,
           guidelines: [
             'Trigger warnings required',
@@ -379,7 +380,7 @@ const SupportGroups: React.FC<SupportGroupsProps> = ({
                       {group.name}
                     </h3>
                     <div className="flex items-center gap-2">
-                      {group.isPrivate && (
+                      {group.privacy === 'private' && (
                         <Lock className="w-4 h-4 text-gray-500" />
                       )}
                       {group.supportLevel === 'professional' && (
@@ -510,7 +511,7 @@ const SupportGroups: React.FC<SupportGroupsProps> = ({
                         <span className={`px-3 py-1 rounded-full text-white text-sm font-medium ${topicInfo[selectedGroup.topic].color}`}>
                           {selectedGroup.topic.replace('-', ' ')}
                         </span>
-                        {selectedGroup.isPrivate && (
+                        {selectedGroup.privacy === 'private' && (
                           <span className="flex items-center gap-1 text-gray-600 dark:text-gray-400">
                             <Lock className="w-4 h-4" />
                             Private

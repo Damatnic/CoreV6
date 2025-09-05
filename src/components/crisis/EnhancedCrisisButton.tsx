@@ -122,6 +122,7 @@ export default function EnhancedCrisisButton({
       
       return () => clearTimeout(timer);
     }
+    return undefined;
   }, [alwaysVisible, isInCrisis, lastInteraction]);
   
   /**

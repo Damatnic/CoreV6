@@ -100,9 +100,9 @@ interface LanguageConfig {
 }
 
 export class LanguageProcessor extends EventEmitter {
-  private languageConfigs: Map<SupportedLanguage, LanguageConfig>;
-  private emotionPatterns: Map<EmotionType, RegExp[]>;
-  private intentPatterns: Map<IntentType, RegExp[]>;
+  private languageConfigs: Map<SupportedLanguage, LanguageConfig> = new Map();
+  private emotionPatterns: Map<EmotionType, RegExp[]> = new Map();
+  private intentPatterns: Map<IntentType, RegExp[]> = new Map();
   private currentLanguage: SupportedLanguage = 'en';
 
   constructor() {
@@ -402,6 +402,7 @@ export class LanguageProcessor extends EventEmitter {
     
     for (let i = 0; i < words.length; i++) {
       const word = words[i];
+      if (!word) continue;
       let wordScore = 0;
       
       if (positiveWords.includes(word)) {
@@ -411,12 +412,13 @@ export class LanguageProcessor extends EventEmitter {
       }
       
       // Check for intensifiers
-      if (i > 0 && intensifiers.includes(words[i - 1])) {
+      const previousWord = words[i - 1];
+      if (i > 0 && previousWord && intensifiers.includes(previousWord)) {
         wordScore *= 1.5;
       }
       
       // Check for negation
-      if (i > 0 && words[i - 1] === 'not') {
+      if (i > 0 && previousWord === 'not') {
         wordScore *= -1;
       }
       
@@ -553,12 +555,14 @@ export class LanguageProcessor extends EventEmitter {
     const personPattern = /\b([A-Z][a-z]+ [A-Z][a-z]+)\b/g;
     let match;
     while ((match = personPattern.exec(text)) !== null) {
-      entities.push({
-        type: 'person',
-        value: match[1],
-        confidence: 0.7,
-        context: text.substring(match.index - 20, match.index + 20)
-      });
+      if (match[1]) {
+        entities.push({
+          type: 'person',
+          value: match[1],
+          confidence: 0.7,
+          context: text.substring(match.index - 20, match.index + 20)
+        });
+      }
     }
     
     // Extract symptoms
@@ -579,11 +583,13 @@ export class LanguageProcessor extends EventEmitter {
     // Extract time references
     const timePattern = /\b(\d{1,2}:\d{2}|morning|afternoon|evening|night|today|yesterday|tomorrow)\b/gi;
     while ((match = timePattern.exec(text)) !== null) {
-      entities.push({
-        type: 'time',
-        value: match[1],
-        confidence: 0.9
-      });
+      if (match[1]) {
+        entities.push({
+          type: 'time',
+          value: match[1],
+          confidence: 0.9
+        });
+      }
     }
     
     // Extract coping strategies

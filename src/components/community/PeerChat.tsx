@@ -468,7 +468,7 @@ const PeerChat: React.FC<PeerChatProps> = ({
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
         <AnimatePresence initial={false}>
-          {messages.map((message, index) => {
+          {messages.map((message) => {
             const isOwn = message.senderSessionId === currentUser.sessionId;
             const isSystem = message.senderSessionId === 'system';
 

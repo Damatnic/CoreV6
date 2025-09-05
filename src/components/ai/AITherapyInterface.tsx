@@ -60,14 +60,12 @@ export default function AITherapyInterface() {
     sendMessage, 
     isProcessing, 
     sessionId,
-    connectionStatus,
-    aiMetrics 
+    connectionStatus
   } = useAITherapy();
   const { checkForCrisis, crisisLevel } = useCrisisDetection();
   const { 
     fontSize, 
     highContrast, 
-    screenReaderMode,
     voiceEnabled,
     toggleVoice 
   } = useAccessibility();
@@ -103,6 +101,7 @@ export default function AITherapyInterface() {
         wsService.current?.disconnect();
       };
     }
+    return undefined;
   }, [sessionId]);
 
   // Auto-scroll to bottom when new messages arrive
@@ -134,6 +133,7 @@ export default function AITherapyInterface() {
         recognition.stop();
       };
     }
+    return undefined;
   }, [voiceInput, language]);
 
   const handleIncomingMessage = useCallback((message: any) => {

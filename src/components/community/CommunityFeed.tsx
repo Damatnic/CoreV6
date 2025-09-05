@@ -7,20 +7,16 @@ import {
   MessageCircle,
   Flag,
   Trophy,
-  Star,
-  Award,
   Sparkles,
-  Calendar,
   Clock,
   PlusCircle,
   Send,
   X,
   AlertCircle,
   Users,
-  Zap,
-  Target,
   Smile,
-  ThumbsUp
+  ThumbsUp,
+  Shield
 } from 'lucide-react';
 import {
   CommunityPost,
@@ -273,7 +269,7 @@ Sending strength to everyone on their journey today. 🌟`,
         } else {
           // Add new reaction
           post.reactions.push({
-            type: reactionType,
+            type: reactionType as "heart" | "support" | "celebrate" | "understand",
             count: 1,
             sessionIds: currentUser ? [currentUser.sessionId] : []
           });

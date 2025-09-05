@@ -102,7 +102,7 @@ export const useSocket = create<SocketState>((set, get) => ({
     if (state.socket) {
       state.socket.disconnect();
       set({ socket: null, connected: false, connecting: false });
-      toast.info('Disconnected from community');
+      toast.success('Disconnected from community');
     }
   },
 

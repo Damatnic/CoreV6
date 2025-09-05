@@ -254,7 +254,7 @@ export default function CrisisAnalytics({
         peakCrisisHour: `${metrics.peakHour}:00`,
         mostCommonTriggers: [] // Would be extracted from crisis indicators
       },
-      recommendations: generateRecommendations(metrics, crisisStats)
+      recommendations: generateRecommendations(metrics as any, crisisStats as any)
     };
     
     // Convert to JSON and download
@@ -271,26 +271,26 @@ export default function CrisisAnalytics({
   /**
    * Generate recommendations based on analytics
    */
-  const generateRecommendations = (metrics: Record<string, number>, stats: Record<string, number>) => {
+  const generateRecommendations = (metrics: any, stats: any) => {
     const recommendations = [];
     
-    if (stats.escalationRate > 30) {
+    if (stats.escalationRate && stats.escalationRate > 30) {
       recommendations.push('High escalation rate detected - consider increasing check-in frequency');
     }
     
-    if (metrics.avgResponseTime > 20000) {
+    if (metrics.avgResponseTime && metrics.avgResponseTime > 20000) {
       recommendations.push('Response times could be improved - optimize crisis detection algorithms');
     }
     
-    if (metrics.successRate < 70) {
+    if (metrics.successRate && metrics.successRate < 70) {
       recommendations.push('Intervention success rate below target - review crisis response protocols');
     }
     
-    if (metrics.highRiskAssessments > filteredData.assessments.length * 0.3) {
+    if (metrics.highRiskAssessments && metrics.highRiskAssessments > filteredData.assessments.length * 0.3) {
       recommendations.push('High proportion of high-risk assessments - increase preventive interventions');
     }
     
-    if (metrics.peakHour >= 22 || metrics.peakHour <= 4) {
+    if (metrics.peakHour !== undefined && (metrics.peakHour >= 22 || metrics.peakHour <= 4)) {
       recommendations.push('Crisis episodes peak during night hours - ensure 24/7 support availability');
     }
     

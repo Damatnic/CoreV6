@@ -130,7 +130,7 @@ export class PrivacyManager extends EventEmitter {
   private accessControls: Map<string, AccessControl>;
   private auditLog: AuditEntry[];
   private encryptionKeys: Map<string, EncryptionKey>;
-  private currentKeyId: string;
+  private currentKeyId: string = '';
 
   private readonly HIPAA_REQUIREMENTS = {
     minimumPasswordLength: 8,
@@ -312,7 +312,7 @@ export class PrivacyManager extends EventEmitter {
     for (const piiPattern of this.PII_PATTERNS) {
       const matches = content.match(piiPattern.pattern);
       if (matches) {
-        matches.forEach(match => {
+        matches.forEach((match: string) => {
           const redacted = this.redactString(match);
           content = content.replace(match, redacted);
           redactedItems.push({
@@ -474,7 +474,8 @@ export class PrivacyManager extends EventEmitter {
         resource,
         success: false,
         violations: ['no_access_control'],
-        timestamp: new Date()
+        timestamp: new Date(),
+        details: { reason: 'no_access_control' }
       });
       return false;
     }
@@ -487,7 +488,8 @@ export class PrivacyManager extends EventEmitter {
         resource,
         success: false,
         violations: ['insufficient_permissions'],
-        timestamp: new Date()
+        timestamp: new Date(),
+        details: { reason: 'insufficient_permissions' }
       });
       return false;
     }
@@ -518,7 +520,8 @@ export class PrivacyManager extends EventEmitter {
       action: 'access',
       resource,
       success: true,
-      timestamp: new Date()
+      timestamp: new Date(),
+      details: { action: 'access_granted' }
     });
 
     return true;
@@ -641,7 +644,8 @@ export class PrivacyManager extends EventEmitter {
       action: 'export',
       resource: 'user_data',
       success: true,
-      timestamp: new Date()
+      timestamp: new Date(),
+      details: { exportFormat: 'json' }
     });
 
     return userData;

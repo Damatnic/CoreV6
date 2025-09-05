@@ -3,28 +3,21 @@
  * Provides early warning systems and personalized recommendations
  */
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Brain,
   TrendingUp,
-  TrendingDown,
   AlertTriangle,
   Shield,
   Sparkles,
   Activity,
-  Calendar,
-  Clock,
-  Target,
   Info,
   ChevronRight,
   ArrowUp,
   ArrowDown,
   Minus,
   BarChart3,
-  LineChart,
-  PieChart,
-  Zap,
   CheckCircle
 } from 'lucide-react';
 import { Line, Bar, Doughnut, Scatter } from 'react-chartjs-2';

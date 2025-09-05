@@ -17,7 +17,8 @@
       "Bash(openssl rand:*)",
       "Bash(npm uninstall:*)",
       "Bash(git rm:*)",
-      "Bash(vercel:*)"
+      "Bash(vercel:*)",
+      "Bash(sed:*)"
     ],
     "deny": [],
     "ask": []

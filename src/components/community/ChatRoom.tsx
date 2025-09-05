@@ -9,7 +9,6 @@ import {
   Flag,
   Smile,
   Paperclip,
-  MoreVertical,
   Phone,
   Info
 } from 'lucide-react';
@@ -18,7 +17,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { toast } from 'react-hot-toast';
 import EmojiPicker from '@emoji-mart/react';
 import data from '@emoji-mart/data';
-import { ChatRoom as ChatRoomType, Message, AnonymousIdentity } from '@/types/community';
+import { Message, AnonymousIdentity } from '@/types/community';
 
 interface ChatRoomProps {
   roomId: string;
@@ -34,7 +33,6 @@ export default function ChatRoom({ roomId, currentUser }: ChatRoomProps) {
   const [participantCount, setParticipantCount] = useState(0);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [selectedMessage, setSelectedMessage] = useState<string | null>(null);
-  const [roomInfo, setRoomInfo] = useState<ChatRoomType | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout>();
 

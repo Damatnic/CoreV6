@@ -23,6 +23,7 @@ import ChatRoom from '@/components/community/ChatRoom';
 import SupportGroups from '@/components/community/SupportGroups';
 import MentorshipMatching from '@/components/community/MentorshipMatching';
 import { useSocket } from '@/lib/socket-client';
+import { AnonymousIdentity } from '@/types/community';
 
 interface CommunityStats {
   totalUsers: number;
@@ -40,7 +41,7 @@ export default function CommunityPage() {
   const { connect, connected } = useSocket();
   const [activeView, setActiveView] = useState<'overview' | 'chat' | 'groups' | 'mentorship' | 'challenges'>('overview');
   const [stats, setStats] = useState<CommunityStats | null>(null);
-  const [userIdentity, setUserIdentity] = useState<Record<string, unknown> | null>(null);
+  const [userIdentity, setUserIdentity] = useState<AnonymousIdentity | null>(null);
   const [activeRooms, setActiveRooms] = useState<Record<string, unknown>[]>([]);
   const [selectedRoom, setSelectedRoom] = useState<string | null>(null);
 

@@ -6,28 +6,17 @@ import {
   Users, 
   Star, 
   Globe, 
-  Clock, 
   CheckCircle,
-  Heart,
-  Brain,
-  Activity,
   MessageCircle,
-  Calendar,
-  Award,
-  Shield,
-  ChevronRight,
-  Search,
-  Filter
+  Search
 } from 'lucide-react';
 import { 
   MentorProfile, 
   MentorshipRequest, 
   SupportTopic,
-  MentorPreferences,
-  Review
+  MentorPreferences
 } from '@/types/community';
 import { toast } from 'react-hot-toast';
-import { format } from 'date-fns';
 
 interface MentorCardProps {
   mentor: MentorProfile & { identity: { displayName: string; avatar: string } };
@@ -80,7 +69,7 @@ function MentorCard({ mentor, onSelect }: MentorCardProps) {
       <div className="mb-4">
         <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">Specializes in:</p>
         <div className="flex flex-wrap gap-2">
-          {mentor.specializations.slice(0, 3).map((topic, idx) => (
+          {mentor.specializations.slice(0, 3).map((topic: SupportTopic, idx: number) => (
             <span 
               key={idx}
               className="px-2 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 text-xs rounded-full"
@@ -112,13 +101,13 @@ function MentorCard({ mentor, onSelect }: MentorCardProps) {
         </div>
         <div className="flex items-center space-x-1 text-gray-500">
           <Users className="w-4 h-4" />
-          <span>{mentor.currentMentees.length}/{mentor.maxMentees}</span>
+          <span>{mentor.currentMentees}/{mentor.maxMentees}</span>
         </div>
       </div>
 
       {/* Availability Status */}
       <div className="mb-4">
-        {mentor.currentMentees.length < mentor.maxMentees ? (
+        {mentor.currentMentees < mentor.maxMentees ? (
           <div className="flex items-center space-x-2 text-green-600 dark:text-green-400">
             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
             <span className="text-sm">Available for mentoring</span>

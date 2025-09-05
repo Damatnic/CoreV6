@@ -5,7 +5,7 @@ import { parse } from 'cookie';
 import jwt from 'jsonwebtoken';
 import { PrismaClient } from '@prisma/client';
 import { z } from 'zod';
-import BadWordsFilter from 'bad-words';
+import * as BadWordsFilter from 'bad-words';
 import CryptoJS from 'crypto-js';
 import { Redis } from '@upstash/redis';
 import { Ratelimit } from '@upstash/ratelimit';
@@ -116,7 +116,7 @@ function generateAvatar(): string {
     '🌟', '🌈', '🦋', '🌸', '🌺', '🌻', '🌷', '🌹',
     '🕊️', '💫', '⭐', '🌙', '☀️', '🌊', '🌿', '🍃'
   ];
-  return avatars[Math.floor(Math.random() * avatars.length)];
+  return avatars[Math.floor(Math.random() * avatars.length)] || '🌟';
 }
 
 // Generate color theme
@@ -125,7 +125,7 @@ function generateColorTheme(): string {
     '#8B5CF6', '#EC4899', '#F59E0B', '#10B981',
     '#3B82F6', '#6366F1', '#14B8A6', '#F97316'
   ];
-  return themes[Math.floor(Math.random() * themes.length)];
+  return themes[Math.floor(Math.random() * themes.length)] || '#8B5CF6';
 }
 
 // Crisis detection
@@ -264,7 +264,7 @@ export function initSocketServer(httpServer: HTTPServer) {
         });
 
         // Decrypt messages before sending
-        const decryptedMessages = recentMessages.map(msg => ({
+        const decryptedMessages = recentMessages.map((msg: any) => ({
           ...msg,
           content: decryptMessage(msg.content),
         }));

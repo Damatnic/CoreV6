@@ -12,24 +12,18 @@ import {
   ChevronRight,
   Award,
   Star,
-  TrendingUp,
   Heart,
   Sparkles,
   CheckCircle,
-  Lock,
-  Unlock,
   Gift,
   Crown,
   Medal,
-  Flag,
   BarChart3,
   Timer,
   Flame
 } from 'lucide-react';
 import {
   WellnessChallenge,
-  ChallengeParticipant,
-  ChallengeGoal,
   Reward,
   AnonymousUser,
   ChallengeType

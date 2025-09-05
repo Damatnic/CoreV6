@@ -32,6 +32,7 @@ export interface AnonymousIdentity {
   id: string;
   avatar: string;
   displayName: string;
+  trustScore?: number;
 }
 
 export interface SupportGroup {
@@ -44,6 +45,7 @@ export interface SupportGroup {
   currentMembers: number;
   moderators: string[]; // Session IDs
   privacy: 'public' | 'private' | 'invite-only';
+  isPrivate?: boolean;
   requiresApproval: boolean;
   guidelines: string[];
   createdAt: Date;
@@ -281,6 +283,8 @@ export interface CommunityWebSocketEvents {
   'peer:accept': { matchId: string };
   'peer:decline': { matchId: string };
   'peer:message': { matchId: string; message: ChatMessage };
+  'peer:typing': { matchId: string; typing: boolean };
+  'peer:media': { matchId: string; mediaType: string; enabled: boolean };
   'post:new': { post: CommunityPost };
   'post:reaction': { postId: string; reaction: PostReaction };
   'milestone:achieved': { milestone: Milestone };
@@ -337,18 +341,22 @@ export interface UserEngagementMetrics {
 // Crisis Intervention Types
 export interface CrisisProtocol {
   id: string;
-  name: string;
-  severity: 'low' | 'medium' | 'high' | 'critical';
-  actions: CrisisAction[];
+  name?: string;
+  severity?: 'low' | 'medium' | 'high' | 'critical';
+  triggerType?: string;
+  indicators?: string[];
+  actions?: CrisisAction[];
+  immediateActions?: CrisisAction[];
+  followUpActions?: CrisisAction[];
   resources: CrisisResource[];
-  escalationPath: string[];
-  timeframe: number; // minutes
-  isActive: boolean;
+  escalationPath: any[];
+  timeframe?: number; // minutes
+  isActive?: boolean;
 }
 
 export interface CrisisAction {
   id: string;
-  type: 'notify' | 'redirect' | 'contact' | 'escalate' | 'monitor';
+  type: 'notify' | 'redirect' | 'contact' | 'escalate' | 'monitor' | 'notify_moderator' | 'connect_counselor' | 'provide_resources';
   priority: number;
   description: string;
   automated: boolean;
@@ -357,13 +365,16 @@ export interface CrisisAction {
 
 export interface CrisisResource {
   id: string;
-  type: 'hotline' | 'chat' | 'text' | 'emergency';
+  type: 'hotline' | 'chat' | 'text' | 'emergency' | 'website';
   name: string;
   description: string;
   contact: string;
-  availability: '24/7' | 'business-hours' | 'weekends';
+  availability?: '24/7' | 'business-hours' | 'weekends';
+  available24x7?: boolean;
   languages: string[];
-  region: string;
+  region?: string;
+  countries?: string[];
+  specializations?: string[];
 }
 
 export interface SafetyAlert {
@@ -396,4 +407,99 @@ export interface Message {
   authorId: string;
   author?: AnonymousIdentity;
   type?: 'text' | 'crisis_alert' | 'system';
+}
+
+// Mentorship Types
+export interface MentorProfile {
+  id: string;
+  sessionId: string;
+  rating: number;
+  reviews: Review[];
+  specializations: SupportTopic[];
+  experience: string;
+  approach: string;
+  availability: MentorAvailability;
+  verified: boolean;
+  languages: string[];
+  timezone: string;
+  preferences: MentorPreferences;
+  currentMentees: number;
+  maxMentees: number;
+  stats: {
+    totalSessions: number;
+    successRate: number;
+    responseTime: number; // hours
+  };
+}
+
+export interface MentorshipRequest {
+  id: string;
+  menteeSessionId: string;
+  mentorSessionId: string;
+  topic: SupportTopic;
+  description: string;
+  urgency: 'low' | 'medium' | 'high';
+  status: 'pending' | 'accepted' | 'declined' | 'completed';
+  createdAt: Date;
+  scheduledAt?: Date;
+  completedAt?: Date;
+}
+
+export type SupportTopic =
+  | 'anxiety'
+  | 'depression' 
+  | 'trauma'
+  | 'relationships'
+  | 'grief'
+  | 'addiction'
+  | 'stress'
+  | 'self_esteem'
+  | 'work_life_balance'
+  | 'family_issues'
+  | 'social_anxiety'
+  | 'panic_attacks'
+  | 'eating_disorders'
+  | 'sleep_issues'
+  | 'anger_management';
+
+export interface MentorPreferences {
+  maxConcurrentMentees?: number;
+  preferredTopics?: SupportTopic[];
+  sessionDuration?: number; // minutes
+  availableTimeSlots?: string[];
+  communicationStyle?: 'structured' | 'conversational' | 'goal_oriented' | 'balanced';
+  languages?: string[];
+  timeZone?: string;
+  sessionFrequency?: string;
+  preferredTimes?: string[];
+}
+
+export interface Review {
+  id: string;
+  reviewerSessionId: string;
+  rating: number; // 1-5
+  comment: string;
+  createdAt: Date;
+  verified: boolean;
+  helpful: number; // helpful votes
+}
+
+export interface MentorAvailability {
+  timezone: string;
+  schedule: {
+    monday: TimeSlot[];
+    tuesday: TimeSlot[];
+    wednesday: TimeSlot[];
+    thursday: TimeSlot[];
+    friday: TimeSlot[];
+    saturday: TimeSlot[];
+    sunday: TimeSlot[];
+  };
+  nextAvailable: Date;
+}
+
+export interface TimeSlot {
+  start: string; // HH:MM format
+  end: string; // HH:MM format
+  available: boolean;
 }

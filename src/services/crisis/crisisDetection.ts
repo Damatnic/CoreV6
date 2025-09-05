@@ -40,28 +40,28 @@ const CRISIS_KEYWORDS = {
 };
 
 // Behavioral patterns that may indicate crisis
-const BEHAVIORAL_PATTERNS = {
-  suddenWithdrawal: {
-    indicator: "Sudden cessation of regular activity",
-    severity: 3
-  },
-  giftGiving: {
-    indicator: "Mentions of giving away possessions",
-    severity: 4
-  },
-  finalStatements: {
-    indicator: "Language suggesting finality or goodbye",
-    severity: 5
-  },
-  planMentions: {
-    indicator: "References to specific harmful plans",
-    severity: 5
-  },
-  isolationLanguage: {
-    indicator: "Expressions of extreme isolation",
-    severity: 3
-  }
-};
+// const BEHAVIORAL_PATTERNS = {
+//   suddenWithdrawal: {
+//     indicator: "Sudden cessation of regular activity",
+//     severity: 3
+//   },
+//   giftGiving: {
+//     indicator: "Mentions of giving away possessions",
+//     severity: 4
+//   },
+//   finalStatements: {
+//     indicator: "Language suggesting finality or goodbye",
+//     severity: 5
+//   },
+//   planMentions: {
+//     indicator: "References to specific harmful plans",
+//     severity: 5
+//   },
+//   isolationLanguage: {
+//     indicator: "Expressions of extreme isolation",
+//     severity: 3
+//   }
+// };
 
 class CrisisDetectionService {
   private static instance: CrisisDetectionService;
@@ -166,7 +166,7 @@ class CrisisDetectionService {
     if (moodTrend < -0.3) {
       indicators.push({
         type: "temporal",
-        severity: Math.min(5, Math.floor(Math.abs(moodTrend) * 5)),
+        severity: Math.min(5, Math.floor(Math.abs(moodTrend) * 5)) as 1 | 2 | 3 | 4 | 5,
         confidence: 0.8
       });
     }
@@ -264,7 +264,7 @@ class CrisisDetectionService {
   /**
    * Generate suggested actions based on assessment
    */
-  private generateSuggestedActions(severity: number, indicators: CrisisIndicator[]): string[] {
+  private generateSuggestedActions(severity: number, _indicators: CrisisIndicator[]): string[] {
     const actions: string[] = [];
 
     if (severity >= 4) {

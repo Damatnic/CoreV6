@@ -12,20 +12,14 @@ import {
   Trophy,
   Shield,
   Star,
-  TrendingUp,
-  Calendar,
   Clock,
   UserPlus,
   Lock,
   Sparkles,
   Award,
-  Target,
   HandHeart,
   Share2,
-  ChevronRight,
-  ThumbsUp,
-  Send,
-  Bell
+  Send
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -89,7 +83,6 @@ const CommunityWellness: React.FC<CommunityWellnessProps> = ({
   onJoinGroup,
   onStartChallenge
 }) => {
-  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<'groups' | 'challenges' | 'peers' | 'feed'>('groups');
   const [supportGroups, setSupportGroups] = useState<SupportGroup[]>([]);
   const [challenges, setChallenges] = useState<Challenge[]>([]);

@@ -13,7 +13,6 @@ import {
   Phone,
   MessageSquare,
   FileText,
-  Heart,
   Shield,
   ChevronRight,
   Plus,
@@ -24,7 +23,6 @@ import {
   Activity,
   Brain,
   Stethoscope,
-  UserCheck,
   Download,
   Upload,
   Send

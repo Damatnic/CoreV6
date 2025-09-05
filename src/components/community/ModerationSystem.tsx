@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Shield,
@@ -12,29 +12,23 @@ import {
   CheckCircle,
   XCircle,
   Clock,
-  Filter,
   Search,
   ChevronRight,
-  Eye,
-  Ban,
   Trash2,
-  Edit3,
   RefreshCw,
-  TrendingUp,
-  Users,
   Activity,
   FileText,
   BarChart3,
   Lock,
-  Unlock
+  Timer,
+  Sparkles,
+  X
 } from 'lucide-react';
 import {
   ModerationReport,
   ModeratorAction,
   ReportReason,
-  AnonymousUser,
-  CommunityPost,
-  ChatMessage
+  AnonymousUser
 } from '@/types/community';
 
 interface ModerationSystemProps {
@@ -44,7 +38,6 @@ interface ModerationSystemProps {
 }
 
 const ModerationSystem: React.FC<ModerationSystemProps> = ({
-  currentUser,
   isModerator = false,
   onActionTaken
 }) => {

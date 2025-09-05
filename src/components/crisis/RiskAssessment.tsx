@@ -6,7 +6,7 @@
  * Includes Columbia Suicide Severity Rating Scale (C-SSRS), PHQ-9, GAD-7
  */
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ClipboardCheck,
@@ -260,7 +260,7 @@ export default function RiskAssessment({
   // Get response options
   const getOptions = useCallback(() => {
     const questions = getQuestions();
-    if (!questions.length) return [];
+    if (!questions.length || !questions[0]) return [];
     
     const questionType = questions[0].type;
     return questionType === 'columbia' ? COLUMBIA_OPTIONS : PHQ9_GAD7_OPTIONS;
@@ -274,6 +274,8 @@ export default function RiskAssessment({
    * Handle response selection
    */
   const handleResponse = (value: number) => {
+    if (!currentQuestion) return;
+    
     const response: RiskAssessmentResponse = {
       questionId: currentQuestion.id,
       response: value,
@@ -590,7 +592,7 @@ export default function RiskAssessment({
           </div>
           
           {/* Question */}
-          {!isAnalyzing ? (
+          {!isAnalyzing && currentQuestion ? (
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentQuestion.id}
