@@ -15,7 +15,9 @@
       "Bash(git remote add:*)",
       "Bash(git push:*)",
       "Bash(openssl rand:*)",
-      "Bash(npm uninstall:*)"
+      "Bash(npm uninstall:*)",
+      "Bash(git rm:*)",
+      "Bash(vercel:*)"
     ],
     "deny": [],
     "ask": []
