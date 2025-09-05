@@ -37,7 +37,8 @@ interface CommunityStats {
 }
 
 export default function CommunityPage() {
-  const { status } = useSession();
+  const session = useSession();
+  const status = session?.status || 'loading';
   const { connect, connected } = useSocket();
   const [activeView, setActiveView] = useState<'overview' | 'chat' | 'groups' | 'mentorship' | 'challenges'>('overview');
   const [stats, setStats] = useState<CommunityStats | null>(null);
