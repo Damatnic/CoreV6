@@ -21,7 +21,8 @@
       "Bash(sed:*)",
       "Bash(npm run typecheck:*)",
       "Bash(npm run deploy:check:*)",
-      "Bash(timeout 10 npm run dev)"
+      "Bash(timeout 10 npm run dev)",
+      "Bash(git reset:*)"
     ],
     "deny": [],
     "ask": []

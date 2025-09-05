@@ -22,6 +22,7 @@ import {
   HardDrive
 } from 'lucide-react';
 import { useApiCache, getCacheStats as getClientCacheStats } from '@/hooks/useCache';
+import AITestChat from '@/components/ai/AITestChat';
 
 interface SystemHealth {
   status: 'healthy' | 'warning' | 'error';
@@ -476,6 +477,77 @@ export default function StatusPage() {
                     <ExternalLink className="w-4 h-4 text-gray-400" />
                   </div>
                 ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* AI Services Testing */}
+        {info && info.aiServices && (info.aiServices.openai.configured || info.aiServices.gemini.configured) && (
+          <div className="bg-white rounded-xl shadow-sm p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold text-gray-900">AI Services Test</h2>
+              <div className="flex items-center space-x-2">
+                {info.aiServices.openai.configured && (
+                  <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
+                    OpenAI Ready
+                  </span>
+                )}
+                {info.aiServices.gemini.configured && (
+                  <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+                    Gemini Ready
+                  </span>
+                )}
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-2">
+                <AITestChat className="h-96" />
+              </div>
+              
+              <div className="space-y-4">
+                <div className="p-4 bg-blue-50 rounded-lg">
+                  <h3 className="font-medium text-blue-900 mb-2">AI Configuration</h3>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span>OpenAI:</span>
+                      <span className={info.aiServices.openai.configured ? 'text-green-600' : 'text-red-600'}>
+                        {info.aiServices.openai.status}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Gemini:</span>
+                      <span className={info.aiServices.gemini.configured ? 'text-green-600' : 'text-red-600'}>
+                        {info.aiServices.gemini.status}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Default:</span>
+                      <span className="text-gray-900 font-medium">{info.aiServices.defaultProvider}</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="p-4 bg-green-50 rounded-lg">
+                  <h3 className="font-medium text-green-900 mb-2">Test Features</h3>
+                  <ul className="text-sm text-green-700 space-y-1">
+                    <li>• Therapy conversation simulation</li>
+                    <li>• Crisis detection and response</li>
+                    <li>• Risk level assessment</li>
+                    <li>• Provider switching (OpenAI/Gemini)</li>
+                    <li>• Response confidence scoring</li>
+                  </ul>
+                </div>
+                
+                <div className="p-4 bg-yellow-50 rounded-lg">
+                  <h3 className="font-medium text-yellow-900 mb-2">Demo Prompts</h3>
+                  <div className="text-sm text-yellow-700 space-y-1">
+                    <p><strong>Low risk:</strong> "I'm feeling a bit stressed about work"</p>
+                    <p><strong>Medium risk:</strong> "I've been feeling really anxious lately"</p>
+                    <p><strong>High risk:</strong> "I feel completely hopeless"</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

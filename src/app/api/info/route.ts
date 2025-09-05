@@ -3,6 +3,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { ensureInitialized, getInitializationInfo } from '@/lib/auto-init';
+import { aiService } from '@/lib/ai-service';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,6 +18,9 @@ export async function GET(request: NextRequest) {
     
     // Get initialization info including demo credentials
     const initInfo = await getInitializationInfo();
+    
+    // Get AI service configuration
+    const aiConfig = aiService.isConfigured();
     
     const systemInfo = {
       name: 'Astral Core V5',
@@ -64,9 +68,22 @@ export async function GET(request: NextRequest) {
         region: process.env.VERCEL_REGION || 'unknown',
         url: process.env.VERCEL_URL || 'localhost:3000',
       },
+      aiServices: {
+        openai: {
+          configured: aiConfig.openai,
+          status: aiConfig.openai ? '✅ Ready' : '❌ Not configured'
+        },
+        gemini: {
+          configured: aiConfig.gemini,
+          status: aiConfig.gemini ? '✅ Ready' : '❌ Not configured'
+        },
+        defaultProvider: aiConfig.openai ? 'OpenAI GPT-4' : aiConfig.gemini ? 'Google Gemini' : 'None',
+        therapyAssistant: aiConfig.openai || aiConfig.gemini ? 'Available' : 'Unavailable'
+      },
       endpoints: {
         health: '/api/health',
         status: '/status',
+        aiChat: '/api/ai/chat',
         documentation: '/docs',
         demo: '/demo',
       },
