@@ -119,8 +119,18 @@ const config: Config = {
     },
   },
   plugins: [
-    require("@tailwindcss/forms"),
-    require("@tailwindcss/typography"),
+    // Safe plugin loading with fallbacks
+    ...((() => {
+      try {
+        return [
+          require("@tailwindcss/forms"),
+          require("@tailwindcss/typography"),
+        ];
+      } catch (error) {
+        console.warn('Tailwind plugins not available:', error.message);
+        return [];
+      }
+    })()),
   ],
 };
 export default config;

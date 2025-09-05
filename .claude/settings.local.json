@@ -29,7 +29,8 @@
       "Bash(npm run vercel:validate:*)",
       "Bash(git check-ignore:*)",
       "Bash(npm run lint:*)",
-      "Bash(npm run deploy:verify:*)"
+      "Bash(npm run deploy:verify:*)",
+      "Bash(npm ci:*)"
     ],
     "deny": [],
     "ask": []

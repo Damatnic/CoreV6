@@ -11,6 +11,7 @@
     "typecheck": "tsc --noEmit",
     "build:analyze": "ANALYZE=true npm run build",
     "vercel:build": "npm run typecheck && npm run lint && npm run build",
+    "build:safe": "npm install --prefer-offline --no-audit && npm run build",
     "deploy:check": "node scripts/deployment-check.mjs",
     "deploy:verify": "node scripts/deployment-verification.js",
     "vercel:validate": "node scripts/validate-vercel.mjs",
