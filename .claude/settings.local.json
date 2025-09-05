@@ -12,7 +12,10 @@
       "Bash(git config:*)",
       "Bash(git commit:*)",
       "Bash(gh repo create:*)",
-      "Bash(git remote add:*)"
+      "Bash(git remote add:*)",
+      "Bash(git push:*)",
+      "Bash(openssl rand:*)",
+      "Bash(npm uninstall:*)"
     ],
     "deny": [],
     "ask": []
