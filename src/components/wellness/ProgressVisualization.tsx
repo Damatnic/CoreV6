@@ -105,7 +105,7 @@ const ProgressVisualization: React.FC<ProgressVisualizationProps> = ({ data, onM
 
   const celebrateMilestone = (milestone: Milestone) => {
     setShowCelebration(true);
-    confetti({
+    confetti.default({
       particleCount: 100,
       spread: 70,
       origin: { y: 0.6 }
