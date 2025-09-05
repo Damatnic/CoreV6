@@ -181,16 +181,16 @@ export default function CommunityPage() {
               {userIdentity && (
                 <div className="flex items-center space-x-2">
                   <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center text-white">
-                    {userIdentity.avatar}
+                    {String(userIdentity.avatar)}
                   </div>
                   <div>
                     <p className="text-sm font-medium text-gray-900 dark:text-white">
-                      {userIdentity.displayName}
+                      {String(userIdentity.displayName)}
                     </p>
                     <div className="flex items-center space-x-1">
                       <Star className="w-3 h-3 text-yellow-500" />
                       <span className="text-xs text-gray-500 dark:text-gray-400">
-                        Trust: {userIdentity.trustScore}
+                        Trust: {String(userIdentity.trustScore)}
                       </span>
                     </div>
                   </div>
@@ -417,29 +417,29 @@ export default function CommunityPage() {
                 <div className="overflow-y-auto h-full">
                   {activeRooms.map((room) => (
                     <button
-                      key={room.id}
-                      onClick={() => setSelectedRoom(room.id)}
+                      key={String(room.id)}
+                      onClick={() => setSelectedRoom(String(room.id))}
                       className={`w-full p-4 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors ${
                         selectedRoom === room.id ? 'bg-purple-50 dark:bg-purple-900/30' : ''
                       }`}
                     >
                       <div className="flex items-center justify-between mb-1">
                         <h4 className="font-medium text-gray-900 dark:text-white">
-                          {room.name}
+                          {String(room.name)}
                         </h4>
                         <span className="text-xs text-gray-500">
-                          {room.currentParticipants}/{room.maxParticipants}
+                          {String(room.currentParticipants)}/{String(room.maxParticipants)}
                         </span>
                       </div>
                       <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-1">
-                        {room.description}
+                        {String(room.description)}
                       </p>
                       <div className="flex items-center space-x-2 mt-2">
                         <span className="px-2 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 text-xs rounded-full">
-                          {room.topic}
+                          {String(room.topic)}
                         </span>
                         <span className="text-xs text-gray-500">
-                          {room.language}
+                          {String(room.language)}
                         </span>
                       </div>
                     </button>

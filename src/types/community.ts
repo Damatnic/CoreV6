@@ -386,4 +386,6 @@ export interface Message {
   sender: AnonymousUser;
   timestamp: Date;
   reactions: MessageReaction[];
+  roomId: string;
+  authorId: string;
 }
