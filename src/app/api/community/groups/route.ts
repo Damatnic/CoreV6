@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
     const type = searchParams.get('type');
     const privacy = searchParams.get('privacy');
 
-    const where: Record<string, any> = {
+    const where: Record<string, unknown> = {
       isActive: true,
     };
 
@@ -79,9 +79,9 @@ export async function GET(request: NextRequest) {
     });
 
     // Transform data for frontend
-    const transformedGroups = groups.map(group => ({
+    const transformedGroups = groups.map((group: any) => ({
       ...group,
-      currentMembers: group.members.map(m => m.userId),
+      currentMembers: group.members.map((m: any) => m.userId),
       nextSession: group.sessions[0]?.scheduledAt || null,
       memberCount: group._count.members,
     }));
@@ -113,7 +113,7 @@ export async function POST(request: NextRequest) {
     // Get user's anonymous identity
     const identity = await prisma.anonymousIdentity.findUnique({
       where: {
-        userId: session.user.id,
+        userId: (session.user as any).id,
       },
     });
 
@@ -127,7 +127,7 @@ export async function POST(request: NextRequest) {
     // Check trust score requirement
     const trustMetric = await prisma.trustMetric.findUnique({
       where: {
-        userId: session.user.id,
+        userId: (session.user as any).id,
       },
     });
 
@@ -147,7 +147,7 @@ export async function POST(request: NextRequest) {
         maxMembers: validatedData.maxMembers,
         privacy: validatedData.privacy,
         type: body.type || 'peer_support',
-        facilitatorId: session.user.id,
+        facilitatorId: (session.user as any).id,
         schedule: body.schedule || {},
         requirements: body.requirements || {
           languages: ['en'],
@@ -170,7 +170,7 @@ export async function POST(request: NextRequest) {
     // Update trust score for creating a group
     await prisma.trustMetric.update({
       where: {
-        userId: session.user.id,
+        userId: (session.user as any).id,
       },
       data: {
         score: {
