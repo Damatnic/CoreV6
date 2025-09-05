@@ -28,6 +28,12 @@ export interface AnonymousUser {
   timezone: string;
 }
 
+export interface AnonymousIdentity {
+  id: string;
+  avatar: string;
+  displayName: string;
+}
+
 export interface SupportGroup {
   id: string;
   name: string;
@@ -388,4 +394,6 @@ export interface Message {
   reactions: MessageReaction[];
   roomId: string;
   authorId: string;
+  author?: AnonymousIdentity;
+  type?: 'text' | 'crisis_alert' | 'system';
 }

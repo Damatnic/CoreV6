@@ -1,7 +1,7 @@
 import React from 'react'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { CrisisButton } from '@/components/crisis/CrisisButton'
+import CrisisButton from '@/components/crisis/CrisisButton'
 import '@testing-library/jest-dom'
 
 // Mock the toast notifications
