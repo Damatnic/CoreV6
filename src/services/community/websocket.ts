@@ -21,7 +21,7 @@ class CommunityWebSocketService {
   private socket: Socket | null = null;
   private config: WebSocketConfig;
   private messageQueue: ChatMessage[] = [];
-  private eventHandlers: Map<string, Set<Function>> = new Map();
+  private eventHandlers: Map<string, Set<(...args: any[]) => void>> = new Map();
   private encryptionKeys?: EncryptionKeys;
   private heartbeatTimer?: NodeJS.Timeout;
   private reconnectAttempts = 0;
@@ -333,14 +333,14 @@ class CommunityWebSocketService {
   }
 
   // Event emitter methods
-  on(event: string, handler: Function): void {
+  on(event: string, handler: (...args: any[]) => void): void {
     if (!this.eventHandlers.has(event)) {
       this.eventHandlers.set(event, new Set());
     }
     this.eventHandlers.get(event)?.add(handler);
   }
 
-  off(event: string, handler: Function): void {
+  off(event: string, handler: (...args: any[]) => void): void {
     this.eventHandlers.get(event)?.delete(handler);
   }
 

@@ -89,7 +89,7 @@ function MentorCard({ mentor, onSelect }: MentorCardProps) {
           {mentor.experience}
         </p>
         <p className="text-sm text-gray-600 dark:text-gray-400 italic line-clamp-2">
-          "{mentor.approach}"
+          &quot;{mentor.approach}&quot;
         </p>
       </div>
 

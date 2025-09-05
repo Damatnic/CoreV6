@@ -123,7 +123,7 @@ export function createErrorResponse(error: unknown): NextResponse {
 }
 
 // Wrapper for API route handlers
-export function handleApiError(handler: Function) {
+export function handleApiError(handler: (request: NextRequest, ...args: any[]) => Promise<NextResponse>) {
   return async (request: NextRequest, ...args: any[]) => {
     try {
       return await handler(request, ...args);

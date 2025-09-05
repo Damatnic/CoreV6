@@ -837,7 +837,7 @@ Sending strength to everyone on their journey today. 🌟`,
                           Your post will be completely anonymous
                         </p>
                         <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
-                          No personal information will be shared. You'll be identified only by your anonymous nickname.
+                          No personal information will be shared. You&apos;ll be identified only by your anonymous nickname.
                         </p>
                       </div>
                     </div>

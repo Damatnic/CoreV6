@@ -26,7 +26,10 @@
       "Bash(npx vercel:*)",
       "Bash(node:*)",
       "Bash(set NODE_OPTIONS=--max-old-space-size=4096)",
-      "Bash(npm run vercel:validate:*)"
+      "Bash(npm run vercel:validate:*)",
+      "Bash(git check-ignore:*)",
+      "Bash(npm run lint:*)",
+      "Bash(npm run deploy:verify:*)"
     ],
     "deny": [],
     "ask": []

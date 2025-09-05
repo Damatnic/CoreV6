@@ -89,6 +89,19 @@ const nextConfig = {
     // Fix Windows symlink issues
     config.resolve.symlinks = false;
     
+    // Windows-specific fixes
+    if (process.platform === 'win32') {
+      config.watchOptions = {
+        ...config.watchOptions,
+        ignored: /node_modules/,
+        poll: 1000,
+        aggregateTimeout: 300,
+      };
+      
+      // Disable problematic cache
+      config.cache = false;
+    }
+    
     // Handle ESM modules
     config.resolve.extensionAlias = {
       '.js': ['.ts', '.tsx', '.js', '.jsx'],
