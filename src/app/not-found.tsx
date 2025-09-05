@@ -1,3 +1,5 @@
+"use client";
+
 // 404 Not Found page
 // Displays when a page cannot be found
 
