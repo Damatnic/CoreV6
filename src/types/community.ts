@@ -10,7 +10,7 @@ export const groupCreationSchema = z.object({
   topic: z.enum(['anxiety', 'depression', 'trauma', 'grief', 'addiction', 'relationships', 'self-harm', 'eating-disorders', 'bipolar', 'ocd', 'ptsd', 'general-support']),
   language: z.string().min(2).max(5),
   maxMembers: z.number().min(2).max(50),
-  isPrivate: z.boolean(),
+  privacy: z.enum(['public', 'private', 'invite-only']),
   requiresApproval: z.boolean(),
   guidelines: z.array(z.string()),
   tags: z.array(z.string()),
@@ -37,7 +37,7 @@ export interface SupportGroup {
   maxMembers: number;
   currentMembers: number;
   moderators: string[]; // Session IDs
-  isPrivate: boolean;
+  privacy: 'public' | 'private' | 'invite-only';
   requiresApproval: boolean;
   guidelines: string[];
   createdAt: Date;
