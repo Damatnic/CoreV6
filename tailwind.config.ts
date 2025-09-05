@@ -126,8 +126,8 @@ const config: Config = {
           require("@tailwindcss/forms"),
           require("@tailwindcss/typography"),
         ];
-      } catch (error) {
-        console.warn('Tailwind plugins not available:', error.message);
+      } catch (error: unknown) {
+        console.warn('Tailwind plugins not available:', error instanceof Error ? error.message : 'Unknown error');
         return [];
       }
     })()),
