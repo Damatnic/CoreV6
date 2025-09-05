@@ -1,6 +1,22 @@
 // Community & Peer Support Type Definitions
 // Maintains complete anonymity - no PII collected
 
+import { z } from 'zod';
+
+// Zod Schemas for Validation
+export const groupCreationSchema = z.object({
+  name: z.string().min(1).max(100),
+  description: z.string().min(1).max(500),
+  topic: z.enum(['anxiety', 'depression', 'trauma', 'grief', 'addiction', 'relationships', 'self-harm', 'eating-disorders', 'bipolar', 'ocd', 'ptsd', 'general-support']),
+  language: z.string().min(2).max(5),
+  maxMembers: z.number().min(2).max(50),
+  isPrivate: z.boolean(),
+  requiresApproval: z.boolean(),
+  guidelines: z.array(z.string()),
+  tags: z.array(z.string()),
+  supportLevel: z.enum(['peer', 'guided', 'professional'])
+});
+
 export interface AnonymousUser {
   sessionId: string; // Temporary session identifier
   avatar: string; // Generated avatar identifier
@@ -310,4 +326,64 @@ export interface UserEngagementMetrics {
   peerConnectionsMade: number;
   helpfulnessScore: number;
   lastActiveAt: Date;
+}
+
+// Crisis Intervention Types
+export interface CrisisProtocol {
+  id: string;
+  name: string;
+  severity: 'low' | 'medium' | 'high' | 'critical';
+  actions: CrisisAction[];
+  resources: CrisisResource[];
+  escalationPath: string[];
+  timeframe: number; // minutes
+  isActive: boolean;
+}
+
+export interface CrisisAction {
+  id: string;
+  type: 'notify' | 'redirect' | 'contact' | 'escalate' | 'monitor';
+  priority: number;
+  description: string;
+  automated: boolean;
+  conditions: string[];
+}
+
+export interface CrisisResource {
+  id: string;
+  type: 'hotline' | 'chat' | 'text' | 'emergency';
+  name: string;
+  description: string;
+  contact: string;
+  availability: '24/7' | 'business-hours' | 'weekends';
+  languages: string[];
+  region: string;
+}
+
+export interface SafetyAlert {
+  id: string;
+  sessionId: string;
+  severity: 'low' | 'medium' | 'high' | 'critical';
+  content: string;
+  timestamp: Date;
+  resolved: boolean;
+  actions: string[];
+}
+
+// Additional missing types for components
+export interface ChatRoom {
+  id: string;
+  name: string;
+  topic: GroupTopic;
+  members: AnonymousUser[];
+  isActive: boolean;
+  lastActivity: Date;
+}
+
+export interface Message {
+  id: string;
+  content: string;
+  sender: AnonymousUser;
+  timestamp: Date;
+  reactions: MessageReaction[];
 }
