@@ -2,10 +2,10 @@ import { createMocks } from 'node-mocks-http'
 import { NextApiRequest, NextApiResponse } from 'next'
 import * as bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@/generated/prisma'
 
 // Mock Prisma
-jest.mock('@prisma/client', () => ({
+jest.mock('@/generated/prisma', () => ({
   PrismaClient: jest.fn().mockImplementation(() => ({
     user: {
       create: jest.fn(),

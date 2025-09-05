@@ -3,7 +3,7 @@ import { Server as HTTPServer } from 'http';
 import { Server as SocketIOServer, Socket } from 'socket.io';
 import { parse } from 'cookie';
 import jwt from 'jsonwebtoken';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@/generated/prisma';
 import { z } from 'zod';
 const BadWordsFilter = require('bad-words');
 import CryptoJS from 'crypto-js';

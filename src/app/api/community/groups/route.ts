@@ -1,6 +1,6 @@
 // API Routes for Support Groups
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@/generated/prisma';
 import { getServerSession } from 'next-auth';
 import { z } from 'zod';
 import { groupCreationSchema } from '@/types/community';

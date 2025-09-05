@@ -1,7 +1,7 @@
 // Crisis Intervention Service
 // Handles crisis detection, intervention, and resource provision
 
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@/generated/prisma';
 import { 
   CrisisProtocol, 
   CrisisAction, 

@@ -23,7 +23,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import { Line, Bar, Doughnut, Radar } from 'react-chartjs-2';
-import confetti from 'canvas-confetti';
+import * as confetti from 'canvas-confetti';
 
 interface ProgressVisualizationProps {
   data: any;
