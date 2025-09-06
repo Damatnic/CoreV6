@@ -474,15 +474,15 @@ class OfflineManager {
 
     try {
       // Use background sync if available
-      if ('serviceWorker' in navigator && 'sync' in window.ServiceWorkerRegistration.prototype) {
+      if ('serviceWorker' in navigator && 'sync' in (window.ServiceWorkerRegistration as any).prototype) {
         const registration = await navigator.serviceWorker.ready;
         
         // Register background sync for different data types
         await Promise.all([
-          registration.sync.register('assessment-sync'),
-          registration.sync.register('therapy-notes-sync'),
-          registration.sync.register('crisis-report-sync'),
-          registration.sync.register('mood-tracking-sync')
+          (registration as any).sync.register('assessment-sync'),
+          (registration as any).sync.register('therapy-notes-sync'),
+          (registration as any).sync.register('crisis-report-sync'),
+          (registration as any).sync.register('mood-tracking-sync')
         ]);
       } else {
         // Fallback to immediate sync

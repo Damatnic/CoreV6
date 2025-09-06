@@ -750,9 +750,10 @@ class AccessibilityService {
     const elements = Array.from(container.querySelectorAll(focusableSelector)) as HTMLElement[];
     
     return elements.filter(el => {
-      return el.offsetWidth > 0 && 
-             el.offsetHeight > 0 && 
-             !el.disabled && 
+      const isDisabled = ('disabled' in el) && (el as HTMLButtonElement | HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement).disabled === true;
+      return el.offsetWidth > 0 &&
+             el.offsetHeight > 0 &&
+             !isDisabled &&
              el.tabIndex >= 0;
     });
   }
@@ -901,9 +902,11 @@ class AccessibilityService {
 
   private async checkFormLabels(violations: AccessibilityViolation[]): Promise<void> {
     document.querySelectorAll('input, textarea, select').forEach(field => {
-      const hasLabel = field.labels?.length || 
-                      field.getAttribute('aria-label') ||
-                      field.getAttribute('aria-labelledby');
+      let hasLabel = false as boolean | string | number | null | undefined;
+      if (field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement || field instanceof HTMLSelectElement) {
+        hasLabel = field.labels?.length;
+      }
+      hasLabel = hasLabel || field.getAttribute('aria-label') || field.getAttribute('aria-labelledby');
       
       if (!hasLabel) {
         violations.push({

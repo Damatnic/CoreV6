@@ -202,7 +202,7 @@ export default function WellnessPage() {
               <div className="space-y-4">
                 <div className="flex items-start">
                   <CheckCircle className="w-5 h-5 text-wellness-growth mr-3 mt-0.5 flex-shrink-0" />
-                  <span className="text-neutral-700">Practice gratitude by writing down 3 things you're thankful for each day</span>
+                  <span className="text-neutral-700">Practice gratitude by writing down 3 things you&apos;re thankful for each day</span>
                 </div>
                 <div className="flex items-start">
                   <CheckCircle className="w-5 h-5 text-wellness-growth mr-3 mt-0.5 flex-shrink-0" />
@@ -210,7 +210,7 @@ export default function WellnessPage() {
                 </div>
                 <div className="flex items-start">
                   <CheckCircle className="w-5 h-5 text-wellness-growth mr-3 mt-0.5 flex-shrink-0" />
-                  <span className="text-neutral-700">Engage in regular physical activity, even if it's just a short walk</span>
+                  <span className="text-neutral-700">Engage in regular physical activity, even if it&apos;s just a short walk</span>
                 </div>
               </div>
               <div className="space-y-4">

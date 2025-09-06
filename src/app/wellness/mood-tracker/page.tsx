@@ -210,7 +210,7 @@ export default function MoodTrackerPage() {
                   className="w-full flex items-center justify-center px-6 py-3 bg-wellness-mindful text-white rounded-xl font-semibold hover:bg-wellness-calm transition-colors disabled:bg-neutral-300 disabled:cursor-not-allowed"
                 >
                   <Save className="w-5 h-5 mr-2" />
-                  Save Today's Mood
+                  Save Today&apos;s Mood
                 </button>
               </motion.div>
             </div>
@@ -345,7 +345,7 @@ export default function MoodTrackerPage() {
                   <div className="p-4 bg-white rounded-lg border border-neutral-200">
                     <h5 className="font-medium text-neutral-800 mb-2">Complex Emotions</h5>
                     <p className="text-neutral-600 text-sm">
-                      Notice mixed feelings like feeling grateful but anxious, or excited but worried. It's normal to experience multiple emotions.
+                      Notice mixed feelings like feeling grateful but anxious, or excited but worried. It&apos;s normal to experience multiple emotions.
                     </p>
                   </div>
                   <div className="p-4 bg-white rounded-lg border border-neutral-200">

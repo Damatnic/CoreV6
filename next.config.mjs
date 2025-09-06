@@ -84,89 +84,13 @@ const nextConfig = {
     ignoreDuringBuilds: false,
   },
 
-  // Webpack customizations
-  webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
-    // Fix Windows symlink issues
-    config.resolve.symlinks = false;
-    
-    // Windows-specific fixes
-    if (process.platform === 'win32') {
-      config.watchOptions = {
-        ...config.watchOptions,
-        ignored: /node_modules/,
-        poll: 1000,
-        aggregateTimeout: 300,
-      };
-      
-      // Disable problematic cache
-      config.cache = false;
-    }
-    
-    // Handle ESM modules
-    config.resolve.extensionAlias = {
-      '.js': ['.ts', '.tsx', '.js', '.jsx'],
-      '.jsx': ['.tsx', '.jsx'],
-    };
-    // Optimize bundle size
-    if (!dev && !isServer) {
-      config.optimization = {
-        ...config.optimization,
-        splitChunks: {
-          ...config.optimization.splitChunks,
-          chunks: 'all',
-          minSize: 20000,
-          maxSize: 244000,
-          cacheGroups: {
-            ...config.optimization.splitChunks.cacheGroups,
-            vendor: {
-              test: /[\\/]node_modules[\\/]/,
-              name: 'vendors',
-              chunks: 'all',
-              priority: 10,
-              reuseExistingChunk: true,
-            },
-            common: {
-              minChunks: 2,
-              chunks: 'all',
-              priority: 5,
-              reuseExistingChunk: true,
-              enforce: true,
-            },
-            lucide: {
-              test: /[\\/]node_modules[\\/]lucide-react[\\/]/,
-              name: 'lucide',
-              chunks: 'all',
-              priority: 20,
-            },
-            framerMotion: {
-              test: /[\\/]node_modules[\\/]framer-motion[\\/]/,
-              name: 'framer-motion',
-              chunks: 'all',
-              priority: 20,
-            },
-            chart: {
-              test: /[\\/]node_modules[\\/](chart\.js|react-chartjs-2)[\\/]/,
-              name: 'chart',
-              chunks: 'all',
-              priority: 20,
-            },
-          },
-        },
-        usedExports: true,
-        providedExports: true,
-        sideEffects: false,
-      };
-
-      // Tree shaking optimization
-      config.optimization.providedExports = true;
-      config.optimization.usedExports = true;
-    }
-
-    // Enable source maps in production for debugging
+  // Webpack (keep minimal to avoid platform issues)
+  webpack: (config, { dev }) => {
+    // Disable filesystem cache to avoid readlink/snapshot issues on Windows
+    config.cache = false;
     if (!dev) {
       config.devtool = 'source-map';
     }
-
     return config;
   },
 

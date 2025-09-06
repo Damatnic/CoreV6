@@ -1,3 +1,4 @@
+/* eslint-disable react/display-name */
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -250,3 +251,4 @@ describe('TherapySessionsPage', () => {
     expect(screen.getByText('Anxiety Management Session')).toBeInTheDocument();
   });
 });
+/* eslint-disable react/display-name */

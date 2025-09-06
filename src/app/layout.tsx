@@ -52,11 +52,11 @@ export default function RootLayout({
         )}
         
         {/* Main application with error boundary */}
-        <ErrorBoundary children={
+        <ErrorBoundary>
           <main id="main-content">
             {children}
           </main>
-        } />
+        </ErrorBoundary>
       </body>
     </html>
   );

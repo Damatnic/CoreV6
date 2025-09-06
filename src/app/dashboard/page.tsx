@@ -255,13 +255,13 @@ export default function DashboardPage() {
             <div className="bg-white rounded-2xl shadow-soft border border-neutral-200 p-6">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold text-neutral-800">
-                  This Week's Progress
+                  This Week&#39;s Progress
                 </h2>
                 <Link
                   href="/wellness"
                   className="text-primary-600 hover:text-primary-700 font-medium text-sm transition-colors"
                 >
-                  View Details →
+                  View Details
                 </Link>
               </div>
               

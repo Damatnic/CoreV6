@@ -282,7 +282,7 @@ class PrivacyService {
     customControls?: Partial<PrivacyControl>[]
   ): Promise<PrivacyPreferences> {
     try {
-      let controls = [...DEFAULT_PRIVACY_CONTROLS[level]];
+      const controls = [...DEFAULT_PRIVACY_CONTROLS[level]];
 
       // Apply custom controls if provided
       if (customControls) {

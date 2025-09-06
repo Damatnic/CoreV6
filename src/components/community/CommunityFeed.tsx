@@ -656,7 +656,7 @@ Sending strength to everyone on their journey today. 🌟`,
                             <input
                               type="text"
                               value={replyContent}
-                              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setReplyContent(e.target.value)}
+                              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setReplyContent(e.target.value)}
                               placeholder="Write a supportive reply..."
                               className="flex-1 px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 
                                        bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white

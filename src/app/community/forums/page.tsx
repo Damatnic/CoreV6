@@ -1,26 +1,25 @@
+/* eslint-disable react/no-unescaped-entities */
 "use client";
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  MessageSquare, 
-  Search, 
+import {
+  MessageSquare,
+  Search,
   Plus,
   Pin,
   Clock,
-  User,
   ArrowLeft,
   ThumbsUp,
   MessageCircle,
   Eye,
-  Filter,
   TrendingUp
 } from 'lucide-react';
 import Link from 'next/link';
 
 export default function ForumsPage() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedCategory] = useState('all');
   const [sortBy, setSortBy] = useState('recent');
 
   const forums = [
@@ -443,7 +442,7 @@ export default function ForumsPage() {
                   href="/community/guidelines"
                   className="inline-block text-primary-600 hover:text-primary-700 font-medium text-sm mt-3 transition-colors"
                 >
-                  Read Full Guidelines →
+                  Read Full Guidelines
                 </Link>
               </div>
             </motion.div>

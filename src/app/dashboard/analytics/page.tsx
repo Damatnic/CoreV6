@@ -438,7 +438,7 @@ export default function AnalyticsPage() {
               </h4>
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-                  <h5 className="font-medium text-green-800 mb-2">✓ What's Working Well</h5>
+                  <h5 className="font-medium text-green-800 mb-2">✓ What&#39;s Working Well</h5>
                   <ul className="text-green-700 text-sm space-y-1">
                     <li>• Your mood trend shows consistent improvement</li>
                     <li>• High therapy session engagement</li>

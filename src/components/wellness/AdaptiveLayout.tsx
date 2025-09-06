@@ -210,7 +210,8 @@ const AdaptiveLayout: React.FC<AdaptiveLayoutProps> = ({
         }
       }
     },
-    onPinch: ({ offset: [scale] }: { offset: [number] }) => {
+    onPinch: ({ offset }: { offset: [number, number] }) => {
+      const [scale] = offset;
       // Pinch to zoom for focus mode
       if (scale < 0.8) {
         onLayoutChange('grid');

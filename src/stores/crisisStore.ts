@@ -168,24 +168,24 @@ interface CrisisState {
 /**
  * Crisis store with persistence and devtools
  */
-const crisisStoreCreator = (set: any, get: any) => ({
+const crisisStoreCreator: StateCreator<CrisisState> = (set, get) => ({
         // Initial state
         isInCrisis: false,
-        currentAssessment: null,
+        currentAssessment: null as CrisisAssessment | null,
         crisisHistory: [],
         lastCheckTime: null,
         
-        activeSafetyPlan: null,
+        activeSafetyPlan: null as SafetyPlan | null,
         safetyPlanHistory: [],
         
         emergencyContacts: [],
-        primaryEmergencyContact: null,
+        primaryEmergencyContact: null as EmergencyContact | null,
         
-        activeChatSession: null,
+        activeChatSession: null as CrisisChatSession | null,
         chatHistory: [],
         isConnectedToCounselor: false,
         
-        lastRiskAssessment: null,
+        lastRiskAssessment: null as RiskAssessmentResult | null,
         assessmentHistory: [],
         isDueForAssessment: false,
         
@@ -388,7 +388,7 @@ const crisisStoreCreator = (set: any, get: any) => ({
         }))
 });
 
-export const useCrisisStore = create<CrisisState>(
+export const useCrisisStore = create<CrisisState>()(
   devtools(
     persist(
       crisisStoreCreator,

@@ -1,6 +1,7 @@
+/* eslint-disable react/no-unescaped-entities */
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Brain, 
@@ -10,16 +11,14 @@ import {
   Sparkles,
   Clock,
   CheckCircle,
-  ArrowRight,
-  User,
-  Bot
+  ArrowRight
 } from 'lucide-react';
 import Link from 'next/link';
 import AITherapyInterface from '@/components/ai/AITherapyInterface';
 
 export default function TherapyPage() {
   const [isStarted, setIsStarted] = useState(false);
-  const [showOnboarding, setShowOnboarding] = useState(true);
+  const [showOnboarding] = useState(true);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-wellness-calm/10">

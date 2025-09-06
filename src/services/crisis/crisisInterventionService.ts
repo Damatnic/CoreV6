@@ -775,7 +775,7 @@ class CrisisInterventionService {
   }> {
     // Filter resources based on location if provided
     let hotlines = this.hotlines;
-    let emergencyServices = this.getEmergencyServices();
+    const emergencyServices = this.getEmergencyServices();
     
     if (location) {
       // In production, filter by location

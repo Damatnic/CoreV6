@@ -287,15 +287,13 @@ class PerformanceService {
             id: this.generateMetricId(),
             name: 'resource_load_time',
             category: PerformanceCategory.LOADING,
-            value: (resourceEntry.loadEventEnd && resourceEntry.loadEventStart) 
-              ? resourceEntry.loadEventEnd - resourceEntry.loadEventStart 
-              : 0,
+            value: resourceEntry.duration,
             unit: 'ms',
             threshold: { warning: 1000, critical: 2000 },
             timestamp: new Date(),
-            tags: { 
+            tags: {
               resource: this.getResourceType(resourceEntry.name),
-              url: resourceEntry.name 
+              url: resourceEntry.name
             }
           });
 
