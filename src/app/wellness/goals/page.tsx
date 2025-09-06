@@ -483,7 +483,7 @@ export default function WellnessGoalsPage() {
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-start space-x-4">
                       <div className={`p-3 rounded-full bg-neutral-100`}>
-                        <category.icon className={`w-6 h-6 ${category.color}`} />
+                        {category && <category.icon className={`w-6 h-6 ${category.color}`} />}
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center space-x-3 mb-2">
@@ -633,7 +633,7 @@ export default function WellnessGoalsPage() {
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-start space-x-3">
                         <div className="p-2 rounded-full bg-neutral-100">
-                          <category.icon className={`w-5 h-5 ${category?.color ?? 'text-neutral-500'}`} />
+                          {category && <category.icon className={`w-5 h-5 ${category.color}`} />}
                         </div>
                         <div>
                           <h3 className="font-bold text-neutral-800">{habit.name}</h3>
@@ -702,7 +702,7 @@ export default function WellnessGoalsPage() {
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-start space-x-3">
                         <div className="p-2 rounded-full bg-neutral-100">
-                          <category.icon className={`w-5 h-5 ${category?.color ?? 'text-neutral-500'}`} />
+                          {category && <category.icon className={`w-5 h-5 ${category.color}`} />}
                         </div>
                         <div className="flex-1">
                           <h3 className="font-bold text-neutral-800 mb-1">{goal.title}</h3>
