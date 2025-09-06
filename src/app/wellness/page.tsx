@@ -18,7 +18,23 @@ import {
   ChevronUp,
   Play,
   Plus,
-  TrendingUp
+  TrendingUp,
+  Flame,
+  Award,
+  Clock,
+  Star,
+  Zap,
+  BookOpen,
+  Users,
+  CloudRain,
+  CloudSun,
+  ThumbsUp,
+  Timer,
+  Sparkles,
+  Trophy,
+  Bookmark,
+  RotateCcw,
+  TrendingDown
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -26,7 +42,75 @@ import { useRouter } from 'next/navigation';
 export default function WellnessPage() {
   const router = useRouter();
   const [expandedAction, setExpandedAction] = useState<number | null>(null);
+  const [quickMoodRating, setQuickMoodRating] = useState<number | null>(null);
+  const [showQuickMoodSuccess, setShowQuickMoodSuccess] = useState(false);
+  const [favorites, setFavorites] = useState<string[]>(['mood-tracker', 'breathing']);
+  const [currentTime] = useState(new Date());
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Mock user wellness data - in a real app, this would come from an API
+  const wellnessStats = {
+    currentStreak: 7,
+    totalSessions: 42,
+    weeklyGoalProgress: 5,
+    weeklyGoal: 7,
+    lastCheckIn: '2 hours ago',
+    wellnessScore: 85,
+    recentMoods: [7, 8, 6, 9, 7, 8, 9], // Last 7 days
+    achievements: [
+      { id: 'streak-7', name: '7-Day Streak', icon: Flame, unlocked: true },
+      { id: 'first-session', name: 'First Session', icon: Star, unlocked: true },
+      { id: 'mood-master', name: 'Mood Master', icon: Heart, unlocked: true },
+      { id: 'zen-master', name: 'Zen Master', icon: Leaf, unlocked: false },
+    ]
+  };
+
+  const recentActivity = [
+    { action: 'Completed breathing exercise', time: '2 hours ago', icon: Activity, color: 'text-wellness-calm' },
+    { action: 'Mood check-in: Feeling great', time: '5 hours ago', icon: Heart, color: 'text-wellness-growth' },
+    { action: 'Set new wellness goal', time: '1 day ago', icon: Target, color: 'text-primary-600' },
+    { action: 'Journal entry completed', time: '2 days ago', icon: BookOpen, color: 'text-wellness-mindful' },
+  ];
+
+  // Time-based recommendations
+  const getTimeBasedRecommendations = () => {
+    const hour = currentTime.getHours();
+    if (hour < 10) {
+      return {
+        title: "Good Morning! Start Fresh",
+        suggestions: [
+          { name: "Morning Mindfulness", icon: Sun, description: "5-min morning meditation", action: () => router.push('/wellness/mindfulness?session=morning') },
+          { name: "Daily Intention Setting", icon: Target, description: "Set today's wellness goal", action: () => router.push('/wellness/goals?mode=daily') },
+        ]
+      };
+    } else if (hour < 14) {
+      return {
+        title: "Midday Energy Boost",
+        suggestions: [
+          { name: "Quick Stress Relief", icon: Activity, description: "3-min breathing break", action: () => router.push('/wellness/breathing?session=quick') },
+          { name: "Mood Check-in", icon: Heart, description: "How are you feeling?", action: () => router.push('/wellness/mood-tracker?mode=quick') },
+        ]
+      };
+    } else if (hour < 18) {
+      return {
+        title: "Afternoon Recharge",
+        suggestions: [
+          { name: "Energy Breathing", icon: Zap, description: "Energizing breath work", action: () => router.push('/wellness/breathing?type=energizing') },
+          { name: "Progress Review", icon: BarChart3, description: "Check your daily progress", action: () => router.push('/wellness/analytics') },
+        ]
+      };
+    } else {
+      return {
+        title: "Evening Wind Down",
+        suggestions: [
+          { name: "Relaxation Session", icon: Moon, description: "Prepare for rest", action: () => router.push('/wellness/mindfulness?session=evening') },
+          { name: "Daily Reflection", icon: BookOpen, description: "Journal about your day", action: () => router.push('/wellness/journal?mode=reflection') },
+        ]
+      };
+    }
+  };
+
+  const timeRecommendations = getTimeBasedRecommendations();
 
   // Close expanded menu when clicking outside
   useEffect(() => {
@@ -151,6 +235,40 @@ export default function WellnessPage() {
     router.push(toolLink);
   };
 
+  const handleQuickMoodRating = (rating: number) => {
+    setQuickMoodRating(rating);
+    setShowQuickMoodSuccess(true);
+    
+    // Auto-hide success message after 3 seconds
+    setTimeout(() => {
+      setShowQuickMoodSuccess(false);
+    }, 3000);
+    
+    // In a real app, this would save to the backend
+    console.log('Quick mood rating saved:', rating);
+  };
+
+  const toggleFavorite = (toolId: string) => {
+    setFavorites(prev => 
+      prev.includes(toolId) 
+        ? prev.filter(id => id !== toolId)
+        : [...prev, toolId]
+    );
+  };
+
+  const calculateMoodTrend = () => {
+    const recent = wellnessStats.recentMoods.slice(-3);
+    const older = wellnessStats.recentMoods.slice(-6, -3);
+    const recentAvg = recent.reduce((a, b) => a + b, 0) / recent.length;
+    const olderAvg = older.reduce((a, b) => a + b, 0) / older.length;
+    
+    if (recentAvg > olderAvg + 0.5) return 'improving';
+    if (recentAvg < olderAvg - 0.5) return 'declining';
+    return 'stable';
+  };
+
+  const moodTrend = calculateMoodTrend();
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-wellness-calm/10 via-white to-wellness-growth/10">
       <div className="container mx-auto px-4 py-8">
@@ -176,6 +294,196 @@ export default function WellnessPage() {
             <p className="text-sm text-neutral-500">
               Track progress • Build habits • Find balance
             </p>
+          </motion.div>
+
+          {/* Personal Wellness Dashboard */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="grid lg:grid-cols-4 md:grid-cols-2 gap-4 mb-8"
+          >
+            {/* Wellness Score */}
+            <div className="bg-white rounded-2xl shadow-soft border border-neutral-200 p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-semibold text-neutral-800">Wellness Score</h3>
+                <div className="relative">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-r from-wellness-growth to-wellness-mindful flex items-center justify-center">
+                    <span className="text-white font-bold text-sm">{wellnessStats.wellnessScore}</span>
+                  </div>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-neutral-600">This week</span>
+                  <span className="text-wellness-growth font-medium">+12%</span>
+                </div>
+                <div className="w-full bg-neutral-200 rounded-full h-2">
+                  <div 
+                    className="bg-gradient-to-r from-wellness-growth to-wellness-mindful h-2 rounded-full transition-all duration-1000" 
+                    style={{ width: `${wellnessStats.wellnessScore}%` }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Current Streak */}
+            <div className="bg-white rounded-2xl shadow-soft border border-neutral-200 p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-semibold text-neutral-800">Current Streak</h3>
+                <Flame className="w-6 h-6 text-orange-500" />
+              </div>
+              <div className="space-y-2">
+                <div className="text-3xl font-bold text-orange-500">{wellnessStats.currentStreak}</div>
+                <div className="text-sm text-neutral-600">days in a row</div>
+                <div className="text-xs text-neutral-500">Last check-in: {wellnessStats.lastCheckIn}</div>
+              </div>
+            </div>
+
+            {/* Weekly Progress */}
+            <div className="bg-white rounded-2xl shadow-soft border border-neutral-200 p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-semibold text-neutral-800">Weekly Goal</h3>
+                <Target className="w-6 h-6 text-wellness-calm" />
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-baseline space-x-1">
+                  <span className="text-2xl font-bold text-wellness-calm">{wellnessStats.weeklyGoalProgress}</span>
+                  <span className="text-neutral-600">/ {wellnessStats.weeklyGoal}</span>
+                </div>
+                <div className="w-full bg-neutral-200 rounded-full h-2">
+                  <div 
+                    className="bg-wellness-calm h-2 rounded-full transition-all duration-1000" 
+                    style={{ width: `${(wellnessStats.weeklyGoalProgress / wellnessStats.weeklyGoal) * 100}%` }}
+                  />
+                </div>
+                <div className="text-xs text-neutral-500">
+                  {wellnessStats.weeklyGoal - wellnessStats.weeklyGoalProgress} sessions to go
+                </div>
+              </div>
+            </div>
+
+            {/* Mood Trend */}
+            <div className="bg-white rounded-2xl shadow-soft border border-neutral-200 p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-semibold text-neutral-800">Mood Trend</h3>
+                {moodTrend === 'improving' ? (
+                  <TrendingUp className="w-6 h-6 text-green-500" />
+                ) : moodTrend === 'declining' ? (
+                  <TrendingDown className="w-6 h-6 text-red-500" />
+                ) : (
+                  <ArrowRight className="w-6 h-6 text-neutral-400" />
+                )}
+              </div>
+              <div className="space-y-2">
+                <div className={`text-lg font-semibold capitalize ${
+                  moodTrend === 'improving' ? 'text-green-500' :
+                  moodTrend === 'declining' ? 'text-red-500' : 'text-neutral-600'
+                }`}>
+                  {moodTrend}
+                </div>
+                <div className="flex space-x-1">
+                  {wellnessStats.recentMoods.slice(-7).map((mood, i) => (
+                    <div 
+                      key={i} 
+                      className="w-2 bg-gradient-to-t from-wellness-calm to-wellness-mindful rounded-full opacity-70"
+                      style={{ height: `${(mood / 10) * 20 + 4}px` }}
+                    />
+                  ))}
+                </div>
+                <div className="text-xs text-neutral-500">Last 7 days</div>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Quick Mood Check-in Widget */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15 }}
+            className="bg-gradient-to-r from-wellness-growth/10 to-wellness-mindful/10 rounded-2xl p-6 mb-8 border border-wellness-growth/20"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center space-x-3">
+                <Heart className="w-6 h-6 text-wellness-growth" />
+                <h3 className="font-semibold text-neutral-800">Quick Mood Check-in</h3>
+              </div>
+              <Timer className="w-5 h-5 text-neutral-500" />
+            </div>
+
+            {!showQuickMoodSuccess ? (
+              <div className="space-y-4">
+                <p className="text-neutral-600">How are you feeling right now?</p>
+                <div className="flex space-x-2 justify-center">
+                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((rating) => (
+                    <motion.button
+                      key={rating}
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={() => handleQuickMoodRating(rating)}
+                      className={`w-12 h-12 rounded-full border-2 font-semibold transition-all ${
+                        quickMoodRating === rating
+                          ? 'bg-wellness-growth text-white border-wellness-growth'
+                          : 'border-neutral-300 hover:border-wellness-growth hover:bg-wellness-growth/10'
+                      }`}
+                    >
+                      {rating}
+                    </motion.button>
+                  ))}
+                </div>
+                <div className="flex justify-between text-xs text-neutral-500">
+                  <span>Very Low</span>
+                  <span>Excellent</span>
+                </div>
+              </div>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="text-center py-4"
+              >
+                <CheckCircle className="w-8 h-8 text-green-500 mx-auto mb-2" />
+                <p className="text-green-600 font-medium">Thanks for checking in!</p>
+                <p className="text-sm text-neutral-600">Your mood ({quickMoodRating}/10) has been recorded.</p>
+              </motion.div>
+            )}
+          </motion.div>
+
+          {/* Time-based Recommendations */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="bg-white rounded-2xl shadow-soft border border-neutral-200 p-6 mb-8"
+          >
+            <div className="flex items-center space-x-3 mb-6">
+              <Clock className="w-6 h-6 text-primary-600" />
+              <h2 className="text-xl font-bold text-neutral-800">{timeRecommendations.title}</h2>
+            </div>
+            
+            <div className="grid md:grid-cols-2 gap-4">
+              {timeRecommendations.suggestions.map((suggestion, index) => (
+                <motion.div
+                  key={suggestion.name}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.25 + index * 0.1 }}
+                  onClick={suggestion.action}
+                  className="flex items-center space-x-4 p-4 rounded-xl border-2 border-neutral-100 hover:border-primary-300 hover:bg-primary-50/50 cursor-pointer transition-all group"
+                >
+                  <div className="p-3 rounded-full bg-primary-100 group-hover:bg-primary-200 transition-colors">
+                    <suggestion.icon className="w-5 h-5 text-primary-600" />
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="font-semibold text-neutral-800 group-hover:text-primary-700 transition-colors">
+                      {suggestion.name}
+                    </h4>
+                    <p className="text-sm text-neutral-600">{suggestion.description}</p>
+                  </div>
+                  <ArrowRight className="w-4 h-4 text-primary-600 opacity-0 group-hover:opacity-100 transition-opacity" />
+                </motion.div>
+              ))}
+            </div>
           </motion.div>
 
           {/* Quick Actions */}
@@ -270,6 +578,128 @@ export default function WellnessPage() {
             </div>
           </motion.div>
 
+          {/* Recent Activity & Achievements */}
+          <div className="grid lg:grid-cols-3 gap-8 mb-12">
+            
+            {/* Recent Activity Feed */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="lg:col-span-2 bg-white rounded-2xl shadow-soft border border-neutral-200 p-6"
+            >
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center space-x-3">
+                  <Activity className="w-6 h-6 text-primary-600" />
+                  <h2 className="text-xl font-bold text-neutral-800">Recent Activity</h2>
+                </div>
+                <Link href="/wellness/analytics" className="text-primary-600 hover:text-primary-700 text-sm font-medium">
+                  View All →
+                </Link>
+              </div>
+              
+              <div className="space-y-4">
+                {recentActivity.map((activity, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.45 + index * 0.1 }}
+                    className="flex items-center space-x-4 p-3 rounded-lg hover:bg-neutral-50 transition-colors"
+                  >
+                    <div className="p-2 rounded-full bg-neutral-100">
+                      <activity.icon className={`w-4 h-4 ${activity.color}`} />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-neutral-800">{activity.action}</p>
+                      <p className="text-xs text-neutral-500">{activity.time}</p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+              
+              <div className="mt-6 pt-4 border-t border-neutral-200">
+                <button className="text-primary-600 hover:text-primary-700 text-sm font-medium flex items-center space-x-1">
+                  <Plus className="w-4 h-4" />
+                  <span>Quick Journal Entry</span>
+                </button>
+              </div>
+            </motion.div>
+
+            {/* Achievements */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="bg-white rounded-2xl shadow-soft border border-neutral-200 p-6"
+            >
+              <div className="flex items-center space-x-3 mb-6">
+                <Trophy className="w-6 h-6 text-yellow-500" />
+                <h2 className="text-xl font-bold text-neutral-800">Achievements</h2>
+              </div>
+              
+              <div className="space-y-4">
+                {wellnessStats.achievements.map((achievement, index) => (
+                  <motion.div
+                    key={achievement.id}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.55 + index * 0.1 }}
+                    className={`flex items-center space-x-3 p-3 rounded-lg transition-all ${
+                      achievement.unlocked 
+                        ? 'bg-yellow-50 border border-yellow-200' 
+                        : 'bg-neutral-50 border border-neutral-200 opacity-60'
+                    }`}
+                  >
+                    <div className={`p-2 rounded-full ${
+                      achievement.unlocked 
+                        ? 'bg-yellow-100' 
+                        : 'bg-neutral-200'
+                    }`}>
+                      <achievement.icon className={`w-4 h-4 ${
+                        achievement.unlocked 
+                          ? 'text-yellow-600' 
+                          : 'text-neutral-400'
+                      }`} />
+                    </div>
+                    <div className="flex-1">
+                      <p className={`text-sm font-medium ${
+                        achievement.unlocked 
+                          ? 'text-neutral-800' 
+                          : 'text-neutral-500'
+                      }`}>
+                        {achievement.name}
+                      </p>
+                      {achievement.unlocked && (
+                        <p className="text-xs text-yellow-600">Unlocked!</p>
+                      )}
+                    </div>
+                    {achievement.unlocked && (
+                      <Sparkles className="w-4 h-4 text-yellow-500" />
+                    )}
+                  </motion.div>
+                ))}
+              </div>
+              
+              <div className="mt-6 pt-4 border-t border-neutral-200">
+                <div className="flex justify-between text-sm">
+                  <span className="text-neutral-600">Progress:</span>
+                  <span className="font-medium text-neutral-800">
+                    {wellnessStats.achievements.filter(a => a.unlocked).length} / {wellnessStats.achievements.length}
+                  </span>
+                </div>
+                <div className="w-full bg-neutral-200 rounded-full h-2 mt-2">
+                  <div 
+                    className="bg-gradient-to-r from-yellow-400 to-yellow-500 h-2 rounded-full transition-all duration-1000"
+                    style={{ 
+                      width: `${(wellnessStats.achievements.filter(a => a.unlocked).length / wellnessStats.achievements.length) * 100}%` 
+                    }}
+                  />
+                </div>
+              </div>
+            </motion.div>
+          </div>
+
           {/* Wellness Tools Grid */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -277,41 +707,152 @@ export default function WellnessPage() {
             transition={{ delay: 0.4 }}
             className="mb-12"
           >
-            <h2 className="text-2xl font-bold text-neutral-800 mb-8 text-center">
-              Wellness Tools & Resources
-            </h2>
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-2xl font-bold text-neutral-800">
+                Wellness Tools & Resources
+              </h2>
+              <div className="flex items-center space-x-2 text-sm text-neutral-600">
+                <Bookmark className="w-4 h-4" />
+                <span>{favorites.length} favorites</span>
+              </div>
+            </div>
+
+            {/* Favorites Section */}
+            {favorites.length > 0 && (
+              <div className="mb-8">
+                <h3 className="text-lg font-semibold text-neutral-700 mb-4 flex items-center space-x-2">
+                  <Star className="w-5 h-5 text-yellow-500" />
+                  <span>Your Favorites</span>
+                </h3>
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {wellnessTools
+                    .filter(tool => favorites.includes(tool.link.split('/').pop()!))
+                    .map((tool, index) => (
+                      <motion.div
+                        key={`fav-${tool.title}`}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.45 + index * 0.1 }}
+                        className="relative bg-white rounded-2xl shadow-soft border-2 border-yellow-200 overflow-hidden hover:shadow-glow transition-all duration-300 group cursor-pointer"
+                        onClick={() => handleToolClick(tool.link)}
+                      >
+                        <div className="absolute top-3 right-3 z-10">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleFavorite(tool.link.split('/').pop()!);
+                            }}
+                            className="p-1 rounded-full bg-white shadow-md hover:scale-110 transition-transform"
+                          >
+                            <Star className="w-4 h-4 text-yellow-500 fill-current" />
+                          </button>
+                        </div>
+                        
+                        <div className={`${tool.color} p-4`}>
+                          <tool.icon className="w-8 h-8 text-white" />
+                        </div>
+                        
+                        <div className="p-6">
+                          <h3 className="font-bold text-xl text-neutral-800 mb-3 group-hover:text-primary-700 transition-colors">
+                            {tool.title}
+                          </h3>
+                          <p className="text-neutral-600 mb-4 group-hover:text-neutral-700 transition-colors">
+                            {tool.description}
+                          </p>
+                          <div className="flex items-center text-primary-600 font-semibold group-hover:text-primary-700 transition-colors">
+                            <span>Explore Tool</span>
+                            <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                </div>
+              </div>
+            )}
+
+            {/* All Tools Section */}
+            <h3 className="text-lg font-semibold text-neutral-700 mb-4">
+              All Wellness Tools
+            </h3>
             
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {wellnessTools.map((tool, index) => (
-                <motion.div
-                  key={tool.title}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5 + index * 0.1 }}
-                  className="relative bg-white rounded-2xl shadow-soft border border-neutral-200 overflow-hidden hover:shadow-glow transition-all duration-300 group cursor-pointer"
-                  onClick={() => handleToolClick(tool.link)}
-                >
-                  <div className={`${tool.color} p-4`}>
-                    <tool.icon className="w-8 h-8 text-white" />
-                  </div>
-                  
-                  <div className="p-6">
-                    <h3 className="font-bold text-xl text-neutral-800 mb-3 group-hover:text-primary-700 transition-colors">
-                      {tool.title}
-                    </h3>
-                    <p className="text-neutral-600 mb-4 group-hover:text-neutral-700 transition-colors">
-                      {tool.description}
-                    </p>
-                    <div className="flex items-center text-primary-600 font-semibold group-hover:text-primary-700 transition-colors">
-                      <span>Explore Tool</span>
-                      <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+              {wellnessTools.map((tool, index) => {
+                const toolId = tool.link.split('/').pop()!;
+                const isFavorite = favorites.includes(toolId);
+                
+                return (
+                  <motion.div
+                    key={tool.title}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5 + index * 0.1 }}
+                    className="relative bg-white rounded-2xl shadow-soft border border-neutral-200 overflow-hidden hover:shadow-glow transition-all duration-300 group cursor-pointer"
+                    onClick={() => handleToolClick(tool.link)}
+                  >
+                    {/* Favorite Button */}
+                    <div className="absolute top-3 right-3 z-10">
+                      <motion.button
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleFavorite(toolId);
+                        }}
+                        className="p-2 rounded-full bg-white shadow-md hover:shadow-lg transition-shadow"
+                      >
+                        {isFavorite ? (
+                          <Star className="w-4 h-4 text-yellow-500 fill-current" />
+                        ) : (
+                          <Star className="w-4 h-4 text-neutral-400 hover:text-yellow-500 transition-colors" />
+                        )}
+                      </motion.button>
                     </div>
-                  </div>
-                  
-                  {/* Subtle hover overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-primary-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-                </motion.div>
-              ))}
+                    
+                    <div className={`${tool.color} p-4`}>
+                      <tool.icon className="w-8 h-8 text-white" />
+                    </div>
+                    
+                    <div className="p-6">
+                      <h3 className="font-bold text-xl text-neutral-800 mb-3 group-hover:text-primary-700 transition-colors">
+                        {tool.title}
+                      </h3>
+                      <p className="text-neutral-600 mb-4 group-hover:text-neutral-700 transition-colors">
+                        {tool.description}
+                      </p>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center text-primary-600 font-semibold group-hover:text-primary-700 transition-colors">
+                          <span>Explore Tool</span>
+                          <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                        </div>
+                        {isFavorite && (
+                          <div className="flex items-center space-x-1 text-xs text-yellow-600 bg-yellow-50 px-2 py-1 rounded-full">
+                            <Bookmark className="w-3 h-3" />
+                            <span>Saved</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    
+                    {/* Enhanced hover overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-primary-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                    
+                    {/* Subtle pulse animation for favorites */}
+                    {isFavorite && (
+                      <motion.div
+                        animate={{ 
+                          boxShadow: [
+                            '0 0 0 0 rgba(234, 179, 8, 0.4)',
+                            '0 0 0 4px rgba(234, 179, 8, 0.1)',
+                            '0 0 0 0 rgba(234, 179, 8, 0.4)'
+                          ]
+                        }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                        className="absolute inset-0 rounded-2xl pointer-events-none"
+                      />
+                    )}
+                  </motion.div>
+                );
+              })}
             </div>
           </motion.div>
 
