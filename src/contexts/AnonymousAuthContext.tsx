@@ -142,8 +142,8 @@ export function AnonymousAuthProvider({ children }: { children: ReactNode }) {
 
   const initializeSession = async (options: { crisisAccess?: boolean } = {}) => {
     try {
-      const sessionId = await sessionManager.createAnonymousSession({
-        crisisAccess: options.crisisAccess || false
+      const sessionData = await sessionManager.createAnonymousSession({
+        accessLevel: options.crisisAccess ? 'write' : 'read'
       });
 
       // Get client info
@@ -152,7 +152,7 @@ export function AnonymousAuthProvider({ children }: { children: ReactNode }) {
       const location = await getApproximateLocation();
 
       const newSession: AnonymousSession = {
-        id: sessionId,
+        id: sessionData.sessionId,
         ipAddress,
         userAgent,
         startTime: new Date(),
@@ -176,14 +176,21 @@ export function AnonymousAuthProvider({ children }: { children: ReactNode }) {
           sessionId: newSession.id,
           ipAddress: newSession.ipAddress,
           userAgent: newSession.userAgent,
-          crisisAccess: options.crisisAccess,
-          capabilities: Array.from(newSession.capabilities),
-          details: { privacyLevel, location }
+          details: { 
+            privacyLevel, 
+            location,
+            crisisAccess: options.crisisAccess,
+            capabilities: Array.from(newSession.capabilities)
+          }
         }
       );
 
       // Monitor for security threats
-      await securityMonitor.trackAnonymousSession(newSession);
+      await securityMonitor.trackAnonymousSession(newSession.id, 'session_created', {
+        privacyLevel,
+        location,
+        userAgent: newSession.userAgent
+      });
 
     } catch (error) {
       console.error('Failed to initialize anonymous session:', error);
@@ -208,7 +215,7 @@ export function AnonymousAuthProvider({ children }: { children: ReactNode }) {
     };
 
     setSession(updatedSession);
-    sessionManager.updateSessionActivity(session.id);
+    sessionManager.updateActivity(session.id, 'user_activity');
   };
 
   const endSession = async () => {
@@ -322,15 +329,12 @@ export function AnonymousAuthProvider({ children }: { children: ReactNode }) {
       );
 
       // Alert security monitoring
-      await securityMonitor.reportSecurityEvent({
-        type: 'CRISIS_MODE_ENABLED',
+      await securityMonitor.reportSecurityEvent('CRISIS_MODE_ENABLED', {
         severity: 'HIGH',
         sessionId: session.id,
-        details: {
-          userAgent: session.userAgent,
-          ipAddress: session.ipAddress,
-          location: session.location
-        }
+        userAgent: session.userAgent,
+        ipAddress: session.ipAddress,
+        location: session.location
       });
 
     } catch (error) {

@@ -228,6 +228,31 @@ class SecurityMonitorService {
   }
 
   /**
+   * Track anonymous session activity
+   */
+  async trackAnonymousSession(sessionId: string, activity: string, metadata: Record<string, any> = {}): Promise<void> {
+    await this.processSecurityEvent('anonymous_session_activity', {
+      sessionId,
+      activity,
+      eventType: 'session_activity',
+      success: true,
+      ...metadata
+    });
+  }
+
+  /**
+   * Report security event
+   */
+  async reportSecurityEvent(eventType: string, details: Record<string, any>): Promise<void> {
+    await this.processSecurityEvent(eventType, {
+      ...details,
+      eventType,
+      reported: true,
+      timestamp: new Date().toISOString()
+    });
+  }
+
+  /**
    * Update risk scores based on activity
    */
   private async updateRiskScores(details: any): Promise<void> {
@@ -648,6 +673,14 @@ class SecurityMonitorService {
   } {
     const first = metrics[0];
     const last = metrics[metrics.length - 1];
+    
+    if (!first || !last) {
+      return {
+        increasing: false,
+        severity: 0,
+        description: 'Insufficient metrics data'
+      };
+    }
 
     const failedLoginIncrease = (last.failedLogins - first.failedLogins) / Math.max(first.failedLogins, 1);
     const suspiciousIncrease = (last.suspiciousActivities - first.suspiciousActivities) / Math.max(first.suspiciousActivities, 1);

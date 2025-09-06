@@ -196,7 +196,7 @@ export default function MoodTrackerPage() {
                   <h3 className="text-lg font-semibold text-neutral-700 mb-4">Notes</h3>
                   <textarea
                     value={notes}
-                    onChange={(e) => setNotes(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNotes(e.target.value)}
                     placeholder="How was your day? What influenced your mood?"
                     rows={4}
                     className="w-full px-4 py-3 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-wellness-mindful resize-none"

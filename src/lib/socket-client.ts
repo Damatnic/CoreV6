@@ -53,7 +53,10 @@ export const useSocket = create<SocketState>((set, get) => ({
       
       if (reason === 'io server disconnect') {
         // Server disconnected, try to reconnect
-        socket.connect();
+        // Reconnect if not already connected
+        if (!socket.connected) {
+          (socket as any).connect();
+        }
       }
     });
 

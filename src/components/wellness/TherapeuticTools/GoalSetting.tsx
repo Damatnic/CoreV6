@@ -5,7 +5,7 @@ interface GoalSettingProps {
   toolId?: string;
 }
 
-const GoalSetting: React.FC<GoalSettingProps> = ({ toolId }) => {
+const GoalSetting: React.FC<GoalSettingProps> = ({ toolId }: GoalSettingProps) => {
   return (
     <div className="p-6 bg-orange-50 dark:bg-orange-900/20 rounded-xl">
       <h3 className="text-xl font-bold mb-4 flex items-center gap-2">

@@ -287,7 +287,9 @@ class PerformanceService {
             id: this.generateMetricId(),
             name: 'resource_load_time',
             category: PerformanceCategory.LOADING,
-            value: resourceEntry.loadEventEnd - resourceEntry.loadEventStart,
+            value: (resourceEntry.loadEventEnd && resourceEntry.loadEventStart) 
+              ? resourceEntry.loadEventEnd - resourceEntry.loadEventStart 
+              : 0,
             unit: 'ms',
             threshold: { warning: 1000, critical: 2000 },
             timestamp: new Date(),
@@ -1099,7 +1101,7 @@ class PerformanceService {
       b.timestamp.getTime() - a.timestamp.getTime()
     );
     
-    return matching.length > 0 ? matching[0].value : null;
+    return matching.length > 0 ? matching[0]?.value ?? null : null;
   }
 
   private calculateErrorRate(metrics: PerformanceMetric[]): number {

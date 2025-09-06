@@ -6,7 +6,7 @@
  * Provides insights for healthcare providers and system improvement
  */
 
-import { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { 
   BarChart3,
@@ -48,7 +48,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
   icon: Icon, 
   color, 
   bgColor 
-}) => (
+}: MetricCardProps) => (
   <motion.div
     whileHover={{ scale: 1.02 }}
     className="p-6 bg-white dark:bg-neutral-900 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700"
@@ -317,7 +317,7 @@ export default function CrisisAnalytics({
           {/* Time Range Selector */}
           <select
             value={selectedTimeRange}
-            onChange={(e) => setSelectedTimeRange(e.target.value as 'day' | 'week' | 'month' | 'year' | 'all')}
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedTimeRange(e.target.value as 'day' | 'week' | 'month' | 'year' | 'all')}
             className="px-3 py-2 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
           >
             <option value="day">Last 24 Hours</option>

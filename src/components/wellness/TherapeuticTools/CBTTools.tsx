@@ -5,7 +5,7 @@ interface CBTToolsProps {
   toolId?: string;
 }
 
-const CBTTools: React.FC<CBTToolsProps> = ({ toolId }) => {
+const CBTTools: React.FC<CBTToolsProps> = ({ toolId }: CBTToolsProps) => {
   return (
     <div className="p-6 bg-purple-50 dark:bg-purple-900/20 rounded-xl">
       <h3 className="text-xl font-bold mb-4 flex items-center gap-2">

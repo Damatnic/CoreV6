@@ -5,7 +5,7 @@ interface GratitudePracticeProps {
   toolId?: string;
 }
 
-const GratitudePractice: React.FC<GratitudePracticeProps> = ({ toolId }) => {
+const GratitudePractice: React.FC<GratitudePracticeProps> = ({ toolId }: GratitudePracticeProps) => {
   return (
     <div className="p-6 bg-pink-50 dark:bg-pink-900/20 rounded-xl">
       <h3 className="text-xl font-bold mb-4 flex items-center gap-2">

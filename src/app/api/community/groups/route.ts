@@ -189,10 +189,10 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json(group, { status: 201 });
-  } catch (error) {
+  } catch (error: unknown) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Invalid input', details: error.issues },
+        { error: 'Invalid input', details: (error as any).issues },
         { status: 400 }
       );
     }

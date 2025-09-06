@@ -11,12 +11,63 @@ export interface AuditLogEntry {
   timestamp: Date;
   sessionId: string;
   userId: string;
+  therapistId?: string;
   action: string;
   category: LogCategory;
   severity: LogSeverity;
   details: any;
   metadata?: LogMetadata;
   hash?: string; // For integrity verification
+  
+  // Extended properties for TS2353 errors
+  accessLevel?: string;
+  administeringClinician?: string;
+  anonymized?: boolean;
+  assessmentCount?: number;
+  assessmentId?: string;
+  assessmentType?: string;
+  assessorId?: string;
+  capability?: string;
+  consentId?: string;
+  consentType?: string;
+  crisisAccess?: boolean;
+  crisisId?: string;
+  dataCategory?: string;
+  dataType?: string;
+  duration?: number;
+  filters?: Record<string, any>;
+  flagged?: boolean;
+  grantId?: string;
+  insightCount?: number;
+  insightTypes?: string[];
+  modality?: string;
+  originalFields?: Record<string, any>;
+  phiCategories?: string[];
+  policyId?: string;
+  purpose?: string;
+  questionId?: string;
+  reason?: string;
+  recommendationCount?: number;
+  recommendationTypes?: string[];
+  reportId?: string;
+  reportType?: string;
+  resolverId?: string;
+  retentionPeriod?: number;
+  riskLevel?: string;
+  runId?: string;
+  safetyPlanId?: string;
+  sessionType?: string;
+  trigger?: string;
+  currentDiagnoses?: string[];
+  dimensions?: Record<string, any>;
+  hipaaCompliant?: boolean;
+  format?: string;
+  totalScore?: number;
+  consentMethod?: string;
+  disposition?: string;
+  filename?: string;
+  requiresAttention?: boolean;
+  effectiveness?: string;
 }
 
 export type LogCategory = 

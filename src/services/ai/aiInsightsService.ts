@@ -5,7 +5,7 @@
  */
 
 import { auditLogger, AuditEventType } from '../security/auditLogger';
-import { hipaaService, PHICategory } from '../compliance/hipaaService';
+import { hipaaService, PHICategory, HIPAARole, AccessLevel } from '../compliance/hipaaService';
 import { analyticsService, AnalyticsDataType } from '../analytics/analyticsService';
 
 // AI model types and capabilities
@@ -329,11 +329,11 @@ class AIInsightsService {
       // Check HIPAA permissions
       const hasPermission = await hipaaService.requestPHIAccess({
         userId: providerId,
-        userRole: 'healthcare_provider',
+        userRole: HIPAARole.HEALTHCARE_PROVIDER,
         patientId,
         phiCategories: [PHICategory.MENTAL_HEALTH_RECORDS, PHICategory.CLINICAL_NOTES],
         purpose: 'Generate AI clinical insights for treatment planning',
-        accessLevel: 'standard',
+        accessLevel: AccessLevel.STANDARD,
         justification: 'AI-assisted clinical decision support'
       });
 

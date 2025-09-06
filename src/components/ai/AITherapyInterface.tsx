@@ -80,8 +80,8 @@ export default function AITherapyInterface() {
   const [voiceInput, setVoiceInput] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
 
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const inputRef = useRef<HTMLTextAreaElement | null>(null);
   const wsService = useRef<AIWebSocketService | null>(null);
 
   // Initialize WebSocket connection
@@ -288,7 +288,7 @@ export default function AITherapyInterface() {
           {/* Language Selector */}
           <select 
             value={language}
-            onChange={(e) => changeLanguage(e.target.value as any)}
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => changeLanguage(e.target.value as any)}
             className="px-3 py-1 border rounded-lg text-sm"
             aria-label="Select language"
           >
@@ -483,7 +483,7 @@ export default function AITherapyInterface() {
               <textarea
                 ref={inputRef}
                 value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setInputValue(e.target.value)}
                 onKeyPress={handleKeyPress}
                 disabled={isProcessing || voiceInput}
                 placeholder={voiceInput ? t('chat.recording') : t('chat.type_message')}

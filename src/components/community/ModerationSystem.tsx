@@ -6,7 +6,7 @@ import {
   Shield,
   AlertTriangle,
   Flag,
-  UserX,
+  User,
   MessageSquareOff,
   AlertCircle,
   CheckCircle,
@@ -14,7 +14,7 @@ import {
   Clock,
   Search,
   ChevronRight,
-  Trash2,
+  Trash,
   RefreshCw,
   Activity,
   FileText,
@@ -40,7 +40,7 @@ interface ModerationSystemProps {
 const ModerationSystem: React.FC<ModerationSystemProps> = ({
   isModerator = false,
   onActionTaken
-}) => {
+}: ModerationSystemProps) => {
   const [reports, setReports] = useState<ModerationReport[]>([]);
   const [selectedReport, setSelectedReport] = useState<ModerationReport | null>(null);
   const [filterStatus, setFilterStatus] = useState<'all' | 'pending' | 'reviewed' | 'resolved' | 'escalated'>('pending');
@@ -72,7 +72,7 @@ const ModerationSystem: React.FC<ModerationSystemProps> = ({
     },
     'harassment': {
       color: 'bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400',
-      icon: <UserX className="w-4 h-4" />,
+      icon: <User className="w-4 h-4" />,
       description: 'Bullying or harassment'
     },
     'spam': {
@@ -511,7 +511,7 @@ const ModerationSystem: React.FC<ModerationSystemProps> = ({
                   type="text"
                   placeholder="Search reports..."
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 dark:border-gray-600 
                            bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white
                            focus:outline-none focus:ring-2 focus:ring-purple-500"
@@ -522,7 +522,7 @@ const ModerationSystem: React.FC<ModerationSystemProps> = ({
             {/* Status Filter */}
             <select
               value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value as any)}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFilterStatus(e.target.value as any)}
               className="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-600 
                        bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white
                        focus:outline-none focus:ring-2 focus:ring-purple-500"
@@ -537,7 +537,7 @@ const ModerationSystem: React.FC<ModerationSystemProps> = ({
             {/* Severity Filter */}
             <select
               value={filterSeverity}
-              onChange={(e) => setFilterSeverity(e.target.value as any)}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFilterSeverity(e.target.value as any)}
               className="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-600 
                        bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white
                        focus:outline-none focus:ring-2 focus:ring-purple-500"
@@ -656,7 +656,7 @@ const ModerationSystem: React.FC<ModerationSystemProps> = ({
                         className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-sm rounded-lg
                                  font-medium transition-colors flex items-center gap-1"
                       >
-                        <Trash2 className="w-3 h-3" />
+                        <Trash className="w-3 h-3" />
                         Remove
                       </button>
                       <button
@@ -730,7 +730,7 @@ const ModerationSystem: React.FC<ModerationSystemProps> = ({
                 initial={{ scale: 0.95, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.95, opacity: 0 }}
-                onClick={(e) => e.stopPropagation()}
+                onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
                 className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto"
               >
                 <div className="p-6">

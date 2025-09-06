@@ -31,7 +31,7 @@ import {
   EyeOff
 } from 'lucide-react';
 import { useTheme } from '../../hooks/useTheme';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth, type AuthContextType } from '../../contexts/AuthContext';
 import { useAnalytics } from '../../hooks/useAnalytics';
 import { useWebSocket } from '../../hooks/useWebSocket';
 import AdaptiveLayout from './AdaptiveLayout';
@@ -90,7 +90,7 @@ interface DashboardWidget {
 
 const WellnessDashboard: React.FC = () => {
   const { theme } = useTheme();
-  const { user } = useAuth();
+  const { user } = useAuth() as any;
   const { track } = useAnalytics();
   // TODO: Fix WebSocket implementation - current hook expects URL parameter
   // const { subscribe, unsubscribe } = useWebSocket();
@@ -616,14 +616,14 @@ const WellnessDashboard: React.FC = () => {
                 exit={{ opacity: 0, scale: 0.9 }}
                 className={widget.minimized ? 'md:col-span-1' : 'md:col-span-2 lg:col-span-2'}
               >
-                <Suspense fallback={<LoadingSpinner />}>
+                <>
                   {widget.type === 'mood' && <WellnessMetrics data={wellnessData} />}
                   {widget.type === 'analytics' && <PredictiveAnalytics data={wellnessData} />}
                   {widget.type === 'tools' && <TherapeuticToolsHub />}
                   {widget.type === 'progress' && <ProgressVisualization data={wellnessData} />}
                   {widget.type === 'professional' && <ProfessionalConnectionHub />}
                   {widget.type === 'community' && <CommunityWellness />}
-                </Suspense>
+                </>
               </motion.div>
             ))}
           </AnimatePresence>

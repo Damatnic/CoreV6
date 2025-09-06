@@ -16,10 +16,25 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
+interface EmergencyContact {
+  name: string;
+  number?: string;
+  description: string;
+  availableVia: string[];
+  website?: string;
+  languages?: string;
+  textMessage?: string;
+}
+
+interface ContactCategory {
+  category: string;
+  contacts: EmergencyContact[];
+}
+
 export default function EmergencyContactsPage() {
   const [copiedNumber, setCopiedNumber] = useState<string | null>(null);
 
-  const emergencyContacts = [
+  const emergencyContacts: ContactCategory[] = [
     {
       category: "National Crisis Hotlines",
       contacts: [
@@ -226,7 +241,7 @@ export default function EmergencyContactsPage() {
                               {contact.number}
                             </a>
                             <button
-                              onClick={() => copyToClipboard(contact.number!)}
+                              onClick={() => contact.number && copyToClipboard(contact.number)}
                               className="p-2 text-neutral-500 hover:text-neutral-700 transition-colors"
                               title="Copy number"
                             >

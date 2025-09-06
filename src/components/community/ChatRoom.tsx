@@ -33,8 +33,8 @@ export default function ChatRoom({ roomId, currentUser }: ChatRoomProps) {
   const [participantCount, setParticipantCount] = useState(0);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [selectedMessage, setSelectedMessage] = useState<string | null>(null);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const typingTimeoutRef = useRef<NodeJS.Timeout>();
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const typingTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
   // Scroll to bottom when new messages arrive
   const scrollToBottom = () => {
@@ -382,7 +382,7 @@ export default function ChatRoom({ roomId, currentUser }: ChatRoomProps) {
               type="text"
               value={inputMessage}
               onChange={handleTyping}
-              onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+              onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => e.key === 'Enter' && sendMessage()}
               placeholder="Type a supportive message..."
               className="w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-full text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
               disabled={!connected}

@@ -54,7 +54,7 @@ export default function EnhancedCrisisButton({
   const [isUrgent, setIsUrgent] = useState(false);
   const [showQuickActions, setShowQuickActions] = useState(false);
   const [lastInteraction, setLastInteraction] = useState<Date | null>(null);
-  const buttonRef = useRef<HTMLButtonElement>(null);
+  const buttonRef = useRef<HTMLButtonElement | null>(null);
   const controls = useAnimation();
   
   // Position classes

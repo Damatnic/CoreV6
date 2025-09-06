@@ -4,6 +4,7 @@
  */
 
 import { create } from 'zustand';
+import type { StateCreator } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import { CrisisAssessment, CrisisSeverity } from '@/services/crisis/CrisisDetectionService';
 
@@ -167,10 +168,7 @@ interface CrisisState {
 /**
  * Crisis store with persistence and devtools
  */
-export const useCrisisStore = create<CrisisState>()(
-  devtools(
-    persist(
-      (set, _get) => ({
+const crisisStoreCreator = (set: any, get: any) => ({
         // Initial state
         isInCrisis: false,
         currentAssessment: null,
@@ -209,9 +207,9 @@ export const useCrisisStore = create<CrisisState>()(
         },
         
         // Actions
-        setAssessment: (assessment) => set((state) => {
+        setAssessment: (assessment: CrisisAssessment) => set((state: CrisisState) => {
           const isInCrisis = assessment.isInCrisis;
-          const newState = {
+          const baseUpdate = {
             currentAssessment: assessment,
             isInCrisis,
             lastCheckTime: new Date()
@@ -223,7 +221,7 @@ export const useCrisisStore = create<CrisisState>()(
             const totalSeverity = (state.statistics.averageSeverity * state.statistics.totalCrisisEpisodes) + assessment.severity;
             
             return {
-              ...newState,
+              ...baseUpdate,
               statistics: {
                 ...state.statistics,
                 totalCrisisEpisodes: totalEpisodes,
@@ -233,10 +231,10 @@ export const useCrisisStore = create<CrisisState>()(
             };
           }
           
-          return newState;
+          return baseUpdate;
         }),
         
-        addToHistory: (assessment) => set((state) => ({
+        addToHistory: (assessment: CrisisAssessment) => set((state: CrisisState) => ({
           crisisHistory: [...state.crisisHistory, assessment].slice(-100) // Keep last 100
         })),
         
@@ -246,15 +244,15 @@ export const useCrisisStore = create<CrisisState>()(
         }),
         
         // Safety plan actions
-        setSafetyPlan: (plan) => set((state) => ({
+        setSafetyPlan: (plan: SafetyPlan) => set((state: CrisisState) => ({
           activeSafetyPlan: plan,
           safetyPlanHistory: [...state.safetyPlanHistory, plan].slice(-10) // Keep last 10
         })),
         
-        updateCopingStrategy: (strategyId, updates) => set((state) => {
+        updateCopingStrategy: (strategyId: string, updates: Partial<CopingStrategy>) => set((state: CrisisState) => {
           if (!state.activeSafetyPlan) return state;
           
-          const updatedStrategies = state.activeSafetyPlan.copingStrategies.map(strategy =>
+          const updatedStrategies = state.activeSafetyPlan.copingStrategies.map((strategy: CopingStrategy) =>
             strategy.id === strategyId ? { ...strategy, ...updates, lastUsed: new Date() } : strategy
           );
           
@@ -271,23 +269,23 @@ export const useCrisisStore = create<CrisisState>()(
           };
         }),
         
-        addEmergencyContact: (contact) => set((state) => ({
+        addEmergencyContact: (contact: EmergencyContact) => set((state: CrisisState) => ({
           emergencyContacts: [...state.emergencyContacts, contact]
         })),
         
-        removeEmergencyContact: (contactId) => set((state) => ({
-          emergencyContacts: state.emergencyContacts.filter(c => c.id !== contactId),
+        removeEmergencyContact: (contactId: string) => set((state: CrisisState) => ({
+          emergencyContacts: state.emergencyContacts.filter((c: EmergencyContact) => c.id !== contactId),
           primaryEmergencyContact: state.primaryEmergencyContact?.id === contactId 
             ? null 
             : state.primaryEmergencyContact
         })),
         
-        setPrimaryContact: (contact) => set({
+        setPrimaryContact: (contact: EmergencyContact) => set({
           primaryEmergencyContact: contact
         }),
         
         // Chat actions
-        startChatSession: (severity) => set((state) => {
+        startChatSession: (severity: CrisisSeverity) => set((state: CrisisState) => {
           const session: CrisisChatSession = {
             id: `session_${Date.now()}`,
             userId: 'current_user', // Would be actual user ID
@@ -303,7 +301,7 @@ export const useCrisisStore = create<CrisisState>()(
           };
         }),
         
-        addChatMessage: (message) => set((state) => {
+        addChatMessage: (message: CrisisChatMessage) => set((state: CrisisState) => {
           if (!state.activeChatSession) return state;
           
           const updatedSession = {
@@ -313,13 +311,13 @@ export const useCrisisStore = create<CrisisState>()(
           
           return {
             activeChatSession: updatedSession,
-            chatHistory: state.chatHistory.map(session =>
+            chatHistory: state.chatHistory.map((session: CrisisChatSession) =>
               session.id === updatedSession.id ? updatedSession : session
             )
           };
         }),
         
-        endChatSession: (outcome) => set((state) => {
+        endChatSession: (outcome: string) => set((state: CrisisState) => {
           if (!state.activeChatSession) return state;
           
           const endedSession = {
@@ -331,7 +329,7 @@ export const useCrisisStore = create<CrisisState>()(
           
           return {
             activeChatSession: null,
-            chatHistory: state.chatHistory.map(session =>
+            chatHistory: state.chatHistory.map((session: CrisisChatSession) =>
               session.id === endedSession.id ? endedSession : session
             ),
             isConnectedToCounselor: false,
@@ -342,7 +340,7 @@ export const useCrisisStore = create<CrisisState>()(
           };
         }),
         
-        connectToCounselor: (counselorId) => set((state) => {
+        connectToCounselor: (counselorId: string) => set((state: CrisisState) => {
           if (!state.activeChatSession) return state;
           
           return {
@@ -355,7 +353,7 @@ export const useCrisisStore = create<CrisisState>()(
         }),
         
         // Risk assessment actions
-        setRiskAssessment: (result) => set((state) => ({
+        setRiskAssessment: (result: RiskAssessmentResult) => set((state: CrisisState) => ({
           lastRiskAssessment: result,
           assessmentHistory: [...state.assessmentHistory, result].slice(-50), // Keep last 50
           isDueForAssessment: false
@@ -366,33 +364,38 @@ export const useCrisisStore = create<CrisisState>()(
         }),
         
         // Preference actions
-        updatePreferences: (preferences) => set((state) => ({
+        updatePreferences: (preferences: Partial<CrisisState['preferences']>) => set((state: CrisisState) => ({
           preferences: { ...state.preferences, ...preferences }
         })),
         
         // Statistics actions
-        updateStatistics: (stats) => set((state) => ({
+        updateStatistics: (stats: Partial<CrisisState['statistics']>) => set((state: CrisisState) => ({
           statistics: { ...state.statistics, ...stats }
         })),
         
-        incrementCrisisCount: () => set((state) => ({
+        incrementCrisisCount: () => set((state: CrisisState) => ({
           statistics: {
             ...state.statistics,
             totalCrisisEpisodes: state.statistics.totalCrisisEpisodes + 1
           }
         })),
         
-        recordSuccessfulIntervention: () => set((state) => ({
+        recordSuccessfulIntervention: () => set((state: CrisisState) => ({
           statistics: {
             ...state.statistics,
             successfulInterventions: state.statistics.successfulInterventions + 1
           }
         }))
-      }),
+});
+
+export const useCrisisStore = create<CrisisState>(
+  devtools(
+    persist(
+      crisisStoreCreator,
       {
         name: 'crisis-storage',
         // Only persist non-sensitive data
-        partialize: (state) => ({
+        partialize: (state: CrisisState) => ({
           safetyPlanHistory: state.safetyPlanHistory,
           emergencyContacts: state.emergencyContacts,
           primaryEmergencyContact: state.primaryEmergencyContact,
@@ -409,9 +412,9 @@ export const useCrisisStore = create<CrisisState>()(
 );
 
 // Selector hooks for common use cases
-export const useIsInCrisis = () => useCrisisStore((state) => state.isInCrisis);
-export const useCurrentAssessment = () => useCrisisStore((state) => state.currentAssessment);
-export const useSafetyPlan = () => useCrisisStore((state) => state.activeSafetyPlan);
-export const useEmergencyContacts = () => useCrisisStore((state) => state.emergencyContacts);
-export const useCrisisPreferences = () => useCrisisStore((state) => state.preferences);
-export const useCrisisStatistics = () => useCrisisStore((state) => state.statistics);
+export const useIsInCrisis = () => useCrisisStore().isInCrisis;
+export const useCurrentAssessment = () => useCrisisStore().currentAssessment;
+export const useSafetyPlan = () => useCrisisStore().activeSafetyPlan;
+export const useEmergencyContacts = () => useCrisisStore().emergencyContacts;
+export const useCrisisPreferences = () => useCrisisStore().preferences;
+export const useCrisisStatistics = () => useCrisisStore().statistics;

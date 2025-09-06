@@ -88,10 +88,10 @@ export default function CrisisChat({
   const [currentSeverity, setCurrentSeverity] = useState(initialSeverity);
   
   // Refs
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const chatContainerRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLTextAreaElement>(null);
-  const typingTimeoutRef = useRef<NodeJS.Timeout>();
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const chatContainerRef = useRef<HTMLDivElement | null>(null);
+  const inputRef = useRef<HTMLTextAreaElement | null>(null);
+  const typingTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
   
   // Initialize WebSocket connection
   useEffect(() => {
@@ -516,11 +516,11 @@ export default function CrisisChat({
             <textarea
               ref={inputRef}
               value={message}
-              onChange={(e) => {
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
                 setMessage(e.target.value);
                 handleTyping();
               }}
-              onKeyPress={(e) => {
+              onKeyPress={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault();
                   sendMessage();

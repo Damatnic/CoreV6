@@ -61,7 +61,11 @@ async function authenticateSocket(socket: Socket, next: (err?: Error) => void) {
       return next(new Error('No cookies provided'));
     }
 
-    const parsedCookies = parse(cookies);
+    const cookieString = Array.isArray(cookies) ? cookies[0] : cookies;
+    if (!cookieString) {
+      return next(new Error('No valid cookies provided'));
+    }
+    const parsedCookies = parse(cookieString);
     const token = parsedCookies['auth-token'];
     
     if (!token) {
@@ -195,12 +199,14 @@ async function moderateContent(content: string): Promise<{
 
 // Initialize Socket.io server
 export function initSocketServer(httpServer: HTTPServer) {
-  const io = new SocketIOServer(httpServer, {
-    cors: {
-      origin: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
-      credentials: true,
-    },
-    transports: ['websocket', 'polling'],
+  const io = new SocketIOServer(httpServer);
+  
+  // Configure CORS after initialization
+  (io as any).engine.on("connection_error", (err: { req: any; code: number; message: string; context: any }) => {
+    console.log(err.req);      // the request object
+    console.log(err.code);     // the error code
+    console.log(err.message);  // the error message
+    console.log(err.context);  // some additional error context
   });
 
   // Apply authentication middleware

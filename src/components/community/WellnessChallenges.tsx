@@ -39,7 +39,7 @@ const WellnessChallenges: React.FC<WellnessChallengesProps> = ({
   currentUser,
   onJoinChallenge,
   onCompleteGoal
-}) => {
+}: WellnessChallengesProps) => {
   const [challenges, setChallenges] = useState<WellnessChallenge[]>([]);
   const [userChallenges, setUserChallenges] = useState<Set<string>>(new Set());
   const [selectedChallenge, setSelectedChallenge] = useState<WellnessChallenge | null>(null);
@@ -685,7 +685,7 @@ const WellnessChallenges: React.FC<WellnessChallengesProps> = ({
                 initial={{ scale: 0.95, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.95, opacity: 0 }}
-                onClick={(e) => e.stopPropagation()}
+                onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
                 className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[80vh] overflow-y-auto"
               >
                 <div className={`h-3 ${challengeTypeInfo[selectedChallenge.type].color}`} />

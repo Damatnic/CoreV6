@@ -146,7 +146,7 @@ class MultiFactorAuthService {
         'mfa_totp_secret'
       );
 
-      const isValid = this.verifyTOTPCode(decryptedSecret, code);
+      const isValid = await this.verifyTOTPCode(decryptedSecret, code);
       
       if (isValid) {
         // Enable and verify the setup
@@ -391,7 +391,7 @@ class MultiFactorAuthService {
               mfaSetup.metadata.secret, 
               'mfa_totp_secret'
             );
-            isValid = this.verifyTOTPCode(decryptedSecret, code);
+            isValid = await this.verifyTOTPCode(decryptedSecret, code);
           }
           break;
 
@@ -494,7 +494,7 @@ class MultiFactorAuthService {
       const setups = await this.getUserMFASetups(userId);
       const setupIndex = setups.findIndex(s => s.method === method);
       
-      if (setupIndex >= 0) {
+      if (setupIndex >= 0 && setups[setupIndex]) {
         setups[setupIndex].enabled = false;
         this.userMFASetups.set(userId, setups);
 
@@ -628,13 +628,13 @@ class MultiFactorAuthService {
     return `mfa_${Date.now()}_${cryptoService.generateSecureToken(8)}`;
   }
 
-  private verifyTOTPCode(secret: string, code: string): boolean {
+  private async verifyTOTPCode(secret: string, code: string): Promise<boolean> {
     // Simplified TOTP verification - in production use a proper TOTP library
     const timeStep = Math.floor(Date.now() / 1000 / this.TOTP_WINDOW);
     
     // Check current time step and adjacent steps for clock skew tolerance
     for (let i = -1; i <= 1; i++) {
-      const expectedCode = this.generateTOTPCode(secret, timeStep + i);
+      const expectedCode = await this.generateTOTPCode(secret, timeStep + i);
       if (cryptoService.secureCompare(code, expectedCode)) {
         return true;
       }
@@ -643,10 +643,11 @@ class MultiFactorAuthService {
     return false;
   }
 
-  private generateTOTPCode(secret: string, timeStep: number): string {
+  private async generateTOTPCode(secret: string, timeStep: number): Promise<string> {
     // Simplified TOTP generation - in production use crypto.createHmac
     const hash = timeStep.toString() + secret;
-    return cryptoService.hash(hash).then(h => h.substring(0, 6));
+    const hashedValue = await cryptoService.hash(hash);
+    return hashedValue.substring(0, 6);
   }
 
   private async verifyBackupCode(userId: string, code: string): Promise<boolean> {
@@ -715,7 +716,7 @@ class MultiFactorAuthService {
 
   private maskEmail(email: string): string {
     const [local, domain] = email.split('@');
-    if (local.length <= 2) return email;
+    if (!local || !domain || local.length <= 2) return email;
     return `${local.substring(0, 2)}***@${domain}`;
   }
 

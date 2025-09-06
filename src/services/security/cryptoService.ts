@@ -109,14 +109,22 @@ class CryptographyService {
       const tag = encryptedArray.slice(-this.TAG_LENGTH);
 
       return {
-        encrypted: this.arrayBufferToBase64(ciphertext),
-        iv: this.arrayBufferToBase64(iv),
-        tag: this.arrayBufferToBase64(tag),
+        encrypted: this.arrayBufferToBase64(ciphertext.buffer),
+        iv: this.arrayBufferToBase64(iv.buffer),
+        tag: this.arrayBufferToBase64(tag.buffer),
       };
     } catch (error) {
       console.error('Encryption failed:', error);
       throw new Error('Encryption failed');
     }
+  }
+
+  /**
+   * Encrypt an object by JSON serializing it first
+   */
+  async encryptObject(obj: any, additionalData?: string): Promise<EncryptionResult> {
+    const jsonString = JSON.stringify(obj);
+    return this.encrypt(jsonString, additionalData);
   }
 
   /**
@@ -186,7 +194,7 @@ class CryptographyService {
    */
   generateSalt(): string {
     const salt = crypto.getRandomValues(new Uint8Array(this.SALT_LENGTH));
-    return this.arrayBufferToBase64(salt);
+    return this.arrayBufferToBase64(salt.buffer);
   }
 
   /**
@@ -292,7 +300,7 @@ class CryptographyService {
     const bytes = new Uint8Array(buffer);
     let binary = '';
     for (let i = 0; i < bytes.byteLength; i++) {
-      binary += String.fromCharCode(bytes[i]);
+      binary += String.fromCharCode(bytes[i] || 0);
     }
     return btoa(binary);
   }
@@ -358,4 +366,4 @@ class CryptographyService {
 
 // Export singleton instance
 export const cryptoService = CryptographyService.getInstance();
-export { EncryptionResult, DecryptionParams };
+export type { EncryptionResult, DecryptionParams };

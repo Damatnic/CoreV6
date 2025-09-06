@@ -174,9 +174,32 @@ const ROLE_PHI_ACCESS_MATRIX: Record<HIPAARole, Record<PHICategory, AccessLevel>
     [PHICategory.MENTAL_HEALTH_RECORDS]: AccessLevel.AUDIT,
   } as any,
   
-  [HIPAARole.NURSE]: {},
-  [HIPAARole.IT_SUPPORT]: {},
-  [HIPAARole.BUSINESS_ASSOCIATE]: {}
+  [HIPAARole.NURSE]: {
+    [PHICategory.NAME]: AccessLevel.STANDARD,
+    [PHICategory.DATE_OF_BIRTH]: AccessLevel.STANDARD,
+    [PHICategory.MEDICAL_HISTORY]: AccessLevel.STANDARD,
+    [PHICategory.CLINICAL_NOTES]: AccessLevel.LIMITED,
+    [PHICategory.THERAPY_NOTES]: AccessLevel.NO_ACCESS,
+    [PHICategory.MENTAL_HEALTH_RECORDS]: AccessLevel.NO_ACCESS,
+  } as any,
+  [HIPAARole.IT_SUPPORT]: {
+    // IT support has very limited access for system maintenance
+    [PHICategory.NAME]: AccessLevel.NO_ACCESS,
+    [PHICategory.DATE_OF_BIRTH]: AccessLevel.NO_ACCESS,
+    [PHICategory.MEDICAL_HISTORY]: AccessLevel.NO_ACCESS,
+    [PHICategory.CLINICAL_NOTES]: AccessLevel.NO_ACCESS,
+    [PHICategory.THERAPY_NOTES]: AccessLevel.NO_ACCESS,
+    [PHICategory.MENTAL_HEALTH_RECORDS]: AccessLevel.NO_ACCESS,
+  } as any,
+  [HIPAARole.BUSINESS_ASSOCIATE]: {
+    // Business associates have minimal required access
+    [PHICategory.NAME]: AccessLevel.LIMITED,
+    [PHICategory.DATE_OF_BIRTH]: AccessLevel.LIMITED,
+    [PHICategory.MEDICAL_HISTORY]: AccessLevel.NO_ACCESS,
+    [PHICategory.CLINICAL_NOTES]: AccessLevel.NO_ACCESS,
+    [PHICategory.THERAPY_NOTES]: AccessLevel.NO_ACCESS,
+    [PHICategory.MENTAL_HEALTH_RECORDS]: AccessLevel.NO_ACCESS,
+  } as any
 };
 
 class HIPAAComplianceService {
@@ -450,9 +473,11 @@ class HIPAAComplianceService {
       AuditEventType.PHI_EXPORT,
       'data_deidentified',
       {
-        originalFields: Object.keys(data).length,
-        deidentifiedFields: Object.keys(deidentified).length,
-        details: { deidentificationMethod: 'safe_harbor' }
+        details: {
+          originalFields: Object.keys(data).length,
+          deidentifiedFields: Object.keys(deidentified).length,
+          deidentificationMethod: 'safe_harbor'
+        }
       }
     );
 

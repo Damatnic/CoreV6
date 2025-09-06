@@ -59,7 +59,7 @@ export function useCache<T>(
   const [isStale, setIsStale] = useState(false);
   
   const fetcherRef = useRef(fetcher);
-  const retryTimeoutRef = useRef<NodeJS.Timeout>();
+  const retryTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
   
   // Update fetcher ref when it changes
   fetcherRef.current = fetcher;

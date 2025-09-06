@@ -14,40 +14,8 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Astral Core - Mental Health Support Platform",
   description: "We built Astral Core to be the voice people find when they've lost their own. Anonymous, immediate mental health support when you need it most.",
-  keywords: "mental health, crisis support, therapy, wellness, peer support, anonymous help",
-  authors: [{ name: "Astral Core Team" }],
-  openGraph: {
-    title: "Astral Core - Find Your Voice",
-    description: "Anonymous, immediate mental health support when you need it most.",
-    url: "https://astralcore.app",
-    siteName: "Astral Core",
-    images: [
-      {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "Astral Core - Mental Health Support",
-      },
-    ],
-    locale: "en_US",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Astral Core - Mental Health Support",
-    description: "Anonymous, immediate mental health support when you need it most.",
-    images: ["/og-image.png"],
-  },
-  manifest: "/manifest.json",
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#09090b" },
-  ],
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 5,
-  },
+  keywords: ["mental health", "crisis support", "therapy", "wellness", "peer support", "anonymous help"],
+  viewport: "width=device-width, initial-scale=1, maximum-scale=5",
 };
 
 export default function RootLayout({
@@ -84,11 +52,11 @@ export default function RootLayout({
         )}
         
         {/* Main application with error boundary */}
-        <ErrorBoundary>
+        <ErrorBoundary children={
           <main id="main-content">
             {children}
           </main>
-        </ErrorBoundary>
+        } />
       </body>
     </html>
   );

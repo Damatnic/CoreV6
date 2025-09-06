@@ -76,7 +76,7 @@ interface Insight {
   suggestedActions: string[];
 }
 
-const PredictiveAnalytics: React.FC<PredictiveAnalyticsProps> = ({ data, onInsightAction }) => {
+const PredictiveAnalytics: React.FC<PredictiveAnalyticsProps> = ({ data, onInsightAction }: PredictiveAnalyticsProps) => {
   const [activeView, setActiveView] = useState<'predictions' | 'patterns' | 'insights'>('predictions');
   const [predictions, setPredictions] = useState<Prediction[]>([]);
   const [patterns, setPatterns] = useState<Pattern[]>([]);

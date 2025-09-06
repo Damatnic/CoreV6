@@ -345,7 +345,7 @@ const configs = {
 };
 
 export const securityConfig = configs[getEnvironment()];
-export { SecurityConfig };
+export type { SecurityConfig };
 
 // Helper functions
 export const isProduction = () => getEnvironment() === 'production';

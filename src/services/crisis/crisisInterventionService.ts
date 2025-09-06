@@ -4,7 +4,7 @@
  * Designed for immediate response to mental health crises
  */
 
-import { auditLogger, AuditEventType } from '../security/auditLogger';
+import { auditLogger, AuditEventType, AuditSeverity } from '../security/auditLogger';
 import { hipaaService, PHICategory } from '../compliance/hipaaService';
 
 // Crisis types and severity levels
@@ -556,11 +556,11 @@ class CrisisInterventionService {
         userId,
         'crisis_intervention_initiated',
         {
-          crisisId: intervention.id,
-          crisisType: crisisData.crisisType,
-          severity,
-          initiatedBy: crisisData.initiatedBy,
+          resourceId: intervention.id,
+          severity: this.mapCrisisSeverityToAuditSeverity(severity),
           details: {
+            crisisType: crisisData.crisisType,
+            initiatedBy: crisisData.initiatedBy,
             location: crisisData.location?.type,
             immediateNeeds: crisisData.immediateNeeds
           }
@@ -641,7 +641,7 @@ class CrisisInterventionService {
         userId: intervention.userId,
         crisisId,
         assessorId,
-        newSeverity: intervention.severity,
+        severity: this.mapCrisisSeverityToAuditSeverity(intervention.severity),
         details: {
           riskLevel: intervention.riskAssessment.overallRisk,
           interventionCount: intervention.interventions.length
@@ -752,7 +752,7 @@ class CrisisInterventionService {
         crisisId,
         resolverId,
         disposition: resolution.disposition.outcome,
-        effectiveness: resolution.effectiveness,
+        effectiveness: resolution.effectiveness.toString(),
         details: {
           totalTime,
           interventionCount: intervention.interventions.length,
@@ -1072,6 +1072,21 @@ class CrisisInterventionService {
     const timestamp = Date.now().toString(36);
     const random = Math.random().toString(36).substr(2, 9);
     return `safety_${timestamp}_${random}`;
+  }
+
+  private mapCrisisSeverityToAuditSeverity(crisisSeverity: CrisisSeverity): AuditSeverity {
+    switch (crisisSeverity) {
+      case CrisisSeverity.LOW:
+        return AuditSeverity.LOW;
+      case CrisisSeverity.MODERATE:
+        return AuditSeverity.MEDIUM;
+      case CrisisSeverity.HIGH:
+        return AuditSeverity.HIGH;
+      case CrisisSeverity.CRITICAL:
+        return AuditSeverity.CRITICAL;
+      default:
+        return AuditSeverity.LOW;
+    }
   }
 }
 

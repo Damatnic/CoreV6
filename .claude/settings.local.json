@@ -37,7 +37,9 @@
       "Bash(dir \"C:\\Users\\%USERNAME%\\AppData\\Roaming\\npm\\node_modules\\.bin\")",
       "Bash(dir:*)",
       "Bash(npm cache clean:*)",
-      "Bash(del nul)"
+      "Bash(del nul)",
+      "Bash(timeout 30 npm run typecheck)",
+      "WebSearch"
     ],
     "deny": [],
     "ask": []

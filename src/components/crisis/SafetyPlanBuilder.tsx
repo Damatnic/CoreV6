@@ -18,7 +18,7 @@ import {
   Sparkles,
   Plus,
   X,
-  Edit2,
+  Edit,
   Save,
   Download,
   CheckCircle,
@@ -332,7 +332,7 @@ ${planData.safeEnvironment?.map(e => `- ${e}`).join('\n')}
                   onClick={() => setIsEditing(true)}
                   className="flex items-center gap-2 px-4 py-2 bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 rounded-lg transition-colors"
                 >
-                  <Edit2 size={18} />
+                  <Edit size={18} />
                   Edit
                 </button>
                 <button
@@ -436,8 +436,8 @@ ${planData.safeEnvironment?.map(e => `- ${e}`).join('\n')}
                   <input
                     type="text"
                     value={newWarningSign}
-                    onChange={(e) => setNewWarningSign(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && addWarningSign()}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewWarningSign(e.target.value)}
+                    onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => e.key === 'Enter' && addWarningSign()}
                     placeholder="e.g., Feeling isolated, trouble sleeping..."
                     className="flex-1 px-4 py-2 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                   />
@@ -510,13 +510,13 @@ ${planData.safeEnvironment?.map(e => `- ${e}`).join('\n')}
                       <input
                         type="text"
                         value={newCopingStrategy.title}
-                        onChange={(e) => setNewCopingStrategy(prev => ({ ...prev, title: e.target.value }))}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewCopingStrategy(prev => ({ ...prev, title: e.target.value }))}
                         placeholder="Strategy name"
                         className="px-3 py-2 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       />
                       <select
                         value={newCopingStrategy.category}
-                        onChange={(e) => setNewCopingStrategy(prev => ({ ...prev, category: e.target.value }))}
+                        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setNewCopingStrategy(prev => ({ ...prev, category: e.target.value }))}
                         className="px-3 py-2 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       >
                         {Object.entries(COPING_CATEGORIES).map(([key, cat]) => (
@@ -526,7 +526,7 @@ ${planData.safeEnvironment?.map(e => `- ${e}`).join('\n')}
                     </div>
                     <textarea
                       value={newCopingStrategy.description}
-                      onChange={(e) => setNewCopingStrategy(prev => ({ ...prev, description: e.target.value }))}
+                      onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNewCopingStrategy(prev => ({ ...prev, description: e.target.value }))}
                       placeholder="Description (optional)"
                       className="w-full px-3 py-2 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
                       rows={2}
@@ -581,8 +581,8 @@ ${planData.safeEnvironment?.map(e => `- ${e}`).join('\n')}
                   <input
                     type="text"
                     value={newReasonToLive}
-                    onChange={(e) => setNewReasonToLive(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && addReasonToLive()}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewReasonToLive(e.target.value)}
+                    onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => e.key === 'Enter' && addReasonToLive()}
                     placeholder="e.g., My family, my pet, future goals..."
                     className="flex-1 px-4 py-2 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                   />
@@ -649,21 +649,21 @@ ${planData.safeEnvironment?.map(e => `- ${e}`).join('\n')}
                     <input
                       type="text"
                       value={newContact.name}
-                      onChange={(e) => setNewContact(prev => ({ ...prev, name: e.target.value }))}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewContact(prev => ({ ...prev, name: e.target.value }))}
                       placeholder="Name"
                       className="px-3 py-2 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                     />
                     <input
                       type="tel"
                       value={newContact.phone}
-                      onChange={(e) => setNewContact(prev => ({ ...prev, phone: e.target.value }))}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewContact(prev => ({ ...prev, phone: e.target.value }))}
                       placeholder="Phone"
                       className="px-3 py-2 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                     />
                     <input
                       type="text"
                       value={newContact.relationship}
-                      onChange={(e) => setNewContact(prev => ({ ...prev, relationship: e.target.value }))}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewContact(prev => ({ ...prev, relationship: e.target.value }))}
                       placeholder="Relationship"
                       className="px-3 py-2 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                     />
@@ -737,8 +737,8 @@ ${planData.safeEnvironment?.map(e => `- ${e}`).join('\n')}
                   <input
                     type="text"
                     value={newSafePlace}
-                    onChange={(e) => setNewSafePlace(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && addSafeEnvironment()}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewSafePlace(e.target.value)}
+                    onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => e.key === 'Enter' && addSafeEnvironment()}
                     placeholder="e.g., Remove sharp objects, go to a friend's house..."
                     className="flex-1 px-4 py-2 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                   />

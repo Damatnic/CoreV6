@@ -438,7 +438,7 @@ class OfflineManager {
 
   // Private helper methods
 
-  private async handleOnlineStatus(isOnline: boolean): void {
+  private async handleOnlineStatus(isOnline: boolean): Promise<void> {
     console.log('[OfflineManager] Network status changed:', isOnline ? 'online' : 'offline');
     
     this.syncStatus.isOnline = isOnline;

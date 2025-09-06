@@ -33,7 +33,7 @@ const PeerChat: React.FC<PeerChatProps> = ({
   currentUser,
   onEndChat,
   onReportUser
-}) => {
+}: PeerChatProps) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -50,9 +50,9 @@ const PeerChat: React.FC<PeerChatProps> = ({
   const [peerAudioEnabled, setPeerAudioEnabled] = useState(false);
   const [peerVideoEnabled, setPeerVideoEnabled] = useState(false);
 
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLTextAreaElement>(null);
-  const typingTimeoutRef = useRef<NodeJS.Timeout>();
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const inputRef = useRef<HTMLTextAreaElement | null>(null);
+  const typingTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
   // Common emojis for mental health support
   const supportEmojis = ['❤️', '🤗', '💪', '🌟', '🌈', '✨', '🙏', '💜', '🌻', '🦋'];
@@ -604,11 +604,11 @@ const PeerChat: React.FC<PeerChatProps> = ({
           <textarea
             ref={inputRef}
             value={inputMessage}
-            onChange={(e) => {
+            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
               setInputMessage(e.target.value);
               handleTyping();
             }}
-            onKeyPress={(e) => {
+            onKeyPress={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
                 sendMessage();

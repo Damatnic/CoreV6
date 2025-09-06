@@ -126,7 +126,7 @@ interface HabitEntry {
   completionRate: number;
 }
 
-const WellnessMetrics: React.FC<WellnessMetricsProps> = ({ data, onUpdate }) => {
+const WellnessMetrics: React.FC<WellnessMetricsProps> = ({ data, onUpdate }: WellnessMetricsProps) => {
   const [activeTab, setActiveTab] = useState<'mood' | 'sleep' | 'medication' | 'symptoms' | 'habits'>('mood');
   const [showQuickEntry, setShowQuickEntry] = useState(false);
   const [currentMood, setCurrentMood] = useState<MoodEntry | null>(null);
@@ -318,7 +318,7 @@ const WellnessMetrics: React.FC<WellnessMetricsProps> = ({ data, onUpdate }) => 
                     min="0"
                     max="10"
                     value={value}
-                    onChange={(e) => {
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       setCurrentMood({
                         ...currentMood,
                         dimensions: {
@@ -378,7 +378,7 @@ const WellnessMetrics: React.FC<WellnessMetricsProps> = ({ data, onUpdate }) => 
               className="w-full p-3 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 resize-none"
               rows={3}
               value={currentMood.notes || ''}
-              onChange={(e) => setCurrentMood({ ...currentMood, notes: e.target.value })}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setCurrentMood({ ...currentMood, notes: e.target.value })}
             />
           </div>
 

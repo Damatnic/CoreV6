@@ -3,11 +3,11 @@
 // Global Error Boundary Component
 // Catches and handles React errors gracefully
 
-import React, { Component, ReactNode, ErrorInfo } from 'react';
+import React, { Component, ReactNode, ErrorInfo, ComponentType } from 'react';
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
 
 interface Props {
-  children: ReactNode;
+  children?: ReactNode;
   fallback?: ReactNode;
   onError?: (error: Error, errorInfo: ErrorInfo) => void;
 }
@@ -19,7 +19,7 @@ interface State {
   errorId?: string;
 }
 
-export class ErrorBoundary extends Component<Props, State> {
+class ErrorBoundaryComponent extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = { hasError: false };
@@ -81,7 +81,7 @@ export class ErrorBoundary extends Component<Props, State> {
     window.location.href = '/';
   };
 
-  render() {
+  render(): React.ReactNode {
     if (this.state.hasError) {
       // Custom fallback UI
       if (this.props.fallback) {
@@ -158,7 +158,7 @@ export class ErrorBoundary extends Component<Props, State> {
       );
     }
 
-    return this.props.children;
+    return this.props.children || <></>;
   }
 }
 
@@ -171,12 +171,12 @@ export function withErrorBoundary<P extends object>(
   }
 ) {
   const WrappedComponent = (props: P) => (
-    <ErrorBoundary {...errorHandlerConfig}>
+    <ErrorBoundaryComponent {...(errorHandlerConfig || {})}>
       <Component {...props} />
-    </ErrorBoundary>
+    </ErrorBoundaryComponent>
   );
 
-  WrappedComponent.displayName = `withErrorBoundary(${Component.displayName || Component.name})`;
+  WrappedComponent.displayName = `withErrorBoundary(${(Component as any).displayName || Component.name})`;
   
   return WrappedComponent;
 }
@@ -203,3 +203,5 @@ export function useErrorHandler() {
 
   return { handleError };
 }
+
+export { ErrorBoundaryComponent as ErrorBoundary };

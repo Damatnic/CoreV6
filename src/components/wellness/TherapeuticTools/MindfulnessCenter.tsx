@@ -5,7 +5,7 @@ interface MindfulnessCenterProps {
   toolId?: string;
 }
 
-const MindfulnessCenter: React.FC<MindfulnessCenterProps> = ({ toolId }) => {
+const MindfulnessCenter: React.FC<MindfulnessCenterProps> = ({ toolId }: MindfulnessCenterProps) => {
   return (
     <div className="p-6 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
       <h3 className="text-xl font-bold mb-4 flex items-center gap-2">

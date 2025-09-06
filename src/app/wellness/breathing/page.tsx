@@ -94,12 +94,15 @@ export default function BreathingPage() {
               setIsActive(false);
               setPhase('inhale');
               setCycle(0);
-              setTimeLeft(phases[0].duration);
+              setTimeLeft(phases[0]?.duration ?? 4);
               return;
             }
           }
-          setPhase(phases[currentPhaseIndex].name);
-          currentTime = phases[currentPhaseIndex].duration;
+          const nextPhase = phases[currentPhaseIndex];
+          if (nextPhase) {
+            setPhase(nextPhase.name);
+            currentTime = nextPhase.duration;
+          }
           setTimeLeft(currentTime);
         }
       }, 1000);
@@ -333,7 +336,7 @@ export default function BreathingPage() {
                       <label className="mr-2 text-neutral-600">Cycles:</label>
                       <select
                         value={totalCycles}
-                        onChange={(e) => setTotalCycles(Number(e.target.value))}
+                        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setTotalCycles(Number(e.target.value))}
                         className="border border-neutral-200 rounded px-2 py-1"
                         disabled={isActive}
                       >

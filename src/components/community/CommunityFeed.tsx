@@ -33,7 +33,7 @@ interface CommunityFeedProps {
 const CommunityFeed: React.FC<CommunityFeedProps> = ({
   currentUser,
   onPostCreate
-}) => {
+}: CommunityFeedProps) => {
   const [posts, setPosts] = useState<CommunityPost[]>([]);
   const [milestones, setMilestones] = useState<Milestone[]>([]);
   const [filterType, setFilterType] = useState<'all' | 'stories' | 'milestones' | 'questions'>('all');
@@ -448,7 +448,7 @@ Sending strength to everyone on their journey today. 🌟`,
             <div className="flex items-center gap-3">
               <select
                 value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as any)}
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSortBy(e.target.value as any)}
                 className="px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 
                          bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white
                          focus:outline-none focus:ring-2 focus:ring-purple-500"
@@ -656,12 +656,12 @@ Sending strength to everyone on their journey today. 🌟`,
                             <input
                               type="text"
                               value={replyContent}
-                              onChange={(e) => setReplyContent(e.target.value)}
+                              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setReplyContent(e.target.value)}
                               placeholder="Write a supportive reply..."
                               className="flex-1 px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 
                                        bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white
                                        focus:outline-none focus:ring-2 focus:ring-purple-500"
-                              onKeyPress={(e) => {
+                              onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
                                 if (e.key === 'Enter') {
                                   handleReply(post.id);
                                 }
@@ -731,7 +731,7 @@ Sending strength to everyone on their journey today. 🌟`,
                 initial={{ scale: 0.95, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.95, opacity: 0 }}
-                onClick={(e) => e.stopPropagation()}
+                onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
                 className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto"
               >
                 <div className="p-6">
@@ -782,7 +782,7 @@ Sending strength to everyone on their journey today. 🌟`,
                     </label>
                     <textarea
                       value={newPostContent}
-                      onChange={(e) => setNewPostContent(e.target.value)}
+                      onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNewPostContent(e.target.value)}
                       placeholder={
                         newPostType === 'question' 
                           ? "What would you like to ask the community?"

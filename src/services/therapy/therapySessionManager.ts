@@ -5,7 +5,7 @@
  */
 
 import { auditLogger, AuditEventType } from '../security/auditLogger';
-import { hipaaService, PHICategory } from '../compliance/hipaaService';
+import { hipaaService, PHICategory, HIPAARole, AccessLevel } from '../compliance/hipaaService';
 import { fieldEncryption } from '../security/fieldEncryption';
 
 // Session types and modalities
@@ -352,11 +352,11 @@ class TherapySessionManager {
       // Check HIPAA permissions
       const hasPermission = await hipaaService.requestPHIAccess({
         userId: sessionData.therapistId,
-        userRole: 'therapist',
+        userRole: HIPAARole.THERAPIST,
         patientId: sessionData.patientId,
         phiCategories: [PHICategory.THERAPY_NOTES, PHICategory.MENTAL_HEALTH_RECORDS],
         purpose: 'Create therapy session and clinical documentation',
-        accessLevel: 'standard',
+        accessLevel: AccessLevel.STANDARD,
         justification: 'Clinical care - therapy session management'
       });
 

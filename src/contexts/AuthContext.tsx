@@ -8,7 +8,7 @@ interface User {
   isAnonymous?: boolean;
 }
 
-interface AuthContextType {
+export interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;

@@ -500,7 +500,9 @@ class SessionManagerService {
       const oldestSession = userSessions
         .sort((a, b) => new Date(a.lastActivity).getTime() - new Date(b.lastActivity).getTime())[0];
       
-      await this.terminateSession(oldestSession.sessionId, 'session_limit_exceeded');
+      if (oldestSession) {
+        await this.terminateSession(oldestSession.sessionId, 'session_limit_exceeded');
+      }
     }
   }
 
@@ -620,6 +622,29 @@ class SessionManagerService {
     );
 
     return result;
+  }
+
+  /**
+   * Create anonymous session for non-authenticated users
+   */
+  async createAnonymousSession(options: Partial<CreateSessionOptions> = {}): Promise<{ sessionId: string; token: string }> {
+    const sessionOptions: CreateSessionOptions = {
+      sessionType: SessionType.ANONYMOUS,
+      ipAddress: options.ipAddress || '0.0.0.0',
+      userAgent: options.userAgent || 'Unknown',
+      accessLevel: 'read',
+      maxIdleMinutes: 30,
+      ...options
+    };
+
+    return this.createSession(sessionOptions);
+  }
+
+  /**
+   * Invalidate session (alias for terminateSession)
+   */
+  async invalidateSession(sessionId: string, reason: string = 'invalidated'): Promise<boolean> {
+    return this.terminateSession(sessionId, reason);
   }
 
   /**

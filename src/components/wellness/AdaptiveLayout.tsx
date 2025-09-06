@@ -23,7 +23,7 @@ interface AdaptiveLayoutProps {
   widgets: any[];
   wellnessData: any;
   onLayoutChange: (mode: 'adaptive' | 'grid' | 'focus') => void;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 interface LayoutPattern {
@@ -46,12 +46,12 @@ const AdaptiveLayout: React.FC<AdaptiveLayoutProps> = ({
   wellnessData,
   onLayoutChange,
   children
-}) => {
+}: AdaptiveLayoutProps) => {
   const [currentLayout, setCurrentLayout] = useState<LayoutPattern | null>(null);
   const [isCustomizing, setIsCustomizing] = useState(false);
   const [touchStartPos, setTouchStartPos] = useState<{ x: number; y: number } | null>(null);
   
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const isMobile = useMediaQuery('(max-width: 768px)');
   const isTablet = useMediaQuery('(max-width: 1024px)');
   const isDesktop = useMediaQuery('(min-width: 1025px)');
@@ -195,7 +195,7 @@ const AdaptiveLayout: React.FC<AdaptiveLayoutProps> = ({
 
   // Handle touch gestures for mobile
   const bind = useGesture({
-    onDrag: ({ movement: [mx, my], first, last }) => {
+    onDrag: ({ movement: [mx, my], first, last }: { movement: [number, number], first: boolean, last: boolean }) => {
       if (first) {
         setTouchStartPos({ x: mx, y: my });
       }
@@ -210,7 +210,7 @@ const AdaptiveLayout: React.FC<AdaptiveLayoutProps> = ({
         }
       }
     },
-    onPinch: ({ offset: [scale] }) => {
+    onPinch: ({ offset: [scale] }: { offset: [number] }) => {
       // Pinch to zoom for focus mode
       if (scale < 0.8) {
         onLayoutChange('grid');
@@ -369,7 +369,7 @@ const AdaptiveLayout: React.FC<AdaptiveLayoutProps> = ({
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           className="bg-white dark:bg-gray-800 rounded-2xl p-6 max-w-2xl w-full max-h-[80vh] overflow-y-auto"
-          onClick={e => e.stopPropagation()}
+          onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
         >
           <h3 className="text-2xl font-bold mb-4">Customize Dashboard Layout</h3>
           

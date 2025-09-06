@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
-import { toast } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import ChatRoom from '@/components/community/ChatRoom';
 import SupportGroups from '@/components/community/SupportGroups';
 import MentorshipMatching from '@/components/community/MentorshipMatching';

@@ -23,7 +23,7 @@ interface MentorCardProps {
   onSelect: () => void;
 }
 
-function MentorCard({ mentor, onSelect }: MentorCardProps) {
+function MentorCard({ mentor, onSelect, ...props }: MentorCardProps & { key?: any }) {
   const renderStars = (rating: number) => {
     return [...Array(5)].map((_, i) => (
       <Star 
@@ -278,7 +278,7 @@ export default function MentorshipMatching() {
                       type="text"
                       placeholder="Search by experience or approach..."
                       value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
                       className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                     />
                   </div>
@@ -287,7 +287,7 @@ export default function MentorshipMatching() {
                 {/* Topic Filter */}
                 <select
                   value={selectedTopic}
-                  onChange={(e) => setSelectedTopic(e.target.value as SupportTopic | 'all')}
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedTopic(e.target.value as SupportTopic | 'all')}
                   className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500"
                 >
                   <option value="all">All Topics</option>
@@ -303,7 +303,7 @@ export default function MentorshipMatching() {
                 {/* Language Filter */}
                 <select
                   value={selectedLanguage}
-                  onChange={(e) => setSelectedLanguage(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedLanguage(e.target.value)}
                   className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500"
                 >
                   <option value="all">All Languages</option>
@@ -448,7 +448,7 @@ function RequestMentorshipModal({
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
         className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
-        onClick={(e) => e.stopPropagation()}
+        onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
       >
         <form onSubmit={handleSubmit}>
           {/* Header */}
@@ -503,7 +503,7 @@ function RequestMentorshipModal({
                     key={idx}
                     type="text"
                     value={goal}
-                    onChange={(e) => {
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       const newGoals = [...goals];
                       newGoals[idx] = e.target.value;
                       setGoals(newGoals);
@@ -554,7 +554,7 @@ function RequestMentorshipModal({
               </label>
               <textarea
                 value={message}
-                onChange={(e) => setMessage(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setMessage(e.target.value)}
                 placeholder="Introduce yourself and explain why you'd like this mentor's support..."
                 rows={4}
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 resize-none"
@@ -568,7 +568,7 @@ function RequestMentorshipModal({
               </label>
               <select
                 value={preferences.communicationStyle}
-                onChange={(e) => setPreferences({
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setPreferences({
                   ...preferences,
                   communicationStyle: e.target.value as any
                 })}

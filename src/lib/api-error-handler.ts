@@ -50,7 +50,7 @@ export const CommonErrors = {
 };
 
 // Error response creation
-export function createErrorResponse(error: unknown): NextResponse {
+export function createErrorResponse(error: unknown): Response {
   console.error('API Error:', error);
   
   // Handle ApiErrorResponse instances
@@ -208,7 +208,7 @@ export function createSuccessResponse(
     message?: string;
     cacheControl?: string;
   } = {}
-): NextResponse {
+): Response {
   const { status = 200, message, cacheControl } = options;
   
   const response = {
@@ -234,7 +234,7 @@ export function createApiErrorHandler(
   code: string,
   message: string,
   status: number = 500
-): NextResponse {
+): Response {
   return NextResponse.json(
     {
       error: {
@@ -256,7 +256,7 @@ export function createApiErrorHandler(
 }
 
 // CORS helper
-export function handleCors(request: NextRequest): NextResponse | null {
+export function handleCors(request: NextRequest): Response | null {
   if (request.method === 'OPTIONS') {
     return new NextResponse(null, {
       status: 200,

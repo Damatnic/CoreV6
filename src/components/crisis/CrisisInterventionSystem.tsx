@@ -441,7 +441,7 @@ export default function CrisisInterventionSystem({
                         className="flex items-center gap-3 p-3 bg-neutral-50 dark:bg-neutral-800 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 cursor-pointer transition-colors"
                         role="button"
                         tabIndex={0}
-                        onKeyPress={(e) => {
+                        onKeyPress={(e: React.KeyboardEvent<HTMLDivElement>) => {
                           if (e.key === 'Enter' || e.key === ' ') {
                             logCrisisInteraction(`action_selected_${index}`);
                           }
@@ -509,7 +509,7 @@ export default function CrisisInterventionSystem({
           <textarea
             className="absolute -left-full"
             onKeyDown={trackKeystroke}
-            onChange={(e) => monitorTextInput(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => monitorTextInput(e.target.value)}
             aria-label="Crisis monitoring input"
           />
         </div>

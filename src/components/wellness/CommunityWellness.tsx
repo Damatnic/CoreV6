@@ -18,7 +18,7 @@ import {
   Sparkles,
   Award,
   HandHeart,
-  Share2,
+  Share,
   Send,
   CheckCircle,
   Calendar
@@ -84,7 +84,7 @@ interface CommunityPost {
 const CommunityWellness: React.FC<CommunityWellnessProps> = ({
   onJoinGroup,
   onStartChallenge
-}) => {
+}: CommunityWellnessProps) => {
   const [activeTab, setActiveTab] = useState<'groups' | 'challenges' | 'peers' | 'feed'>('groups');
   const [supportGroups, setSupportGroups] = useState<SupportGroup[]>([]);
   const [challenges, setChallenges] = useState<Challenge[]>([]);
@@ -583,7 +583,7 @@ const CommunityWellness: React.FC<CommunityWellnessProps> = ({
                 </button>
               </div>
               <button className="text-gray-500">
-                <Share2 className="w-4 h-4" />
+                <Share className="w-4 h-4" />
               </button>
             </div>
           </div>
@@ -662,13 +662,13 @@ const CommunityWellness: React.FC<CommunityWellnessProps> = ({
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               className="bg-white dark:bg-gray-800 rounded-xl p-6 max-w-md w-full"
-              onClick={e => e.stopPropagation()}
+              onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
             >
               <h4 className="font-semibold mb-4">Share with the Community</h4>
               
               <textarea
                 value={newPost}
-                onChange={(e) => setNewPost(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNewPost(e.target.value)}
                 placeholder="What's on your mind? Your story might help someone today..."
                 className="w-full p-3 border border-gray-200 dark:border-gray-600 rounded-lg resize-none h-32"
               />
@@ -678,7 +678,7 @@ const CommunityWellness: React.FC<CommunityWellnessProps> = ({
                   <input
                     type="checkbox"
                     checked={isAnonymous}
-                    onChange={(e) => setIsAnonymous(e.target.checked)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setIsAnonymous(e.target.checked)}
                     className="w-4 h-4"
                   />
                   <span className="text-sm">Post anonymously</span>

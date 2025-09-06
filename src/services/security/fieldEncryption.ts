@@ -78,6 +78,31 @@ class FieldEncryptionService {
   }
 
   /**
+   * Encrypt a field value (always encrypt regardless of field name)
+   */
+  async encryptField(value: string, fieldName?: string): Promise<string> {
+    try {
+      const encrypted = await cryptoService.encryptField(value, fieldName || 'generic');
+      return encrypted;
+    } catch (error) {
+      console.error('Failed to encrypt field:', error);
+      throw new Error('Critical: Failed to encrypt field');
+    }
+  }
+
+  /**
+   * Decrypt a field value (direct decryption)
+   */
+  async decryptField(encryptedValue: string, fieldName?: string): Promise<string> {
+    try {
+      return await cryptoService.decryptField(encryptedValue, fieldName || 'generic');
+    } catch (error) {
+      console.error('Failed to decrypt field:', error);
+      throw new Error('Failed to decrypt field');
+    }
+  }
+
+  /**
    * Encrypt a field value if it should be encrypted
    */
   async encryptFieldIfNeeded(fieldName: string, value: any): Promise<any> {
@@ -132,7 +157,7 @@ class FieldEncryptionService {
 
     for (const [key, value] of Object.entries(result)) {
       if (value !== null && value !== undefined) {
-        result[key] = await this.encryptFieldIfNeeded(key, value);
+        (result as any)[key] = await this.encryptFieldIfNeeded(key, value);
       }
     }
 
@@ -147,7 +172,7 @@ class FieldEncryptionService {
 
     for (const [key, value] of Object.entries(result)) {
       if (value !== null && value !== undefined) {
-        result[key] = await this.decryptFieldIfNeeded(key, value);
+        (result as any)[key] = await this.decryptFieldIfNeeded(key, value);
       }
     }
 
@@ -176,7 +201,7 @@ class FieldEncryptionService {
 
     for (const [key, value] of Object.entries(result)) {
       if (this.shouldEncrypt(key)) {
-        result[key] = this.isEncryptedField(value) ? '[ENCRYPTED]' : '[SENSITIVE]';
+        (result as any)[key] = this.isEncryptedField(value) ? '[ENCRYPTED]' : '[SENSITIVE]';
       }
     }
 
@@ -273,7 +298,7 @@ class FieldEncryptionService {
 
 // Export singleton instance
 export const fieldEncryption = FieldEncryptionService.getInstance();
-export { EncryptedField };
+export type { EncryptedField };
 
 // Utility functions for database integration
 export const encryptSensitiveFields = async <T extends Record<string, any>>(obj: T): Promise<T> => {

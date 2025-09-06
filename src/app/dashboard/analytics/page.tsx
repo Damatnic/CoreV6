@@ -217,7 +217,7 @@ export default function AnalyticsPage() {
               <div className="relative">
                 <select
                   value={timeRange}
-                  onChange={(e) => setTimeRange(e.target.value)}
+                  onChange={(e: any) => setTimeRange(e.target.value)}
                   className="appearance-none bg-white border border-neutral-200 rounded-lg px-4 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-primary-500"
                 >
                   <option value="7d">Last 7 days</option>

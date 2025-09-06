@@ -26,7 +26,7 @@ import {
   Plus,
   ArrowRight
 } from 'lucide-react';
-import { useAuth } from '../../../contexts/AuthContext';
+import { useAuth, type AuthContextType } from '../../../contexts/AuthContext';
 import CBTTools from './CBTTools';
 import MindfulnessCenter from './MindfulnessCenter';
 import JournalingSuite from './JournalingSuite';
@@ -55,8 +55,8 @@ interface TherapeuticToolsHubProps {
 const TherapeuticToolsHub: React.FC<TherapeuticToolsHubProps> = ({ 
   onToolSelect, 
   compactMode = false 
-}) => {
-  const { user } = useAuth();
+}: TherapeuticToolsHubProps) => {
+  const { user } = useAuth() as any;
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedTool, setSelectedTool] = useState<Tool | null>(null);
   const [activeView, setActiveView] = useState<'grid' | 'detail'>('grid');

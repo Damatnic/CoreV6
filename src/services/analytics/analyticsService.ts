@@ -25,6 +25,7 @@ export enum AnalyticsDataType {
   DEMOGRAPHIC_INSIGHTS = 'demographic_insights',
   OUTCOME_TRENDS = 'outcome_trends',
   RISK_PATTERNS = 'risk_patterns',
+  POPULATION_HEALTH = 'population_health',
   
   // Quality Metrics
   PROVIDER_PERFORMANCE = 'provider_performance',
@@ -379,11 +380,13 @@ class AnalyticsService {
         'analytics_report_generated',
         {
           userId,
-          reportId,
-          runId,
-          recordCount: metadata.totalRecords,
-          anonymized: metadata.anonymizedRecords,
-          hipaaCompliant: generatedReport.complianceStatus.hipaaCompliant
+          resourceId: reportId,
+          details: {
+            runId,
+            recordCount: metadata.totalRecords,
+            anonymized: metadata.anonymizedRecords > 0,
+            hipaaCompliant: generatedReport.complianceStatus.hipaaCompliant
+          }
         }
       );
 
@@ -566,7 +569,7 @@ class AnalyticsService {
     runId: string,
     format: 'json' | 'csv' | 'pdf' | 'xlsx',
     userId: string
-  ): Promise<{ data: string | Buffer; mimeType: string; filename: string }> {
+  ): Promise<{ data: string | Uint8Array; mimeType: string; filename: string }> {
     // Check permissions
     const hasPermission = await this.checkExportPermission(userId, reportId);
     if (!hasPermission) {
@@ -579,7 +582,7 @@ class AnalyticsService {
       throw new Error('Report not found');
     }
 
-    let exportData: string | Buffer;
+    let exportData: string | Uint8Array;
     let mimeType: string;
     let filename: string;
 
@@ -1081,11 +1084,11 @@ class AnalyticsService {
     return 'CSV export not implemented in demo';
   }
 
-  private async generatePDF(reportData: GeneratedReport): Promise<Buffer> {
+  private async generatePDF(reportData: GeneratedReport): Promise<Uint8Array> {
     return Buffer.from('PDF export not implemented in demo');
   }
 
-  private async generateExcel(reportData: GeneratedReport): Promise<Buffer> {
+  private async generateExcel(reportData: GeneratedReport): Promise<Uint8Array> {
     return Buffer.from('Excel export not implemented in demo');
   }
 

@@ -210,11 +210,11 @@ class ConsentService {
         'consent_requested',
         {
           userId,
-          consentType,
-          purpose,
-          dataCategories,
-          consentId: consentRecord.id,
+          resourceId: consentRecord.id,
           details: {
+            consentType,
+            purpose,
+            dataCategories,
             legalBasis: options.legalBasis,
             thirdParties: options.thirdParties,
             expirationDays: options.expirationDays
@@ -780,7 +780,7 @@ class ConsentService {
   }
 
   private getDefaultPurpose(type: ConsentType): string {
-    const purposes = {
+    const purposes: Record<string, string> = {
       [ConsentType.DATA_PROCESSING]: 'Essential service functionality',
       [ConsentType.TREATMENT]: 'Providing mental health treatment and care',
       [ConsentType.MARKETING]: 'Marketing communications and promotions',
@@ -788,11 +788,11 @@ class ConsentService {
       [ConsentType.RESEARCH]: 'Anonymous research and studies'
     };
     
-    return purposes[type] || 'Data processing';
+    return purposes[type as string] || 'Data processing';
   }
 
   private getDefaultDataCategories(type: ConsentType): DataCategory[] {
-    const categories = {
+    const categories: Record<string, DataCategory[]> = {
       [ConsentType.DATA_PROCESSING]: [DataCategory.PROFILE, DataCategory.USAGE],
       [ConsentType.TREATMENT]: [DataCategory.MEDICAL, DataCategory.THERAPEUTIC],
       [ConsentType.MARKETING]: [DataCategory.PROFILE, DataCategory.COMMUNICATION],
@@ -800,7 +800,7 @@ class ConsentService {
       [ConsentType.RESEARCH]: [DataCategory.THERAPEUTIC, DataCategory.BEHAVIORAL]
     };
     
-    return categories[type] || [DataCategory.PROFILE];
+    return categories[type as string] || [DataCategory.PROFILE];
   }
 
   private generateConsentId(): string {

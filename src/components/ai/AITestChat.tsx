@@ -128,7 +128,7 @@ export default function AITestChat({ className = '' }: AITestChatProps) {
         <div className="flex items-center space-x-2">
           <select
             value={provider}
-            onChange={(e) => setProvider(e.target.value as 'openai' | 'gemini')}
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setProvider(e.target.value as 'openai' | 'gemini')}
             className="text-sm border border-gray-300 rounded px-2 py-1"
           >
             <option value="openai">OpenAI GPT-4</option>
@@ -240,7 +240,7 @@ export default function AITestChat({ className = '' }: AITestChatProps) {
         <div className="flex space-x-2">
           <textarea
             value={inputMessage}
-            onChange={(e) => setInputMessage(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setInputMessage(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="Share what's on your mind..."
             className="flex-1 resize-none border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"

@@ -41,7 +41,7 @@ interface Milestone {
   reward?: string;
 }
 
-const ProgressVisualization: React.FC<ProgressVisualizationProps> = ({ data, onMilestoneReached }) => {
+const ProgressVisualization: React.FC<ProgressVisualizationProps> = ({ data, onMilestoneReached }: ProgressVisualizationProps) => {
   const [selectedPeriod, setSelectedPeriod] = useState<'week' | 'month' | 'year'>('week');
   const [milestones, setMilestones] = useState<Milestone[]>([]);
   const [showCelebration, setShowCelebration] = useState(false);

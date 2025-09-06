@@ -60,7 +60,7 @@ export async function securityMiddleware(request: NextRequest) {
     // 1. Rate limiting check
     const rateLimitResult = await checkRateLimit(clientIP, request.url);
     if (!rateLimitResult.allowed) {
-      return createErrorResponse('Too Many Requests', 429, {
+      return createSecurityErrorResponse('Too Many Requests', 429, {
         'Retry-After': String(Math.ceil(rateLimitResult.resetTime / 1000))
       });
     }
@@ -75,7 +75,7 @@ export async function securityMiddleware(request: NextRequest) {
     if (sessionId) {
       const sessionResult = await validateSession(sessionId, clientIP, userAgent);
       if (!sessionResult.valid) {
-        return createErrorResponse('Invalid Session', 401);
+        return createSecurityErrorResponse('Invalid Session', 401);
       }
       
       // Update session activity
@@ -90,7 +90,7 @@ export async function securityMiddleware(request: NextRequest) {
     }
 
     // 5. HTTPS enforcement (production only)
-    if (securityConfig.api.requireHTTLS && !request.url.startsWith('https://')) {
+    if (securityConfig.api.requireHTTPS && !request.url.startsWith('https://')) {
       const httpsUrl = request.url.replace('http://', 'https://');
       return NextResponse.redirect(httpsUrl, 301);
     }
@@ -99,7 +99,10 @@ export async function securityMiddleware(request: NextRequest) {
     if (request.nextUrl.pathname.startsWith('/api/')) {
       const apiValidation = await validateAPIRequest(request);
       if (!apiValidation.valid) {
-        return createErrorResponse(apiValidation.error, apiValidation.status);
+        return createSecurityErrorResponse(
+          apiValidation.error || 'API validation failed', 
+          apiValidation.status || 400
+        );
       }
     }
 
@@ -139,7 +142,7 @@ export async function securityMiddleware(request: NextRequest) {
       error: error instanceof Error ? error.message : 'Unknown error'
     });
 
-    return createErrorResponse('Internal Security Error', 500);
+    return createSecurityErrorResponse('Internal Security Error', 500);
   }
 }
 
@@ -291,7 +294,7 @@ function detectSuspiciousActivity(
   const sessionData = Array.from(activeSessions.values())
     .filter(s => s.ip === ip);
   
-  if (sessionData.length > 0 && sessionData[0].requests > 100) {
+  if (sessionData.length > 0 && sessionData[0]?.requests && sessionData[0].requests > 100) {
     return { detected: true, reason: 'High request frequency' };
   }
 
@@ -331,7 +334,7 @@ async function validateAPIRequest(request: NextRequest): Promise<{
 /**
  * Add security headers to response
  */
-function addSecurityHeaders(response: NextResponse): void {
+function addSecurityHeaders(response: Response | NextResponse): void {
   Object.entries(SECURITY_HEADERS).forEach(([key, value]) => {
     response.headers.set(key, value);
   });
@@ -346,7 +349,7 @@ function addSecurityHeaders(response: NextResponse): void {
 /**
  * Create error response with security headers
  */
-function createErrorResponse(message: string, status: number, additionalHeaders: Record<string, string> = {}): NextResponse {
+function createSecurityErrorResponse(message: string, status: number, additionalHeaders: Record<string, string> = {}): Response {
   const response = NextResponse.json(
     { error: message, timestamp: new Date().toISOString() },
     { status }
@@ -372,7 +375,7 @@ function getClientIP(request: NextRequest): string {
 
   if (cfConnectingIP) return cfConnectingIP;
   if (realIP) return realIP;
-  if (forwardedFor) return forwardedFor.split(',')[0].trim();
+  if (forwardedFor) return forwardedFor.split(',')[0]?.trim() || forwardedFor;
 
   return request.ip || 'unknown';
 }
@@ -390,7 +393,7 @@ function getSessionId(request: NextRequest): string | null {
   if (cookie) {
     const sessionMatch = cookie.match(/session=([^;]+)/);
     if (sessionMatch) {
-      return sessionMatch[1];
+      return sessionMatch[1] || null;
     }
   }
 

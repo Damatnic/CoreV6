@@ -289,7 +289,11 @@ class PrivacyService {
         customControls.forEach(customControl => {
           const index = controls.findIndex(c => c.category === customControl.category);
           if (index !== -1) {
-            controls[index] = { ...controls[index], ...customControl };
+            const { category, ...customControlWithoutCategory } = customControl;
+            controls[index] = {
+              ...controls[index],
+              ...customControlWithoutCategory
+            } as PrivacyControl;
           } else if (customControl.category) {
             // Add new control for category not in defaults
             const fullControl: PrivacyControl = {

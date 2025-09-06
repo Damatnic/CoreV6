@@ -299,8 +299,11 @@ class AccessibilityService {
     }
 
     const targetElement = focusableElements[newIndex];
-    this.setFocusWithAnnouncement(targetElement);
-    return true;
+    if (targetElement) {
+      this.setFocusWithAnnouncement(targetElement);
+      return true;
+    }
+    return false;
   }
 
   /**
@@ -317,6 +320,10 @@ class AccessibilityService {
     const firstElement = focusableElements[0];
     const lastElement = focusableElements[focusableElements.length - 1];
 
+    if (!firstElement || !lastElement) {
+      return () => {}; // Return empty cleanup function
+    }
+
     // Focus first element
     firstElement.focus();
 
@@ -327,13 +334,13 @@ class AccessibilityService {
         // Shift + Tab
         if (document.activeElement === firstElement) {
           event.preventDefault();
-          lastElement.focus();
+          lastElement?.focus();
         }
       } else {
         // Tab
         if (document.activeElement === lastElement) {
           event.preventDefault();
-          firstElement.focus();
+          firstElement?.focus();
         }
       }
     };
@@ -440,7 +447,9 @@ class AccessibilityService {
       field.setAttribute('aria-describedby', errorId);
 
       const validateField = () => {
-        const error = validationRules[fieldName](field.value);
+        const validationRule = validationRules[fieldName];
+        if (!validationRule) return;
+        const error = validationRule(field.value);
         
         // Remove existing error
         const existingError = document.getElementById(errorId);
@@ -802,15 +811,17 @@ class AccessibilityService {
     }
 
     const nextLandmark = landmarks[nextIndex];
-    nextLandmark.tabIndex = -1; // Make focusable
-    this.setFocusWithAnnouncement(nextLandmark);
+    if (nextLandmark) {
+      nextLandmark.tabIndex = -1; // Make focusable
+      this.setFocusWithAnnouncement(nextLandmark);
+    }
   }
 
   private handleEscapeKey(): void {
     // Close any focus traps
     if (this.keyboardTrapStack.length > 0) {
       const topTrap = this.keyboardTrapStack[this.keyboardTrapStack.length - 1];
-      topTrap.dispatchEvent(new CustomEvent('close'));
+      topTrap?.dispatchEvent(new CustomEvent('close'));
     }
   }
 
@@ -850,7 +861,7 @@ class AccessibilityService {
   // Accessibility audit helper methods
   private async checkImageAltText(violations: AccessibilityViolation[]): Promise<void> {
     document.querySelectorAll('img').forEach(img => {
-      if (!img.alt && !img.getAttribute('aria-label') && !img.getAttribute('role') === 'presentation') {
+      if (!img.alt && !img.getAttribute('aria-label') && img.getAttribute('role') !== 'presentation') {
         violations.push({
           id: 'img-alt-missing',
           rule: 'Images must have alternative text',

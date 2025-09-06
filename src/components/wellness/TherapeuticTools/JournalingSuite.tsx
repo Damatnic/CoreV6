@@ -5,7 +5,7 @@ interface JournalingSuiteProps {
   toolId?: string;
 }
 
-const JournalingSuite: React.FC<JournalingSuiteProps> = ({ toolId }) => {
+const JournalingSuite: React.FC<JournalingSuiteProps> = ({ toolId }: JournalingSuiteProps) => {
   return (
     <div className="p-6 bg-green-50 dark:bg-green-900/20 rounded-xl">
       <h3 className="text-xl font-bold mb-4 flex items-center gap-2">

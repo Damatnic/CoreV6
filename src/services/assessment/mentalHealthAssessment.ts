@@ -4,8 +4,8 @@
  * Includes standardized questionnaires, scoring algorithms, and risk assessment
  */
 
-import { auditLogger, AuditEventType } from '../security/auditLogger';
-import { hipaaService, PHICategory } from '../compliance/hipaaService';
+import { auditLogger, AuditEventType, AuditSeverity } from '../security/auditLogger';
+import { hipaaService, PHICategory, HIPAARole, AccessLevel } from '../compliance/hipaaService';
 
 // Standardized assessment types
 export enum AssessmentType {
@@ -289,11 +289,11 @@ class MentalHealthAssessmentService {
       // Check HIPAA permissions for clinical data access
       const hasPermission = await hipaaService.requestPHIAccess({
         userId: options?.administeringClinician || userId,
-        userRole: options?.administeringClinician ? 'healthcare_provider' : 'patient',
+        userRole: options?.administeringClinician ? HIPAARole.HEALTHCARE_PROVIDER : HIPAARole.PATIENT,
         patientId: userId,
         phiCategories: [PHICategory.MENTAL_HEALTH_RECORDS],
         purpose: `Administer ${assessment.name} assessment`,
-        accessLevel: 'standard',
+        accessLevel: AccessLevel.STANDARD,
         justification: `Clinical assessment for ${options?.clinicalContext || 'mental health evaluation'}`
       });
 
@@ -425,9 +425,9 @@ class MentalHealthAssessmentService {
     }
 
     return {
-      nextQuestion,
+      nextQuestion: nextQuestion || undefined,
       isComplete,
-      flagged
+      flagged: flagged || undefined
     };
   }
 
@@ -818,7 +818,7 @@ class MentalHealthAssessmentService {
     assessmentType: AssessmentType
   ): Promise<FlaggedResponse | null> {
     // Crisis indicators for different assessment types
-    const crisisPatterns = {
+    const crisisPatterns: Record<string, Record<string, (response: any) => boolean>> = {
       [AssessmentType.PHQ9]: {
         'phq9_9': (response: number) => response >= 1, // Suicidal ideation question
       },
@@ -828,11 +828,13 @@ class MentalHealthAssessmentService {
       }
     };
 
-    const patterns = crisisPatterns[assessmentType];
+    const patterns = crisisPatterns[assessmentType as string];
     if (patterns && patterns[question.id]) {
-      const isCrisis = patterns[question.id](response);
-      
-      if (isCrisis) {
+      const patternFunction = patterns[question.id];
+      if (patternFunction) {
+        const isCrisis = patternFunction(response);
+        
+        if (isCrisis) {
         return {
           questionId: question.id,
           questionText: question.text,
@@ -841,6 +843,7 @@ class MentalHealthAssessmentService {
           severity: 'critical',
           suggestedAction: 'Immediate clinical evaluation and safety assessment required'
         };
+        }
       }
     }
 
@@ -855,7 +858,7 @@ class MentalHealthAssessmentService {
         userId: session.userId,
         sessionId: session.id,
         questionId: flag.questionId,
-        severity: 'critical',
+        severity: AuditSeverity.CRITICAL,
         details: {
           questionText: flag.questionText,
           suggestedAction: flag.suggestedAction

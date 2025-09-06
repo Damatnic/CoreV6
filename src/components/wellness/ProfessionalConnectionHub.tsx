@@ -29,6 +29,7 @@ import {
   Target
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import type { AuthContextType } from '../../contexts/AuthContext';
 
 interface ProfessionalConnectionHubProps {
   onScheduleAppointment?: () => void;
@@ -75,8 +76,8 @@ interface TreatmentPlan {
 const ProfessionalConnectionHub: React.FC<ProfessionalConnectionHubProps> = ({
   onScheduleAppointment,
   onContactProvider
-}) => {
-  const { user } = useAuth();
+}: ProfessionalConnectionHubProps) => {
+  const { user } = useAuth() as AuthContextType;
   const [activeTab, setActiveTab] = useState<'team' | 'appointments' | 'treatment' | 'records'>('team');
   const [providers, setProviders] = useState<Provider[]>([]);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
@@ -586,12 +587,12 @@ const ProfessionalConnectionHub: React.FC<ProfessionalConnectionHubProps> = ({
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               className="bg-white dark:bg-gray-800 rounded-xl p-6 max-w-md w-full"
-              onClick={e => e.stopPropagation()}
+              onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
             >
               <h4 className="font-semibold mb-4">Message {selectedProvider.name}</h4>
               <textarea
                 value={message}
-                onChange={(e) => setMessage(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setMessage(e.target.value)}
                 placeholder="Type your message..."
                 className="w-full p-3 border border-gray-200 dark:border-gray-600 rounded-lg resize-none h-32"
               />

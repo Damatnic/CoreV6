@@ -34,7 +34,7 @@ interface SupportGroupsProps {
 const SupportGroups: React.FC<SupportGroupsProps> = ({
   onGroupJoin,
   onGroupLeave
-}) => {
+}: SupportGroupsProps) => {
   const [groups, setGroups] = useState<SupportGroup[]>([]);
   const [joinedGroups, setJoinedGroups] = useState<Set<string>>(new Set());
   const [selectedTopic, setSelectedTopic] = useState<GroupTopic | 'all'>('all');
@@ -317,7 +317,7 @@ const SupportGroups: React.FC<SupportGroupsProps> = ({
                   type="text"
                   placeholder="Search groups..."
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
                   className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 
                            bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white
                            focus:outline-none focus:ring-2 focus:ring-purple-500"
@@ -330,7 +330,7 @@ const SupportGroups: React.FC<SupportGroupsProps> = ({
               <Filter className="text-gray-400 w-5 h-5" />
               <select
                 value={selectedTopic}
-                onChange={(e) => setSelectedTopic(e.target.value as GroupTopic | 'all')}
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedTopic(e.target.value as GroupTopic | 'all')}
                 className="px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-600 
                          bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white
                          focus:outline-none focus:ring-2 focus:ring-purple-500"
@@ -429,7 +429,7 @@ const SupportGroups: React.FC<SupportGroupsProps> = ({
                           Joined
                         </span>
                         <button
-                          onClick={(e) => {
+                          onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                             e.stopPropagation();
                             handleLeaveGroup(group.id);
                           }}
@@ -440,7 +440,7 @@ const SupportGroups: React.FC<SupportGroupsProps> = ({
                       </div>
                     ) : (
                       <button
-                        onClick={(e) => {
+                        onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                           e.stopPropagation();
                           handleJoinGroup(group);
                         }}
@@ -496,7 +496,7 @@ const SupportGroups: React.FC<SupportGroupsProps> = ({
                 initial={{ scale: 0.95, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.95, opacity: 0 }}
-                onClick={(e) => e.stopPropagation()}
+                onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
                 className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto"
               >
                 <div className={`h-3 ${topicInfo[selectedGroup.topic].color}`} />

@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { 
   Shield, 
   Plus, 
-  Trash2, 
+  Trash, 
   Save, 
   AlertTriangle,
   Phone,
@@ -102,7 +102,7 @@ export default function SafetyPlanPage() {
                 <input
                   type="text"
                   value={sign}
-                  onChange={(e) => updateItem('warningSigns', index, e.target.value)}
+                  onChange={(e: any) => updateItem('warningSigns', index, e.target.value)}
                   placeholder="Enter a warning sign..."
                   className="flex-1 px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                 />
@@ -110,7 +110,7 @@ export default function SafetyPlanPage() {
                   onClick={() => removeItem('warningSigns', index)}
                   className="p-2 text-neutral-400 hover:text-red-500 transition-colors"
                 >
-                  <Trash2 className="w-4 h-4" />
+                  <Trash className="w-4 h-4" />
                 </button>
               </div>
             ))}
@@ -143,7 +143,7 @@ export default function SafetyPlanPage() {
                 <input
                   type="text"
                   value={strategy}
-                  onChange={(e) => updateItem('copingStrategies', index, e.target.value)}
+                  onChange={(e: any) => updateItem('copingStrategies', index, e.target.value)}
                   placeholder="Enter a coping strategy..."
                   className="flex-1 px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                 />
@@ -151,7 +151,7 @@ export default function SafetyPlanPage() {
                   onClick={() => removeItem('copingStrategies', index)}
                   className="p-2 text-neutral-400 hover:text-red-500 transition-colors"
                 >
-                  <Trash2 className="w-4 h-4" />
+                  <Trash className="w-4 h-4" />
                 </button>
               </div>
             ))}
@@ -184,14 +184,14 @@ export default function SafetyPlanPage() {
                 <input
                   type="text"
                   value={contact.name}
-                  onChange={(e) => updateItem('supportContacts', index, { ...contact, name: e.target.value })}
+                  onChange={(e: any) => updateItem('supportContacts', index, { ...contact, name: e.target.value })}
                   placeholder="Name"
                   className="px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                 />
                 <input
                   type="tel"
                   value={contact.phone}
-                  onChange={(e) => updateItem('supportContacts', index, { ...contact, phone: e.target.value })}
+                  onChange={(e: any) => updateItem('supportContacts', index, { ...contact, phone: e.target.value })}
                   placeholder="Phone number"
                   className="px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                 />
@@ -199,7 +199,7 @@ export default function SafetyPlanPage() {
                   <input
                     type="text"
                     value={contact.relationship}
-                    onChange={(e) => updateItem('supportContacts', index, { ...contact, relationship: e.target.value })}
+                    onChange={(e: any) => updateItem('supportContacts', index, { ...contact, relationship: e.target.value })}
                     placeholder="Relationship"
                     className="flex-1 px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                   />
@@ -207,7 +207,7 @@ export default function SafetyPlanPage() {
                     onClick={() => removeItem('supportContacts', index)}
                     className="p-2 text-neutral-400 hover:text-red-500 transition-colors"
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <Trash className="w-4 h-4" />
                   </button>
                 </div>
               </div>
@@ -241,14 +241,14 @@ export default function SafetyPlanPage() {
                 <input
                   type="text"
                   value={contact.name}
-                  onChange={(e) => updateItem('professionalContacts', index, { ...contact, name: e.target.value })}
+                  onChange={(e: any) => updateItem('professionalContacts', index, { ...contact, name: e.target.value })}
                   placeholder="Name/Title"
                   className="px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                 />
                 <input
                   type="tel"
                   value={contact.phone}
-                  onChange={(e) => updateItem('professionalContacts', index, { ...contact, phone: e.target.value })}
+                  onChange={(e: any) => updateItem('professionalContacts', index, { ...contact, phone: e.target.value })}
                   placeholder="Phone number"
                   className="px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                 />
@@ -256,7 +256,7 @@ export default function SafetyPlanPage() {
                   <input
                     type="text"
                     value={contact.organization}
-                    onChange={(e) => updateItem('professionalContacts', index, { ...contact, organization: e.target.value })}
+                    onChange={(e: any) => updateItem('professionalContacts', index, { ...contact, organization: e.target.value })}
                     placeholder="Organization"
                     className="flex-1 px-3 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                   />
@@ -264,7 +264,7 @@ export default function SafetyPlanPage() {
                     onClick={() => removeItem('professionalContacts', index)}
                     className="p-2 text-neutral-400 hover:text-red-500 transition-colors"
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <Trash className="w-4 h-4" />
                   </button>
                 </div>
               </div>
