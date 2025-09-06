@@ -34,7 +34,15 @@ import {
   Trophy,
   Bookmark,
   RotateCcw,
-  TrendingDown
+  TrendingDown,
+  Search,
+  Filter,
+  Bell,
+  Lightbulb,
+  RefreshCw,
+  Shuffle,
+  Command,
+  PartyPopper
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -46,6 +54,12 @@ export default function WellnessPage() {
   const [showQuickMoodSuccess, setShowQuickMoodSuccess] = useState(false);
   const [favorites, setFavorites] = useState<string[]>(['mood-tracker', 'breathing']);
   const [currentTime] = useState(new Date());
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showSearch, setShowSearch] = useState(false);
+  const [todayIntention, setTodayIntention] = useState('');
+  const [showIntentionInput, setShowIntentionInput] = useState(false);
+  const [currentTipIndex, setCurrentTipIndex] = useState(0);
+  const [showStreakCelebration, setShowStreakCelebration] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Mock user wellness data - in a real app, this would come from an API
@@ -70,6 +84,39 @@ export default function WellnessPage() {
     { action: 'Mood check-in: Feeling great', time: '5 hours ago', icon: Heart, color: 'text-wellness-growth' },
     { action: 'Set new wellness goal', time: '1 day ago', icon: Target, color: 'text-primary-600' },
     { action: 'Journal entry completed', time: '2 days ago', icon: BookOpen, color: 'text-wellness-mindful' },
+  ];
+
+  const wellnessTips = [
+    {
+      title: "Practice the 5-4-3-2-1 Grounding Technique",
+      description: "Name 5 things you can see, 4 you can touch, 3 you can hear, 2 you can smell, and 1 you can taste.",
+      category: "Mindfulness",
+      icon: Leaf
+    },
+    {
+      title: "Take Regular Movement Breaks",
+      description: "Every 30 minutes, stand up and do some light stretching or walk around for 2-3 minutes.",
+      category: "Physical Wellness",
+      icon: Activity
+    },
+    {
+      title: "Set a Daily Gratitude Intention",
+      description: "Each morning, identify three things you're grateful for and one person you want to appreciate.",
+      category: "Mental Health",
+      icon: Heart
+    },
+    {
+      title: "Practice the 4-7-8 Breathing Method",
+      description: "Inhale for 4 counts, hold for 7 counts, exhale for 8 counts. Repeat 4 times for instant calm.",
+      category: "Stress Relief",
+      icon: Activity
+    },
+    {
+      title: "Create a Digital Sunset Routine",
+      description: "Put devices away 1 hour before bed and do calming activities like reading or gentle stretching.",
+      category: "Sleep Health",
+      icon: Moon
+    }
   ];
 
   // Time-based recommendations
@@ -269,6 +316,65 @@ export default function WellnessPage() {
 
   const moodTrend = calculateMoodTrend();
 
+  const handleIntentionSave = () => {
+    setShowIntentionInput(false);
+    if (todayIntention.trim()) {
+      // In a real app, this would save to backend
+      console.log('Today\'s intention saved:', todayIntention);
+    }
+  };
+
+  const cycleTip = () => {
+    setCurrentTipIndex((prev) => (prev + 1) % wellnessTips.length);
+  };
+
+  const filteredTools = wellnessTools.filter(tool => 
+    searchTerm === '' || 
+    tool.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    tool.description.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // Celebration effect for streaks
+  useEffect(() => {
+    if (wellnessStats.currentStreak >= 7) {
+      const timer = setTimeout(() => {
+        setShowStreakCelebration(true);
+        setTimeout(() => setShowStreakCelebration(false), 3000);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+    return undefined;
+  }, [wellnessStats.currentStreak]);
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyPress = (event: KeyboardEvent) => {
+      if (event.metaKey || event.ctrlKey) {
+        switch (event.key) {
+          case 'k':
+            event.preventDefault();
+            setShowSearch(!showSearch);
+            break;
+          case 'm':
+            event.preventDefault();
+            router.push('/wellness/mood-tracker');
+            break;
+          case 'b':
+            event.preventDefault();
+            router.push('/wellness/breathing');
+            break;
+          case 'i':
+            event.preventDefault();
+            setShowIntentionInput(!showIntentionInput);
+            break;
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyPress);
+    return () => document.removeEventListener('keydown', handleKeyPress);
+  }, [showSearch, showIntentionInput, router]);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-wellness-calm/10 via-white to-wellness-growth/10">
       <div className="container mx-auto px-4 py-8">
@@ -279,21 +385,155 @@ export default function WellnessPage() {
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-12"
           >
-            <div className="flex items-center justify-center mb-6">
-              <div className="bg-wellness-growth rounded-full p-4 mr-4">
-                <Heart className="w-8 h-8 text-white" />
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center">
+                <div className="bg-wellness-growth rounded-full p-4 mr-4">
+                  <Heart className="w-8 h-8 text-white" />
+                </div>
+                <div className="text-left">
+                  <h1 className="text-4xl font-bold text-neutral-800">
+                    Wellness Hub
+                  </h1>
+                  <div className="flex items-center space-x-4 mt-2">
+                    <div className="text-sm text-neutral-500">
+                      Track progress • Build habits • Find balance
+                    </div>
+                  </div>
+                </div>
               </div>
-              <h1 className="text-4xl font-bold text-neutral-800">
-                Wellness Hub
-              </h1>
+
+              {/* Header Controls */}
+              <div className="flex items-center space-x-3">
+                {/* Search Toggle */}
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setShowSearch(!showSearch)}
+                  className="p-3 rounded-full bg-white shadow-soft border border-neutral-200 hover:shadow-md transition-shadow"
+                  title="Search tools (⌘K)"
+                >
+                  <Search className="w-5 h-5 text-neutral-600" />
+                </motion.button>
+
+                {/* Keyboard Shortcuts Info */}
+                <div className="hidden lg:flex items-center space-x-2 text-xs text-neutral-500 bg-neutral-50 px-3 py-2 rounded-full">
+                  <Command className="w-3 h-3" />
+                  <span>K</span>
+                  <span className="text-neutral-300">•</span>
+                  <span>M</span>
+                  <span className="text-neutral-300">•</span>
+                  <span>B</span>
+                  <span className="text-neutral-300">•</span>
+                  <span>I</span>
+                </div>
+              </div>
             </div>
+
+            {/* Search Bar */}
+            <AnimatePresence>
+              {showSearch && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="max-w-md mx-auto mb-6"
+                >
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-neutral-400" />
+                    <input
+                      type="text"
+                      placeholder="Search wellness tools..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="w-full pl-10 pr-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
+                      autoFocus
+                    />
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
             
             <p className="text-xl text-neutral-600 mb-4">
               Tools and resources to support your mental health journey
             </p>
-            <p className="text-sm text-neutral-500">
-              Track progress • Build habits • Find balance
-            </p>
+          </motion.div>
+
+          {/* Streak Celebration */}
+          <AnimatePresence>
+            {showStreakCelebration && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8, y: -50 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.8, y: -50 }}
+                className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white rounded-2xl shadow-2xl p-8 text-center border-4 border-orange-200"
+              >
+                <PartyPopper className="w-12 h-12 text-orange-500 mx-auto mb-4" />
+                <h2 className="text-2xl font-bold text-orange-600 mb-2">🎉 Amazing Streak!</h2>
+                <p className="text-neutral-700 mb-4">You&apos;ve maintained your wellness routine for {wellnessStats.currentStreak} days straight!</p>
+                <div className="flex items-center justify-center space-x-2">
+                  <Flame className="w-6 h-6 text-orange-500" />
+                  <span className="text-3xl font-bold text-orange-500">{wellnessStats.currentStreak}</span>
+                  <span className="text-neutral-600">days</span>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Daily Intention Widget */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.05 }}
+            className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 mb-8 border border-blue-200"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center space-x-3">
+                <Lightbulb className="w-6 h-6 text-blue-600" />
+                <h3 className="font-semibold text-neutral-800">Today&apos;s Intention</h3>
+              </div>
+              <button
+                onClick={() => setShowIntentionInput(!showIntentionInput)}
+                className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+              >
+                {todayIntention ? 'Edit' : 'Set Intention'}
+              </button>
+            </div>
+
+            {showIntentionInput ? (
+              <div className="space-y-3">
+                <input
+                  type="text"
+                  placeholder="What's your intention for today?"
+                  value={todayIntention}
+                  onChange={(e) => setTodayIntention(e.target.value)}
+                  className="w-full p-3 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                  onKeyPress={(e) => e.key === 'Enter' && handleIntentionSave()}
+                  autoFocus
+                />
+                <div className="flex space-x-2">
+                  <button
+                    onClick={handleIntentionSave}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    Save
+                  </button>
+                  <button
+                    onClick={() => setShowIntentionInput(false)}
+                    className="px-4 py-2 bg-neutral-200 text-neutral-700 rounded-lg hover:bg-neutral-300 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-4">
+                {todayIntention ? (
+                  <p className="text-lg text-neutral-700 italic">&ldquo;{todayIntention}&rdquo;</p>
+                ) : (
+                  <p className="text-neutral-500">Set your intention for today to stay focused on what matters most</p>
+                )}
+              </div>
+            )}
           </motion.div>
 
           {/* Personal Wellness Dashboard */}
@@ -776,7 +1016,7 @@ export default function WellnessPage() {
             </h3>
             
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {wellnessTools.map((tool, index) => {
+              {filteredTools.map((tool, index) => {
                 const toolId = tool.link.split('/').pop()!;
                 const isFavorite = favorites.includes(toolId);
                 
