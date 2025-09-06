@@ -5,11 +5,11 @@ import { parse } from 'cookie';
 import jwt from 'jsonwebtoken';
 import { PrismaClient } from '@/generated/prisma';
 import { z } from 'zod';
-const BadWordsFilter = require('bad-words');
 import CryptoJS from 'crypto-js';
 import { Redis } from '@upstash/redis';
 import { Ratelimit } from '@upstash/ratelimit';
 
+const BadWordsFilter = require('bad-words');
 const prisma = new PrismaClient();
 const badWordsFilter = new BadWordsFilter();
 
