@@ -171,7 +171,6 @@ const nextConfig = {
   },
 
   // Production optimizations
-  swcMinify: true,
   poweredByHeader: false,
   
   // Generate optimized builds

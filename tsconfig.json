@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": ["dom", "dom.iterable", "esnext", "es2015", "es2017", "es2018", "es2019", "es2020"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -30,9 +30,10 @@
     "paths": {
       "@/*": ["./src/*"]
     },
+    "typeRoots": ["./src/types"],
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": ["next-env.d.ts", "src/types/global.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": [
     "node_modules", 
     "dist", 
@@ -42,6 +43,7 @@
     "**/*.test.tsx", 
     "**/__tests__/**", 
     "e2e/**", 
+    "tests/**",
     "playwright.config.ts",
     "jest.config.js"
   ]

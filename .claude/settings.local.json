@@ -30,7 +30,14 @@
       "Bash(git check-ignore:*)",
       "Bash(npm run lint:*)",
       "Bash(npm run deploy:verify:*)",
-      "Bash(npm ci:*)"
+      "Bash(npm ci:*)",
+      "Read(//h/Astral Core/**)",
+      "Bash(npx prisma:*)",
+      "Bash(dir prisma)",
+      "Bash(dir \"C:\\Users\\%USERNAME%\\AppData\\Roaming\\npm\\node_modules\\.bin\")",
+      "Bash(dir:*)",
+      "Bash(npm cache clean:*)",
+      "Bash(del nul)"
     ],
     "deny": [],
     "ask": []
