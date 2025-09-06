@@ -107,14 +107,14 @@ export default function DashboardPage() {
             </div>
             
             <div className="flex items-center gap-4 mt-4 md:mt-0">
-              <button className="flex items-center px-4 py-2 bg-white border border-neutral-200 rounded-lg hover:shadow-md transition-all duration-200">
+              <Link href="/community" className="flex items-center px-4 py-2 bg-white border border-neutral-200 rounded-lg hover:shadow-md transition-all duration-200">
                 <Bell className="w-5 h-5 text-neutral-600 mr-2" />
                 <span className="text-neutral-700">Notifications</span>
-              </button>
-              <button className="flex items-center px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-all duration-200">
+              </Link>
+              <Link href="/therapy/therapists" className="flex items-center px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-all duration-200">
                 <Settings className="w-5 h-5 mr-2" />
                 <span>Settings</span>
-              </button>
+              </Link>
             </div>
           </motion.div>
 
