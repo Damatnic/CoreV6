@@ -579,7 +579,7 @@ export default function WellnessCheckInPage() {
                 {Array.from({ length: 10 }).map((_, index) => {
                   const rating = index + 1;
                   const isSelected = responses[currentQuestion.id as keyof CheckInResponse] === rating;
-                  const emoji = moodEmojis.find(e => e.range && rating >= e.range[0] && rating <= e.range[1]);
+                  const emoji = moodEmojis.find(e => e.range && e.range[0] !== undefined && e.range[1] !== undefined && rating >= e.range[0] && rating <= e.range[1]);
                   
                   return (
                     <motion.button
