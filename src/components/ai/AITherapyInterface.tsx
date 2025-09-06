@@ -55,6 +55,7 @@ interface InterventionCard {
 }
 
 import { useTherapist } from '@/hooks/useTherapist';
+import Link from 'next/link';
 export default function AITherapyInterface() {
   const { t, language, changeLanguage } = useTranslation();
   const { 
@@ -305,9 +306,22 @@ export default function AITherapyInterface() {
           }`}>
             {connectionStatus}
           </span>
+          {therapist && (
+            <span className="hidden md:inline-flex items-center gap-2 ml-2 text-sm text-neutral-600">
+              <span className="text-base" aria-hidden>{therapist.avatar}</span>
+              <span className="max-w-[160px] truncate">{therapist.name}</span>
+            </span>
+          )}
         </div>
         
         <div className="flex items-center space-x-2">
+          <Link
+            href="/therapy/therapists"
+            className="hidden sm:inline-flex items-center px-2 py-1 border rounded-lg text-sm hover:bg-gray-100"
+            aria-label="Change therapist"
+          >
+            Change therapist
+          </Link>
           {/* Language Selector */}
           <select 
             value={language}
