@@ -34,7 +34,7 @@ export default function TherapyPage() {
               className="max-w-4xl mx-auto"
             >
               {/* Header */}
-              <div className="text-center mb-12">
+              <div className="text-center mb-8">
                 <motion.div
                   initial={{ scale: 0.9 }}
                   animate={{ scale: 1 }}
@@ -55,6 +55,38 @@ export default function TherapyPage() {
                   Available 24/7 • Completely Anonymous • Crisis Support Enabled
                 </p>
               </div>
+
+              {/* AI Disclosure Notice */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl text-white p-6 mb-12"
+              >
+                <div className="flex items-start space-x-4">
+                  <div className="bg-white bg-opacity-20 rounded-full p-2 flex-shrink-0">
+                    <Brain className="w-6 h-6" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-lg font-bold mb-2">🤖 AI-Powered Therapy Service</h3>
+                    <p className="text-sm opacity-90 mb-3">
+                      <strong>Important:</strong> You will be speaking with an AI assistant, not a human therapist. 
+                      While our AI provides evidence-based support and therapeutic techniques, it cannot replace 
+                      professional mental health treatment when needed.
+                    </p>
+                    <div className="flex flex-wrap gap-3">
+                      <Link 
+                        href="/therapy/ai-terms"
+                        className="text-sm bg-white bg-opacity-20 hover:bg-opacity-30 px-3 py-1 rounded-full transition-colors"
+                      >
+                        View AI Terms & Goals
+                      </Link>
+                      <span className="text-xs opacity-75">|</span>
+                      <span className="text-xs opacity-75">Crisis situations: Call 988 or emergency services</span>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
 
               {/* Features Grid */}
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">

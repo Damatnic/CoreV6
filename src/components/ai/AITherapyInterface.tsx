@@ -460,6 +460,36 @@ export default function AITherapyInterface() {
         </motion.div>
       )}
 
+      {/* AI Disclosure Notice */}
+      {messages.length === 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-3"
+        >
+          <div className="flex items-center space-x-3">
+            <div className="bg-white bg-opacity-20 rounded-full p-1 flex-shrink-0">
+              <Brain className="w-4 h-4" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-medium">
+                🤖 <strong>AI Assistant Notice:</strong> You&apos;re chatting with an AI, not a human therapist. 
+                This AI provides evidence-based support but cannot replace professional mental health treatment.
+              </p>
+              <div className="flex items-center gap-3 mt-1">
+                <Link 
+                  href="/therapy/ai-terms"
+                  className="text-xs bg-white bg-opacity-20 hover:bg-opacity-30 px-2 py-1 rounded-full transition-colors"
+                >
+                  View AI Terms
+                </Link>
+                <span className="text-xs opacity-75">Crisis? Call 988 or emergency services</span>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
       {/* Main Content Area */}
       <div className="flex-1 flex overflow-hidden">
         {/* Chat Area */}
