@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import CrisisButton from "@/components/crisis/CrisisButton";
 import PerformanceMonitor from "@/components/ui/PerformanceMonitor";
+import NotificationCenter from "@/components/notifications/NotificationCenter";
 import DemoModeToggle from "@/components/ui/DemoModeToggle";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
 
@@ -50,13 +51,16 @@ export default function RootLayout({
         {process.env.NODE_ENV !== 'production' && (
           <PerformanceMonitor compact={true} position="bottom-left" />
         )}
-        
+
         {/* Main application with error boundary */}
         <ErrorBoundary>
           <main id="main-content">
             {children}
           </main>
         </ErrorBoundary>
+
+        {/* Global notifications */}
+        <NotificationCenter />
       </body>
     </html>
   );
