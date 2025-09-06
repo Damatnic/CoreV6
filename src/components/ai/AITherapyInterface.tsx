@@ -63,11 +63,15 @@ export default function AITherapyInterface() {
     connectionStatus
   } = useAITherapy();
   const { checkForCrisis, crisisLevel } = useCrisisDetection();
-  const { 
-    fontSize, 
-    highContrast, 
+  const {
+    fontSize,
+    highContrast,
     voiceEnabled,
-    toggleVoice 
+    toggleVoice,
+    increaseFontSize,
+    decreaseFontSize,
+    toggleHighContrast,
+    toggleScreenReader,
   } = useAccessibility();
 
   const [messages, setMessages] = useState<Message[]>([]);
@@ -336,6 +340,71 @@ export default function AITherapyInterface() {
           </button>
         </div>
       </header>
+      {/* Settings Drawer */}
+      <AnimatePresence>
+        {showSettings && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50"
+            role="dialog"
+            aria-modal="true"
+          >
+            <div className="absolute inset-0 bg-black/40" onClick={() => setShowSettings(false)} />
+            <div className="absolute right-0 top-0 h-full w-full max-w-md bg-white shadow-xl border-l p-6 overflow-y-auto">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold">Session Settings</h2>
+                <button onClick={() => setShowSettings(false)} className="p-2 rounded hover:bg-gray-100" aria-label="Close settings">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              <div className="space-y-6 text-sm">
+                <section>
+                  <h3 className="font-medium mb-2">Accessibility</h3>
+                  <div className="flex items-center justify-between py-2">
+                    <span>High contrast</span>
+                    <input type="checkbox" onChange={toggleHighContrast} checked={highContrast} />
+                  </div>
+                  <div className="flex items-center justify-between py-2">
+                    <span>Screen reader mode</span>
+                    <input type="checkbox" onChange={toggleScreenReader} checked={false} />
+                  </div>
+                  <div className="flex items-center justify-between py-2">
+                    <span>Font size</span>
+                    <div className="flex items-center gap-2">
+                      <button onClick={decreaseFontSize} className="px-2 py-1 border rounded">A-</button>
+                      <span className="w-10 text-center">{fontSize}px</span>
+                      <button onClick={increaseFontSize} className="px-2 py-1 border rounded">A+</button>
+                    </div>
+                  </div>
+                </section>
+                <section>
+                  <h3 className="font-medium mb-2">Audio</h3>
+                  <div className="flex items-center justify-between py-2">
+                    <span>Sound effects</span>
+                    <input type="checkbox" checked={soundEnabled} onChange={(e) => setSoundEnabled(e.target.checked)} />
+                  </div>
+                  <div className="flex items-center justify-between py-2">
+                    <span>Voice responses</span>
+                    <input type="checkbox" checked={voiceEnabled} onChange={toggleVoice} />
+                  </div>
+                </section>
+                <section>
+                  <h3 className="font-medium mb-2">Language</h3>
+                  <select value={language} onChange={(e) => changeLanguage(e.target.value as any)} className="border rounded px-2 py-1">
+                    <option value="en">English</option>
+                    <option value="es">Español</option>
+                    <option value="fr">Français</option>
+                    <option value="de">Deutsch</option>
+                    <option value="pt">Português</option>
+                  </select>
+                </section>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Crisis Alert Bar */}
       {crisisLevel && crisisLevel !== 'none' && (

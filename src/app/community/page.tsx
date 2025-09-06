@@ -23,6 +23,7 @@ import ChatRoom from '@/components/community/ChatRoom';
 import SupportGroups from '@/components/community/SupportGroups';
 import MentorshipMatching from '@/components/community/MentorshipMatching';
 import { useSocket } from '@/lib/socket-client';
+import CommunitySettings from '@/components/community/CommunitySettings';
 import { AnonymousIdentity } from '@/types/community';
 
 interface CommunityStats {
@@ -45,6 +46,8 @@ export default function CommunityPage() {
   const [userIdentity, setUserIdentity] = useState<AnonymousIdentity | null>(null);
   const [activeRooms, setActiveRooms] = useState<Record<string, unknown>[]>([]);
   const [selectedRoom, setSelectedRoom] = useState<string | null>(null);
+  const [showSettings, setShowSettings] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
 
   // Connect to socket on mount
   useEffect(() => {
@@ -124,8 +127,8 @@ export default function CommunityPage() {
       description: 'Join community challenges for better mental health',
       icon: Trophy,
       color: 'from-yellow-400 to-yellow-600',
-      stats: 'Coming soon',
-      onClick: () => toast('Wellness challenges coming soon!', { icon: '🎯' }),
+      stats: 'Join a challenge',
+      onClick: () => setActiveView('challenges'),
     },
   ];
 
@@ -199,11 +202,11 @@ export default function CommunityPage() {
                 </div>
               )}
               
-              <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+              <button onClick={() => setShowNotifications(true)} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors" aria-label="Notifications">
                 <Bell className="w-5 h-5 text-gray-600 dark:text-gray-400" />
               </button>
               
-              <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+              <button onClick={() => setShowSettings(true)} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors" aria-label="Settings">
                 <Settings className="w-5 h-5 text-gray-600 dark:text-gray-400" />
               </button>
             </div>
