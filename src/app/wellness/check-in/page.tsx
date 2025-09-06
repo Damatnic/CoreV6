@@ -601,7 +601,7 @@ export default function WellnessCheckInPage() {
                         />
                       )}
                       {currentQuestion.id === 'mood' && emoji && rating >= 7 && isSelected ? (
-                        <span className="text-2xl">{emoji.emoji}</span>
+                        <span className="text-2xl">{emoji?.emoji}</span>
                       ) : (
                         <span className="relative z-10">{rating}</span>
                       )}

@@ -178,7 +178,7 @@ export default function MindfulnessPage() {
     }
   ];
 
-  const currentSession = sessions.find(s => s.id === selectedSession) || sessions[0];
+  const currentSession = sessions.find(s => s.id === selectedSession) ?? sessions[0];
   const totalDuration = duration * 60; // Convert to seconds
   const progress = (currentTime / totalDuration) * 100;
 
@@ -555,16 +555,20 @@ export default function MindfulnessPage() {
             <div className="bg-white rounded-3xl shadow-2xl p-8">
               
               {/* Session Header */}
-              <div className={`${currentSession.bgColor} rounded-2xl p-6 text-center mb-8`}>
-                <currentSession.icon className={`w-16 h-16 ${currentSession.color} mx-auto mb-4`} />
-                <h2 className="text-2xl font-bold text-neutral-800 mb-2">
-                  {currentSession.name}
-                </h2>
-                <p className="text-neutral-600 mb-2">{currentSession.description}</p>
-                <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/50 rounded-full">
-                  <Star className="w-4 h-4 text-yellow-500" />
-                  <span className="text-sm font-medium">{currentSession.level}</span>
-                </div>
+              <div className={`${currentSession?.bgColor ?? 'bg-neutral-50'} rounded-2xl p-6 text-center mb-8`}>
+                {currentSession && (
+                  <>
+                    <currentSession.icon className={`w-16 h-16 ${currentSession.color} mx-auto mb-4`} />
+                    <h2 className="text-2xl font-bold text-neutral-800 mb-2">
+                      {currentSession.name}
+                    </h2>
+                    <p className="text-neutral-600 mb-2">{currentSession.description}</p>
+                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/50 rounded-full">
+                      <Star className="w-4 h-4 text-yellow-500" />
+                      <span className="text-sm font-medium">{currentSession.level}</span>
+                    </div>
+                  </>
+                )}
               </div>
 
               {/* Timer Display */}
@@ -595,7 +599,7 @@ export default function MindfulnessPage() {
                       fill="transparent"
                       strokeDasharray={`${2 * Math.PI * 45}`}
                       strokeDashoffset={`${2 * Math.PI * 45 * (1 - progress / 100)}`}
-                      className={currentSession.color}
+                      className={currentSession?.color ?? 'text-neutral-500'}
                       initial={{ strokeDashoffset: 2 * Math.PI * 45 }}
                       animate={{ strokeDashoffset: 2 * Math.PI * 45 * (1 - progress / 100) }}
                       transition={{ duration: 0.5 }}
@@ -617,7 +621,7 @@ export default function MindfulnessPage() {
                   onClick={handlePlayPause}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className={`p-6 rounded-full text-white transition-colors ${currentSession.color.replace('text-', 'bg-')}`}
+                  className={`p-6 rounded-full text-white transition-colors ${currentSession?.color?.replace('text-', 'bg-') ?? 'bg-neutral-500'}`}
                 >
                   {isComplete ? (
                     <CheckCircle className="w-8 h-8" />
@@ -641,7 +645,7 @@ export default function MindfulnessPage() {
                 <h3 className="text-lg font-semibold text-neutral-800 text-center mb-4">
                   Instructions
                 </h3>
-                {currentSession.instructions.map((instruction, index) => (
+                {currentSession?.instructions?.map((instruction, index) => (
                   <motion.div
                     key={index}
                     initial={{ opacity: 0, x: -20 }}
@@ -649,7 +653,7 @@ export default function MindfulnessPage() {
                     transition={{ delay: index * 0.1 }}
                     className="flex items-start space-x-3 p-3 rounded-lg bg-neutral-50"
                   >
-                    <div className={`w-6 h-6 rounded-full flex items-center justify-center text-white text-sm font-bold ${currentSession.color.replace('text-', 'bg-')}`}>
+                    <div className={`w-6 h-6 rounded-full flex items-center justify-center text-white text-sm font-bold ${currentSession?.color?.replace('text-', 'bg-') ?? 'bg-neutral-500'}`}>
                       {index + 1}
                     </div>
                     <p className="text-neutral-700 flex-1">{instruction}</p>

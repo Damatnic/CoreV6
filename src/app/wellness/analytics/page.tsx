@@ -490,7 +490,7 @@ export default function WellnessAnalyticsPage() {
                   {compareMode && (
                     <motion.div
                       initial={{ height: 0 }}
-                      animate={{ height: `${(currentTrend.previous[index] / 10) * 100}%` }}
+                      animate={{ height: `${((currentTrend.previous?.[index] ?? 0) / 10) * 100}%` }}
                       transition={{ delay: index * 0.02 }}
                       className="w-full bg-neutral-300 rounded-t-sm opacity-50 mb-1"
                     />
