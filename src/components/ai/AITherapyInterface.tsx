@@ -54,6 +54,7 @@ interface InterventionCard {
   active: boolean;
 }
 
+import { useTherapist } from '@/hooks/useTherapist';
 export default function AITherapyInterface() {
   const { t, language, changeLanguage } = useTranslation();
   const { 
@@ -87,6 +88,13 @@ export default function AITherapyInterface() {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
   const wsService = useRef<AIWebSocketService | null>(null);
+  const { therapist } = useTherapist();
+  const systemPersonaRef = useRef<string | null>(null);
+
+  // Initialize persona
+  useEffect(() => {
+    systemPersonaRef.current = therapist?.systemPrompt || null;
+  }, [therapist]);
 
   // Initialize WebSocket connection
   useEffect(() => {
@@ -217,12 +225,23 @@ export default function AITherapyInterface() {
     setIsTyping(true);
     
     // Send via WebSocket
-    if (wsService.current?.isConnected()) {
-      await wsService.current.sendChatMessage(userMessage.content);
-    } else {
-      // Fallback to API
-      await sendMessage(userMessage.content);
-    }
+    // Always send to API for persona support
+    const history = messages.map(m => ({ role: m.role, content: m.content }));
+    const res = await sendMessage(userMessage.content, {
+      conversationHistory: history,
+      provider: 'openai',
+      systemPrompt: systemPersonaRef.current || undefined,
+    });
+    const text = res?.response || '…';
+    const assistant: Message = {
+      id: `asst_${Date.now()}`,
+      role: 'assistant',
+      content: text,
+      timestamp: new Date(),
+      metadata: { confidence: 0.85 }
+    };
+    setMessages(prev => [...prev, assistant]);
+    setIsTyping(false);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {

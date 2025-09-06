@@ -6,8 +6,14 @@ interface AIMetrics {
   sentiment: number;
 }
 
+interface SendOptions {
+  conversationHistory?: { role: 'user'|'assistant'|'system'; content: string }[];
+  provider?: 'openai'|'gemini';
+  systemPrompt?: string;
+}
+
 interface AITherapyHook {
-  sendMessage: (content: string) => Promise<void>;
+  sendMessage: (content: string, options?: SendOptions) => Promise<{ response: string } | null>;
   isProcessing: boolean;
   sessionId: string;
   connectionStatus: 'connected' | 'connecting' | 'disconnected';
@@ -24,19 +30,21 @@ export function useAITherapy(): AITherapyHook {
     sentiment: 0
   });
 
-  const sendMessage = useCallback(async (content: string) => {
+  const sendMessage = useCallback(async (content: string, options?: SendOptions) => {
     setIsProcessing(true);
     
     try {
-      // Simulate AI processing
-      const response = await fetch('/api/ai/therapy', {
+      const response = await fetch('/api/ai/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           message: content,
-          sessionId
+          sessionId,
+          conversationHistory: options?.conversationHistory || [],
+          provider: options?.provider || 'openai',
+          systemPrompt: options?.systemPrompt
         })
       });
 
@@ -44,10 +52,12 @@ export function useAITherapy(): AITherapyHook {
         throw new Error('Failed to send message');
       }
 
-      // Process response if needed
-      await response.json();
+      const data = await response.json();
+      const text = data?.data?.response as string | undefined;
+      return text ? { response: text } : null;
     } catch (error) {
       console.error('Error sending message:', error);
+      return null;
     } finally {
       setIsProcessing(false);
     }

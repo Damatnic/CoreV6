@@ -12,12 +12,13 @@ interface ChatRequest {
   conversationHistory?: AIMessage[];
   provider?: 'openai' | 'gemini';
   sessionId?: string;
+  systemPrompt?: string;
 }
 
 export async function POST(request: NextRequest) {
   try {
     const body: ChatRequest = await request.json();
-    const { message, conversationHistory = [], provider = 'openai', sessionId } = body;
+    const { message, conversationHistory = [], provider = 'openai', sessionId, systemPrompt } = body;
     
     // Initialize database service
     const dbService = new NeonDatabaseService();
@@ -78,12 +79,20 @@ export async function POST(request: NextRequest) {
       console.error('Failed to log user message to database:', dbError);
     }
 
-    // Generate AI response
-    const aiResponse = await aiService.getTherapyResponse(
-      message,
-      conversationHistory,
-      provider
-    );
+    // Generate AI response (allow persona/system prompt override)
+    const aiResponse = systemPrompt
+      ? await aiService.generateResponse(
+          [
+            ...conversationHistory,
+            { role: 'user', content: message, timestamp: new Date() },
+          ],
+          { provider, systemPrompt, temperature: 0.7, maxTokens: 800 }
+        )
+      : await aiService.getTherapyResponse(
+          message,
+          conversationHistory,
+          provider
+        );
 
     // Log for monitoring (without sensitive content)
     console.log(`AI Response: model=${aiResponse.model}, risk=${aiResponse.riskLevel}, confidence=${aiResponse.confidence}`);

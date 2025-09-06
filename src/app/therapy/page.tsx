@@ -15,10 +15,12 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import AITherapyInterface from '@/components/ai/AITherapyInterface';
+import { useTherapist } from '@/hooks/useTherapist';
 
 export default function TherapyPage() {
   const [isStarted, setIsStarted] = useState(false);
   const [showOnboarding] = useState(true);
+  const { therapist } = useTherapist();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-wellness-calm/10">
@@ -47,7 +49,7 @@ export default function TherapyPage() {
                 </motion.div>
                 
                 <p className="text-xl text-neutral-600 mb-4">
-                  Get immediate, confidential mental health support powered by advanced AI
+                  Get immediate, confidential support from a specialized AI therapist
                 </p>
                 <p className="text-sm text-neutral-500">
                   Available 24/7 • Completely Anonymous • Crisis Support Enabled
@@ -123,6 +125,20 @@ export default function TherapyPage() {
                   Your conversation will be completely anonymous and confidential. 
                   You can stop at any time.
                 </p>
+                {therapist ? (
+                  <div className="mb-6 inline-flex items-center gap-3 px-4 py-2 rounded-xl bg-neutral-50 border">
+                    <span className="text-2xl" aria-hidden>{therapist.avatar}</span>
+                    <div className="text-left">
+                      <div className="font-semibold">{therapist.name}</div>
+                      <div className="text-xs text-neutral-600">Specialties: {therapist.specialty.map(s=>s.toUpperCase()).join(' · ')}</div>
+                    </div>
+                    <a className="ml-4 text-sm text-primary-600 hover:text-primary-700" href="/therapy/therapists">Change</a>
+                  </div>
+                ) : (
+                  <div className="mb-6">
+                    <a className="text-sm text-primary-600 hover:text-primary-700" href="/therapy/therapists">Choose a therapist (specialty & tone)</a>
+                  </div>
+                )}
                 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                   <button
