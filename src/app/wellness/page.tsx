@@ -1,7 +1,7 @@
 "use client";
 
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Heart, 
   Brain, 
@@ -13,11 +13,49 @@ import {
   BarChart3,
   Calendar,
   ArrowRight,
-  CheckCircle
+  CheckCircle,
+  ChevronDown,
+  ChevronUp,
+  Play,
+  Plus,
+  TrendingUp
 } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function WellnessPage() {
+  const router = useRouter();
+  const [expandedAction, setExpandedAction] = useState<number | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Close expanded menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setExpandedAction(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  // Close expanded menu when pressing Escape
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setExpandedAction(null);
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, []);
+
   const wellnessTools = [
     {
       icon: Brain,
@@ -68,21 +106,50 @@ export default function WellnessPage() {
       title: "Take a Quick Mood Check",
       description: "2-minute assessment",
       icon: Heart,
-      action: "Start Now"
+      action: "Start Now",
+      options: [
+        { name: "Quick Check-in", time: "2 min", action: () => router.push('/wellness/mood-tracker?mode=quick') },
+        { name: "Detailed Assessment", time: "5 min", action: () => router.push('/wellness/mood-tracker?mode=detailed') },
+        { name: "Weekly Review", time: "10 min", action: () => router.push('/wellness/mood-tracker?mode=weekly') }
+      ]
     },
     {
       title: "5-Minute Breathing Exercise",
       description: "Reduce stress instantly",
       icon: Activity,
-      action: "Begin"
+      action: "Begin",
+      options: [
+        { name: "Box Breathing", time: "4 min", action: () => router.push('/wellness/breathing?type=box') },
+        { name: "4-7-8 Technique", time: "3 min", action: () => router.push('/wellness/breathing?type=478') },
+        { name: "Deep Belly Breathing", time: "5 min", action: () => router.push('/wellness/breathing?type=belly') },
+        { name: "Custom Session", time: "Variable", action: () => router.push('/wellness/breathing?type=custom') }
+      ]
     },
     {
       title: "Set a Wellness Goal",
       description: "Plan your wellness journey",
       icon: Target,
-      action: "Create Goal"
+      action: "Create Goal",
+      options: [
+        { name: "Mood Goal", time: "3 min", action: () => router.push('/wellness/goals?type=mood') },
+        { name: "Habit Goal", time: "5 min", action: () => router.push('/wellness/goals?type=habit') },
+        { name: "Mindfulness Goal", time: "4 min", action: () => router.push('/wellness/goals?type=mindfulness') },
+        { name: "Exercise Goal", time: "3 min", action: () => router.push('/wellness/goals?type=exercise') }
+      ]
     }
   ];
+
+  const handleActionClick = (actionIndex: number) => {
+    if (expandedAction === actionIndex) {
+      setExpandedAction(null);
+    } else {
+      setExpandedAction(actionIndex);
+    }
+  };
+
+  const handleToolClick = (toolLink: string) => {
+    router.push(toolLink);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-wellness-calm/10 via-white to-wellness-growth/10">
@@ -122,25 +189,82 @@ export default function WellnessPage() {
               Quick Wellness Actions
             </h2>
             
-            <div className="grid md:grid-cols-3 gap-6">
+            <div className="grid md:grid-cols-3 gap-6" ref={containerRef}>
               {quickActions.map((action, index) => (
                 <motion.div
                   key={action.title}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 + index * 0.1 }}
-                  className="text-center p-6 rounded-xl border-2 border-neutral-100 hover:border-wellness-calm hover:shadow-md transition-all duration-300 cursor-pointer group"
+                  className="relative"
                 >
-                  <action.icon className="w-12 h-12 text-wellness-calm mx-auto mb-4 group-hover:text-wellness-mindful transition-colors" />
-                  <h3 className="font-bold text-lg text-neutral-800 mb-2">
-                    {action.title}
-                  </h3>
-                  <p className="text-neutral-600 text-sm mb-4">
-                    {action.description}
-                  </p>
-                  <button className="text-wellness-calm font-semibold hover:text-wellness-mindful transition-colors">
-                    {action.action} →
-                  </button>
+                  <div 
+                    className={`text-center p-6 rounded-xl border-2 transition-all duration-300 cursor-pointer group ${
+                      expandedAction === index 
+                        ? 'border-wellness-calm shadow-lg bg-wellness-calm/5' 
+                        : 'border-neutral-100 hover:border-wellness-calm hover:shadow-md'
+                    }`}
+                    onClick={() => handleActionClick(index)}
+                  >
+                    <action.icon className={`w-12 h-12 mx-auto mb-4 transition-colors ${
+                      expandedAction === index 
+                        ? 'text-wellness-mindful' 
+                        : 'text-wellness-calm group-hover:text-wellness-mindful'
+                    }`} />
+                    <h3 className="font-bold text-lg text-neutral-800 mb-2">
+                      {action.title}
+                    </h3>
+                    <p className="text-neutral-600 text-sm mb-4">
+                      {action.description}
+                    </p>
+                    <div className="flex items-center justify-center text-wellness-calm font-semibold hover:text-wellness-mindful transition-colors">
+                      <span>{action.action}</span>
+                      {expandedAction === index ? (
+                        <ChevronUp className="w-4 h-4 ml-2" />
+                      ) : (
+                        <ChevronDown className="w-4 h-4 ml-2" />
+                      )}
+                    </div>
+                  </div>
+                  
+                  <AnimatePresence>
+                    {expandedAction === index && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                        transition={{ duration: 0.2 }}
+                        className="absolute top-full left-0 right-0 z-10 mt-2 bg-white rounded-xl shadow-lg border border-neutral-200 p-4"
+                      >
+                        <div className="space-y-3">
+                          {action.options?.map((option, optionIndex) => (
+                            <motion.div
+                              key={option.name}
+                              initial={{ opacity: 0, x: -10 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: optionIndex * 0.1 }}
+                              className="flex items-center justify-between p-3 rounded-lg hover:bg-wellness-calm/10 cursor-pointer transition-colors group/option"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                option.action();
+                                setExpandedAction(null);
+                              }}
+                            >
+                              <div className="flex-1">
+                                <div className="font-medium text-neutral-800 group-hover/option:text-wellness-mindful transition-colors">
+                                  {option.name}
+                                </div>
+                                <div className="text-xs text-neutral-500 mt-1">
+                                  {option.time}
+                                </div>
+                              </div>
+                              <Play className="w-4 h-4 text-wellness-calm opacity-0 group-hover/option:opacity-100 transition-opacity" />
+                            </motion.div>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </motion.div>
               ))}
             </div>
@@ -164,17 +288,18 @@ export default function WellnessPage() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.5 + index * 0.1 }}
-                  className="bg-white rounded-2xl shadow-soft border border-neutral-200 overflow-hidden hover:shadow-glow transition-all duration-300 group cursor-pointer"
+                  className="relative bg-white rounded-2xl shadow-soft border border-neutral-200 overflow-hidden hover:shadow-glow transition-all duration-300 group cursor-pointer"
+                  onClick={() => handleToolClick(tool.link)}
                 >
                   <div className={`${tool.color} p-4`}>
                     <tool.icon className="w-8 h-8 text-white" />
                   </div>
                   
                   <div className="p-6">
-                    <h3 className="font-bold text-xl text-neutral-800 mb-3">
+                    <h3 className="font-bold text-xl text-neutral-800 mb-3 group-hover:text-primary-700 transition-colors">
                       {tool.title}
                     </h3>
-                    <p className="text-neutral-600 mb-4">
+                    <p className="text-neutral-600 mb-4 group-hover:text-neutral-700 transition-colors">
                       {tool.description}
                     </p>
                     <div className="flex items-center text-primary-600 font-semibold group-hover:text-primary-700 transition-colors">
@@ -182,6 +307,9 @@ export default function WellnessPage() {
                       <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                     </div>
                   </div>
+                  
+                  {/* Subtle hover overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-primary-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
                 </motion.div>
               ))}
             </div>
