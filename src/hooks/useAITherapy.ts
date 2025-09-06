@@ -10,6 +10,8 @@ interface SendOptions {
   conversationHistory?: { role: 'user'|'assistant'|'system'; content: string }[];
   provider?: 'openai'|'gemini';
   systemPrompt?: string;
+  therapistId?: string;
+  therapistName?: string;
 }
 
 interface AITherapyHook {
@@ -44,7 +46,9 @@ export function useAITherapy(): AITherapyHook {
           sessionId,
           conversationHistory: options?.conversationHistory || [],
           provider: options?.provider || 'openai',
-          systemPrompt: options?.systemPrompt
+          systemPrompt: options?.systemPrompt,
+          therapistId: options?.therapistId,
+          therapistName: options?.therapistName,
         })
       });
 

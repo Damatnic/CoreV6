@@ -232,6 +232,8 @@ export default function AITherapyInterface() {
       conversationHistory: history,
       provider: 'openai',
       systemPrompt: systemPersonaRef.current || undefined,
+      therapistId: therapist?.id,
+      therapistName: therapist?.name,
     });
     const text = res?.response || '…';
     const assistant: Message = {

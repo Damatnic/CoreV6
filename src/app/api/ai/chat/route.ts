@@ -13,12 +13,14 @@ interface ChatRequest {
   provider?: 'openai' | 'gemini';
   sessionId?: string;
   systemPrompt?: string;
+  therapistId?: string;
+  therapistName?: string;
 }
 
 export async function POST(request: NextRequest) {
   try {
     const body: ChatRequest = await request.json();
-    const { message, conversationHistory = [], provider = 'openai', sessionId, systemPrompt } = body;
+    const { message, conversationHistory = [], provider = 'openai', sessionId, systemPrompt, therapistId, therapistName } = body;
     
     // Initialize database service
     const dbService = new NeonDatabaseService();
@@ -71,6 +73,8 @@ export async function POST(request: NextRequest) {
         content: message,
         metadata: {
           provider,
+          therapistId,
+          therapistName,
           timestamp: new Date().toISOString(),
           messageLength: message.length
         }
@@ -110,7 +114,9 @@ export async function POST(request: NextRequest) {
           provider,
           tokens: aiResponse.tokens,
           processingTime: Date.now(),
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
+          therapistId,
+          therapistName
         }
       });
     } catch (dbError) {
