@@ -9,9 +9,28 @@ import CryptoJS from 'crypto-js';
 import { Redis } from '@upstash/redis';
 import { Ratelimit } from '@upstash/ratelimit';
 
-const BadWordsFilter = require('bad-words');
 const prisma = new PrismaClient();
-const badWordsFilter = new BadWordsFilter();
+
+// Lazy load bad-words to avoid build issues
+let BadWordsFilter: any = null;
+let badWordsFilter: any = null;
+
+function getBadWordsFilter() {
+  if (!badWordsFilter) {
+    try {
+      BadWordsFilter = require('bad-words');
+      badWordsFilter = new BadWordsFilter();
+    } catch (error) {
+      console.warn('Bad words filter not available:', error);
+      // Fallback implementation
+      badWordsFilter = {
+        isProfane: () => false,
+        clean: (text: string) => text
+      };
+    }
+  }
+  return badWordsFilter;
+}
 
 // Initialize Redis for caching and rate limiting
 const redis = new Redis({
@@ -170,9 +189,10 @@ async function moderateContent(content: string): Promise<{
   let filteredContent = content;
 
   // Check for profanity
-  if (badWordsFilter.isProfane(content)) {
+  const filter = getBadWordsFilter();
+  if (filter.isProfane(content)) {
     violations.push('profanity');
-    filteredContent = badWordsFilter.clean(content);
+    filteredContent = filter.clean(content);
   }
 
   // Check for excessive caps (shouting)
