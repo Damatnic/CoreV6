@@ -2,6 +2,7 @@
 import { io, Socket } from 'socket.io-client';
 import { create } from 'zustand';
 import { toast } from 'react-hot-toast';
+import { useNotifications } from '@/hooks/useNotifications';
 
 interface SocketState {
   socket: Socket | null;
@@ -95,6 +96,24 @@ export const useSocket = create<SocketState>((set, get) => ({
         });
       }
     });
+
+    // Real-time notifications
+    const push = (payload: any, fallbackTitle: string, type: any = 'system') => {
+      try {
+        const { add } = useNotifications.getState();
+        const title = payload?.title || fallbackTitle;
+        const body = payload?.body || payload?.message || '';
+        add({ type, title, body, data: payload });
+      } catch (e) {
+        console.error('Failed to add notification:', e);
+      }
+    };
+
+    socket.on('notification', (payload: any) => push(payload, 'Notification', payload?.type));
+    socket.on('notification:new', (payload: any) => push(payload, 'Notification', payload?.type));
+    socket.on('community:invite', (payload: any) => push(payload, 'Community invite', 'invite'));
+    socket.on('community:reply', (payload: any) => push(payload, 'New reply', 'community'));
+    socket.on('message:new', (payload: any) => push(payload, 'New message', 'message'));
 
     set({ socket });
   },

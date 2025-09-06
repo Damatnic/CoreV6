@@ -25,6 +25,7 @@ import MentorshipMatching from '@/components/community/MentorshipMatching';
 import { useSocket } from '@/lib/socket-client';
 import CommunitySettings from '@/components/community/CommunitySettings';
 import { AnonymousIdentity } from '@/types/community';
+import { useNotifications } from '@/hooks/useNotifications';
 
 interface CommunityStats {
   totalUsers: number;
@@ -48,6 +49,7 @@ export default function CommunityPage() {
   const [selectedRoom, setSelectedRoom] = useState<string | null>(null);
   const [showSettings, setShowSettings] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
+  const { notifications, unread, markAllRead, remove } = useNotifications();
 
   // Connect to socket on mount
   useEffect(() => {
@@ -494,6 +496,56 @@ export default function CommunityPage() {
         </AnimatePresence>
       </div>
 
+      {/* Challenges View */}
+      {activeView === 'challenges' && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-6">
+            <h2 className="text-xl font-bold mb-4">Community Wellness Challenges</h2>
+            <p className="text-neutral-600 dark:text-neutral-400 mb-6">Participate in supportive, opt-in challenges to build healthy habits together.</p>
+            <div className="grid md:grid-cols-2 gap-4">
+              <InlineChallengeCard id="gratitude" title="7-Day Gratitude" desc="Write 3 things you are grateful for daily." />
+              <InlineChallengeCard id="steps" title="10k Steps / Day" desc="Aim for 10,000 steps each day this week." />
+              <InlineChallengeCard id="mindful" title="Mindfulness Minutes" desc="Practice 10 minutes of mindfulness daily." />
+              <InlineChallengeCard id="connect" title="Reach Out" desc="Connect with a friend or community member daily." />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Overlays */}
+      <CommunitySettings open={showSettings} onClose={() => setShowSettings(false)} />
+      {showNotifications && (
+        <div className="fixed inset-0 z-50">
+          <div className="absolute inset-0 bg-black/40" onClick={() => setShowNotifications(false)} />
+          <div className="absolute right-0 top-0 h-full w-full max-w-sm bg-white shadow-xl border-l p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-semibold">Notifications {unread > 0 && <span className="ml-1 text-xs text-red-600">({unread} new)</span>}</h3>
+              <div className="flex items-center gap-3">
+                <button onClick={() => markAllRead()} className="text-xs text-neutral-500 hover:text-neutral-700">Mark all read</button>
+                <button onClick={() => setShowNotifications(false)} className="text-sm text-neutral-500">Close</button>
+              </div>
+            </div>
+            <ul className="space-y-3 text-sm">
+              {notifications.length === 0 && (
+                <li className="p-3 bg-neutral-50 rounded border text-neutral-500">No notifications yet</li>
+              )}
+              {notifications.map(n => (
+                <li key={n.id} className={`p-3 rounded border ${n.read ? 'bg-white' : 'bg-neutral-50'}`}>
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <div className="font-medium">{n.title}</div>
+                      <div className="text-neutral-600">{n.body}</div>
+                      <div className="text-[10px] text-neutral-400 mt-1">{new Date(n.createdAt).toLocaleString()}</div>
+                    </div>
+                    <button onClick={() => remove(n.id)} className="text-xs text-neutral-400 hover:text-neutral-600">Dismiss</button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
+
       {/* Crisis Support Footer */}
       <div className="bg-red-50 dark:bg-red-900/20 border-t border-red-200 dark:border-red-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -520,6 +572,27 @@ export default function CommunityPage() {
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function InlineChallengeCard({ id, title, desc }: { id: string; title: string; desc: string }) {
+  const key = `challenge:${id}`;
+  const [joined, setJoined] = React.useState<boolean>(() => {
+    try { return localStorage.getItem(key) === 'joined'; } catch { return false; }
+  });
+  const toggle = () => {
+    const next = !joined;
+    setJoined(next);
+    try { localStorage.setItem(key, next ? 'joined' : 'left'); } catch {}
+  };
+  return (
+    <div className="p-4 border rounded-xl bg-white dark:bg-gray-900 dark:border-gray-700">
+      <h4 className="font-semibold mb-1">{title}</h4>
+      <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-3">{desc}</p>
+      <button onClick={toggle} className={`px-3 py-2 rounded-lg text-sm font-medium ${joined ? 'bg-neutral-200' : 'bg-purple-600 text-white hover:bg-purple-700'}`}>
+        {joined ? 'Joined' : 'Join Challenge'}
+      </button>
     </div>
   );
 }
