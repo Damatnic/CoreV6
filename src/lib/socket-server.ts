@@ -197,9 +197,15 @@ async function moderateContent(content: string): Promise<{
   };
 }
 
+let ioRef: SocketIOServer | null = null;
+export function getSocketIO(): SocketIOServer | null {
+  return ioRef;
+}
+
 // Initialize Socket.io server
 export function initSocketServer(httpServer: HTTPServer) {
   const io = new SocketIOServer(httpServer);
+  ioRef = io;
   
   // Configure CORS after initialization
   (io as any).engine.on("connection_error", (err: { req: any; code: number; message: string; context: any }) => {

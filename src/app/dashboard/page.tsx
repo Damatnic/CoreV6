@@ -22,9 +22,11 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
+import { useNotifications } from '@/hooks/useNotifications';
 
 export default function DashboardPage() {
   const session = useSession();
+  const { unread } = useNotifications();
   const [selectedTab, setSelectedTab] = useState<'overview' | 'therapy' | 'wellness' | 'community'>('overview');
   const [stats, setStats] = useState({
     therapySessions: 3,
@@ -108,7 +110,14 @@ export default function DashboardPage() {
             
             <div className="flex items-center gap-4 mt-4 md:mt-0">
               <Link href="/community" className="flex items-center px-4 py-2 bg-white border border-neutral-200 rounded-lg hover:shadow-md transition-all duration-200">
-                <Bell className="w-5 h-5 text-neutral-600 mr-2" />
+                <div className="relative mr-2">
+                  <Bell className="w-5 h-5 text-neutral-600" />
+                  {unread > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-red-600 text-white text-[10px] px-1.5 py-0.5 rounded-full min-w-[18px] text-center">
+                      {unread > 99 ? '99+' : unread}
+                    </span>
+                  )}
+                </div>
                 <span className="text-neutral-700">Notifications</span>
               </Link>
               <Link href="/settings" className="flex items-center px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-all duration-200">

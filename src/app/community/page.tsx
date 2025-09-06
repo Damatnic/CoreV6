@@ -204,8 +204,13 @@ export default function CommunityPage() {
                 </div>
               )}
               
-              <button onClick={() => setShowNotifications(true)} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors" aria-label="Notifications">
+              <button onClick={() => setShowNotifications(true)} className="relative p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors" aria-label="Notifications">
                 <Bell className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                {unread > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] px-1 rounded-full min-w-[16px] text-center">
+                    {unread > 99 ? '99+' : unread}
+                  </span>
+                )}
               </button>
               
               <button onClick={() => setShowSettings(true)} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors" aria-label="Settings">
