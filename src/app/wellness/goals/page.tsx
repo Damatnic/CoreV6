@@ -1039,12 +1039,12 @@ export default function WellnessGoalsPage() {
                         <div className="mt-2">
                           {criterion.key === 'isSpecific' && (
                             <p className="text-xs text-neutral-500">
-                              Example: "Practice mindfulness meditation for 10 minutes" instead of "Be more mindful"
+                              Example: &quot;Practice mindfulness meditation for 10 minutes&quot; instead of &quot;Be more mindful&quot;
                             </p>
                           )}
                           {criterion.key === 'isMeasurable' && (
                             <p className="text-xs text-neutral-500">
-                              Example: "Read 20 pages per day" instead of "Read more books"
+                              Example: &quot;Read 20 pages per day&quot; instead of &quot;Read more books&quot;
                             </p>
                           )}
                           {criterion.key === 'isAchievable' && (
@@ -1059,7 +1059,7 @@ export default function WellnessGoalsPage() {
                           )}
                           {criterion.key === 'isTimeBound' && (
                             <p className="text-xs text-neutral-500">
-                              Example: "Complete within 30 days" instead of "someday"
+                              Example: &quot;Complete within 30 days&quot; instead of &quot;someday&quot;
                             </p>
                           )}
                         </div>

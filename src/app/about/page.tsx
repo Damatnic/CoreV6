@@ -180,7 +180,7 @@ export default function AboutPage() {
               After witnessing firsthand the challenges people face when seeking mental health support—long 
               wait times, high costs, stigma, and lack of culturally competent care—we knew we had to act. 
               We began building a platform that would democratize access to quality mental health resources 
-              while maintaining the human connection that's so crucial to healing.
+              while maintaining the human connection that&apos;s so crucial to healing.
             </p>
             <p>
               Today, Astral Core serves thousands of individuals worldwide, providing 24/7 access to 

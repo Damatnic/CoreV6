@@ -395,7 +395,7 @@ export default function WellnessCheckInPage() {
             
             <h2 className="text-3xl font-bold text-neutral-800 mb-2">Check-in Complete!</h2>
             <p className="text-neutral-600 mb-4">
-              {getStreakMessage()} You've checked in {currentStreak} days in a row!
+              {getStreakMessage()} You&apos;ve checked in {currentStreak} days in a row!
             </p>
             
             <div className="flex justify-center space-x-8 mb-6">
