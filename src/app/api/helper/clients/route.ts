@@ -231,7 +231,7 @@ export async function POST(request: NextRequest) {
     // Create initial support session
     const supportSession = await prisma.supportSession.create({
         data: {
-          id: generatePrismaCreateFields().id, id: `session-${Date.now()}`,
+          id: `session-${Date.now()}`,
         userId: data.clientId,
         helperId: session.user.id,
         sessionType: data.sessionType,

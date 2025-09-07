@@ -161,7 +161,7 @@ export async function POST(request: NextRequest) {
     // Create new session
     const newSession = await prisma.supportSession.create({
         data: {
-          id: generatePrismaCreateFields().id, id: `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          id: `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         userId: data.clientId,
         helperId: session.user.id,
         sessionType: data.sessionType,
