@@ -1,254 +1,163 @@
-"use client";
-
-import { motion } from "framer-motion";
-import { 
-  Heart, Shield, Users, Brain, Lock, Globe, 
-  ArrowRight, Sparkles, Phone, MessageCircle 
-} from "lucide-react";
-import Link from "next/link";
+import Link from 'next/link';
+import { AccessibleSkipLink, AccessibleButton } from '@/components/accessibility/AccessibleComponents';
+import { Brain, Heart, Users, Shield, ArrowRight } from 'lucide-react';
 
 export default function Home() {
-
   return (
-    <div className="min-h-screen bg-gradient-to-b from-neutral-50 to-primary-50/20 dark:from-neutral-950 dark:to-primary-950/20">
-      {/* Hero Section */}
-      <section className="relative px-6 lg:px-8 pt-14 pb-20">
-        <div className="mx-auto max-w-7xl">
-          <div className="text-center">
-            <motion.h1 
-              className="text-4xl font-bold tracking-tight sm:text-6xl bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-            >
-              Find Your Voice When You&apos;ve Lost Your Own
-            </motion.h1>
-            
-            <motion.p 
-              className="mt-6 text-lg leading-8 text-neutral-600 dark:text-neutral-300 max-w-2xl mx-auto"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-            >
-              Astral Core provides immediate, anonymous mental health support with advanced crisis intervention, 
-              peer connections, and professional resources - all with your privacy at the forefront.
-            </motion.p>
-            
-            <motion.div 
-              className="mt-10 flex items-center justify-center gap-x-6"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-            >
-              <Link
-                href="/dashboard"
-                className="rounded-xl bg-primary-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-primary-500 transition-colors flex items-center gap-2"
-              >
-                Start Anonymously
-                <Shield size={18} />
-              </Link>
-              <Link
-                href="/auth/helper-signup"
-                className="rounded-xl border border-primary-600 px-6 py-3 text-sm font-semibold text-primary-600 hover:bg-primary-50 transition-colors"
-              >
-                Become a Helper
-              </Link>
-            </motion.div>
-          </div>
-        </div>
-
-        {/* Crisis Support Banner */}
-        <motion.div 
-          className="mt-16 mx-auto max-w-4xl"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.6 }}
-        >
-          <div className="bg-crisis-background border border-crisis-accent rounded-2xl p-6">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <Heart className="text-crisis-primary" size={24} />
-                <div>
-                  <p className="font-semibold text-neutral-900">Need immediate help?</p>
-                  <p className="text-sm text-neutral-600">Support is available 24/7</p>
-                </div>
-              </div>
-              <div className="flex gap-3">
-                <button className="flex items-center gap-2 px-4 py-2 bg-white rounded-lg hover:bg-crisis-accent transition-colors">
-                  <Phone size={16} />
-                  <span className="font-medium">Call 988</span>
-                </button>
-                <button className="flex items-center gap-2 px-4 py-2 bg-white rounded-lg hover:bg-crisis-accent transition-colors">
-                  <MessageCircle size={16} />
-                  <span className="font-medium">Crisis Chat</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      </section>
-
-      {/* Features Grid */}
-      <section className="py-20 px-6 lg:px-8 bg-white dark:bg-neutral-900">
-        <div className="mx-auto max-w-7xl">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-neutral-900 dark:text-neutral-100">
-              Built for Real Support
-            </h2>
-            <p className="mt-4 text-neutral-600 dark:text-neutral-300">
-              Every feature designed with your wellbeing and privacy in mind
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {/* Feature 1: Crisis Detection */}
-            <motion.div 
-              className="bg-neutral-50 dark:bg-neutral-800 rounded-2xl p-6 hover:shadow-lg transition-shadow"
-              whileHover={{ y: -5 }}
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-3 bg-crisis-background rounded-xl">
-                  <Brain className="text-crisis-primary" size={24} />
-                </div>
-                <h3 className="font-semibold text-lg">Advanced Crisis Detection</h3>
-              </div>
-              <p className="text-neutral-600 dark:text-neutral-300">
-                89% accuracy in identifying crisis situations with real-time intervention and immediate support resources.
-              </p>
-            </motion.div>
-
-            {/* Feature 2: Anonymous First */}
-            <motion.div 
-              className="bg-neutral-50 dark:bg-neutral-800 rounded-2xl p-6 hover:shadow-lg transition-shadow"
-              whileHover={{ y: -5 }}
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-3 bg-primary-100 rounded-xl">
-                  <Lock className="text-primary-600" size={24} />
-                </div>
-                <h3 className="font-semibold text-lg">Radical Anonymity</h3>
-              </div>
-              <p className="text-neutral-600 dark:text-neutral-300">
-                No personal information required. End-to-end encryption. Your privacy is our foundation.
-              </p>
-            </motion.div>
-
-            {/* Feature 3: Peer Support */}
-            <motion.div 
-              className="bg-neutral-50 dark:bg-neutral-800 rounded-2xl p-6 hover:shadow-lg transition-shadow"
-              whileHover={{ y: -5 }}
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-3 bg-wellness-calm/20 rounded-xl">
-                  <Users className="text-wellness-calm" size={24} />
-                </div>
-                <h3 className="font-semibold text-lg">Peer Support Network</h3>
-              </div>
-              <p className="text-neutral-600 dark:text-neutral-300">
-                Connect with trained peer supporters who understand. Real people, real support, real time.
-              </p>
-            </motion.div>
-
-            {/* Feature 4: AI Augmentation */}
-            <motion.div 
-              className="bg-neutral-50 dark:bg-neutral-800 rounded-2xl p-6 hover:shadow-lg transition-shadow"
-              whileHover={{ y: -5 }}
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-3 bg-secondary-100 rounded-xl">
-                  <Sparkles className="text-secondary-600" size={24} />
-                </div>
-                <h3 className="font-semibold text-lg">Ethical AI Support</h3>
-              </div>
-              <p className="text-neutral-600 dark:text-neutral-300">
-                AI-powered insights and coping strategies, always with human oversight and your consent.
-              </p>
-            </motion.div>
-
-            {/* Feature 5: Multi-language */}
-            <motion.div 
-              className="bg-neutral-50 dark:bg-neutral-800 rounded-2xl p-6 hover:shadow-lg transition-shadow"
-              whileHover={{ y: -5 }}
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-3 bg-wellness-growth/20 rounded-xl">
-                  <Globe className="text-wellness-growth" size={24} />
-                </div>
-                <h3 className="font-semibold text-lg">Global Accessibility</h3>
-              </div>
-              <p className="text-neutral-600 dark:text-neutral-300">
-                Support in 5+ languages with culturally-aware resources and offline capabilities.
-              </p>
-            </motion.div>
-
-            {/* Feature 6: Professional Care */}
-            <motion.div 
-              className="bg-neutral-50 dark:bg-neutral-800 rounded-2xl p-6 hover:shadow-lg transition-shadow"
-              whileHover={{ y: -5 }}
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-3 bg-wellness-mindful/20 rounded-xl">
-                  <Heart className="text-wellness-mindful" size={24} />
-                </div>
-                <h3 className="font-semibold text-lg">Professional Bridge</h3>
-              </div>
-              <p className="text-neutral-600 dark:text-neutral-300">
-                Optional connection to licensed therapists and emergency services when you need them.
-              </p>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* Statistics Section */}
-      <section className="py-20 px-6 lg:px-8 bg-primary-50/30 dark:bg-primary-950/30">
-        <div className="mx-auto max-w-7xl">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
-            <div>
-              <p className="text-4xl font-bold text-primary-600">89%</p>
-              <p className="mt-2 text-neutral-600 dark:text-neutral-300">Crisis Detection Accuracy</p>
-            </div>
-            <div>
-              <p className="text-4xl font-bold text-primary-600">24/7</p>
-              <p className="mt-2 text-neutral-600 dark:text-neutral-300">Always Available</p>
-            </div>
-            <div>
-              <p className="text-4xl font-bold text-primary-600">5+</p>
-              <p className="mt-2 text-neutral-600 dark:text-neutral-300">Languages Supported</p>
-            </div>
-            <div>
-              <p className="text-4xl font-bold text-primary-600">100%</p>
-              <p className="mt-2 text-neutral-600 dark:text-neutral-300">Anonymous & Secure</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-20 px-6 lg:px-8">
-        <div className="mx-auto max-w-4xl text-center">
-          <h2 className="text-3xl font-bold mb-6">You Deserve Support</h2>
-          <p className="text-lg text-neutral-600 dark:text-neutral-300 mb-8">
-            Whether you&apos;re in crisis, need someone to talk to, or want to help others, 
-            Astral Core is here for you.
+    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-wellness-calm/10">
+      <AccessibleSkipLink targetId="main-content" />
+      
+      <main id="main-content" className="container mx-auto px-4 py-12" tabIndex={-1}>
+        {/* Hero Section */}
+        <section className="text-center max-w-4xl mx-auto mb-16" aria-labelledby="hero-heading">
+          <h1 
+            id="hero-heading"
+            className="text-4xl md:text-6xl font-bold text-neutral-800 mb-6"
+          >
+            Welcome to <span className="text-primary-600">Astral Core</span>
+          </h1>
+          <p className="text-xl md:text-2xl text-neutral-600 mb-8" aria-describedby="hero-heading">
+            We built Astral Core to be the voice people find when they&apos;ve lost their own.
+            <br />
+            Anonymous, immediate mental health support when you need it most.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link
-              href="/dashboard"
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-primary-600 text-white rounded-xl hover:bg-primary-500 transition-colors font-semibold"
+              href="/auth/signin"
+              className="bg-primary-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-primary-700 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 inline-flex items-center"
             >
               Get Started
-              <ArrowRight size={18} />
+              <ArrowRight className="w-5 h-5 ml-2" aria-hidden="true" />
             </Link>
             <Link
-              href="/about"
-              className="inline-flex items-center justify-center px-6 py-3 border border-neutral-300 dark:border-neutral-700 rounded-xl hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors font-semibold"
+              href="/crisis"
+              className="bg-red-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-red-700 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
             >
-              Learn More
+              Crisis Support
             </Link>
           </div>
+        </section>
+
+        {/* Features Section */}
+        <section className="mb-16" aria-labelledby="features-heading">
+          <h2 id="features-heading" className="text-3xl font-bold text-center text-neutral-800 mb-12">
+            How We Support You
+          </h2>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              {
+                icon: Brain,
+                title: "AI Therapy",
+                description: "24/7 anonymous therapy sessions with AI that understands and responds with empathy.",
+                color: "bg-primary-500"
+              },
+              {
+                icon: Shield,
+                title: "Crisis Support",
+                description: "Immediate crisis intervention tools and emergency resources when you need them most.",
+                color: "bg-red-500"
+              },
+              {
+                icon: Heart,
+                title: "Wellness Tools",
+                description: "Mood tracking, mindfulness exercises, and personalized wellness plans.",
+                color: "bg-wellness-mindful"
+              },
+              {
+                icon: Users,
+                title: "Peer Support",
+                description: "Connect with others who understand your journey in a safe, moderated environment.",
+                color: "bg-green-500"
+              }
+            ].map((feature, index) => (
+              <article 
+                key={feature.title}
+                className="bg-white rounded-2xl p-6 shadow-soft border border-neutral-200 text-center"
+                aria-labelledby={`feature-${index}-title`}
+              >
+                <div className={`${feature.color} rounded-xl p-4 w-16 h-16 mx-auto mb-4 flex items-center justify-center`}>
+                  <feature.icon className="w-8 h-8 text-white" aria-hidden="true" />
+                </div>
+                <h3 id={`feature-${index}-title`} className="text-xl font-bold text-neutral-800 mb-3">
+                  {feature.title}
+                </h3>
+                <p className="text-neutral-600">
+                  {feature.description}
+                </p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section 
+          className="bg-gradient-to-r from-primary-500 to-primary-700 rounded-2xl p-8 md:p-12 text-center text-white"
+          aria-labelledby="cta-heading"
+        >
+          <h2 id="cta-heading" className="text-3xl font-bold mb-4">
+            You&apos;re Not Alone
+          </h2>
+          <p className="text-xl mb-8 text-primary-100">
+            Join thousands who have found their voice again through Astral Core.
+          </p>
+          <Link
+            href="/auth/signup"
+            className="bg-white text-primary-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-neutral-100 transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-600 inline-flex items-center"
+          >
+            Start Your Journey
+            <ArrowRight className="w-5 h-5 ml-2" aria-hidden="true" />
+          </Link>
+        </section>
+        
+        {/* Emergency Notice */}
+        <aside 
+          className="mt-12 p-6 bg-red-50 border-l-4 border-red-500 rounded-lg"
+          role="alert"
+          aria-labelledby="emergency-heading"
+        >
+          <h3 id="emergency-heading" className="text-lg font-semibold text-red-800 mb-2">
+            In Crisis? Get Immediate Help
+          </h3>
+          <p className="text-red-700 mb-4">
+            If you&apos;re in immediate danger or having thoughts of self-harm, please reach out for help right now.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <a 
+              href="tel:988"
+              className="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-700 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 text-center"
+            >
+              Call 988 - Suicide & Crisis Lifeline
+            </a>
+            <Link
+              href="/crisis"
+              className="bg-white text-red-600 border-2 border-red-600 px-6 py-3 rounded-lg font-semibold hover:bg-red-50 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 text-center"
+            >
+              Crisis Resources
+            </Link>
+          </div>
+        </aside>
+      </main>
+      
+      <footer className="bg-neutral-100 py-8 mt-16" role="contentinfo">
+        <div className="container mx-auto px-4 text-center text-neutral-600">
+          <p>&copy; 2024 Astral Core. Supporting mental health with compassion and technology.</p>
+          <nav className="mt-4" aria-label="Footer navigation">
+            <div className="flex justify-center space-x-6">
+              <Link href="/privacy" className="hover:text-primary-600 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2">
+                Privacy Policy
+              </Link>
+              <Link href="/terms" className="hover:text-primary-600 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2">
+                Terms of Service
+              </Link>
+              <Link href="/accessibility" className="hover:text-primary-600 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2">
+                Accessibility
+              </Link>
+            </div>
+          </nav>
         </div>
-      </section>
+      </footer>
     </div>
   );
 }

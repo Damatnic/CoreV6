@@ -1,11 +1,7 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import CrisisButton from "@/components/crisis/CrisisButton";
-import PerformanceMonitor from "@/components/ui/PerformanceMonitor";
-import NotificationCenter from "@/components/notifications/NotificationCenter";
-import DemoModeToggle from "@/components/ui/DemoModeToggle";
-import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
+import { ClientProviders } from "@/components/providers/ClientProviders";
 
 const inter = Inter({ 
   subsets: ["latin"],
@@ -15,9 +11,38 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Astral Core - Mental Health Support Platform",
   description: "We built Astral Core to be the voice people find when they've lost their own. Anonymous, immediate mental health support when you need it most.",
-  keywords: ["mental health", "crisis support", "therapy", "wellness", "peer support", "anonymous help"],
-  viewport: "width=device-width, initial-scale=1, maximum-scale=5",
+  keywords: ["mental health", "crisis support", "therapy", "wellness", "peer support", "anonymous help", "accessible mental health", "WCAG compliant"],
+  authors: [{ name: "Astral Core Team" }],
+  creator: "Astral Core",
+  publisher: "Astral Core",
+  robots: "index, follow",
+  openGraph: {
+    title: "Astral Core - Mental Health Support Platform",
+    description: "Anonymous, immediate mental health support when you need it most.",
+    type: "website",
+    locale: "en_US"
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Astral Core - Mental Health Support Platform",
+    description: "Anonymous, immediate mental health support when you need it most."
+  }
 };
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+  themeColor: [{
+    media: '(prefers-color-scheme: light)',
+    color: '#ffffff'
+  }, {
+    media: '(prefers-color-scheme: dark)',
+    color: '#0a0a0a'
+  }]
+};
+
 
 export default function RootLayout({
   children,
@@ -25,42 +50,72 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html 
+      lang="en" 
+      className={inter.variable}
+      dir="ltr"
+      suppressHydrationWarning
+    >
       <head>
         {/* Accessibility and Performance */}
         <meta name="color-scheme" content="light dark" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="msapplication-tap-highlight" content="no" />
         <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" crossOrigin="anonymous" />
+        
+        {/* Accessibility improvements */}
+        <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+        <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)" />
       </head>
-      <body className="font-sans antialiased bg-neutral-50 dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 min-h-screen">
-        {/* Skip to main content for accessibility */}
-        <a 
-          href="#main-content" 
-          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-primary-600 text-white px-4 py-2 rounded-lg z-50"
-        >
-          Skip to main content
-        </a>
+      <body 
+        className="font-sans antialiased bg-neutral-50 dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 min-h-screen"
+        suppressHydrationWarning
+      >
+        {/* Global live region for screen reader announcements */}
+        <div 
+          id="live-region-polite" 
+          aria-live="polite" 
+          aria-atomic="true" 
+          className="sr-only"
+        ></div>
+        <div 
+          id="live-region-assertive" 
+          aria-live="assertive" 
+          aria-atomic="true" 
+          className="sr-only"
+        ></div>
         
-        {/* Always-visible crisis button */}
-        <CrisisButton variant="floating" />
-        
-        {/* Demo mode toggle for easy testing */}
-        <DemoModeToggle compact={true} position="top-right" />
-        
-        {/* Performance monitoring in development/staging */}
-        {process.env.NODE_ENV !== 'production' && (
-          <PerformanceMonitor compact={true} position="bottom-left" />
-        )}
+        {/* Skip navigation for keyboard users */}
+        <div className="sr-only focus-within:not-sr-only">
+          <a 
+            href="#main-content" 
+            className="absolute top-4 left-4 bg-primary-600 text-white px-4 py-2 rounded-lg z-[9999] focus:outline-none focus:ring-2 focus:ring-primary-300 focus:ring-offset-2 font-medium"
+          >
+            Skip to main content
+          </a>
+          <a 
+            href="#navigation" 
+            className="absolute top-4 left-40 bg-primary-600 text-white px-4 py-2 rounded-lg z-[9999] focus:outline-none focus:ring-2 focus:ring-primary-300 focus:ring-offset-2 font-medium"
+          >
+            Skip to navigation
+          </a>
+        </div>
 
-        {/* Main application with error boundary */}
-        <ErrorBoundary>
-          <main id="main-content">
+        {/* Main application with providers */}
+        <ClientProviders>
+          <div className="min-h-screen flex flex-col">
             {children}
-          </main>
-        </ErrorBoundary>
-
-        {/* Global notifications */}
-        <NotificationCenter />
+          </div>
+        </ClientProviders>
+        
+        {/* Screen reader only status messages */}
+        <div 
+          role="status" 
+          aria-live="polite" 
+          className="sr-only" 
+          id="status-message"
+        ></div>
       </body>
     </html>
   );

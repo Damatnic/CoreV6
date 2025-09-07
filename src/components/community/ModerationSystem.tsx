@@ -128,90 +128,21 @@ const ModerationSystem: React.FC<ModerationSystemProps> = ({
   const loadReports = async () => {
     setLoading(true);
     try {
-      // Mock data - in production, fetch from API
-      const mockReports: ModerationReport[] = [
-        {
-          id: 'report_1',
-          reporterSessionId: 'user_reporter_1',
-          targetType: 'post',
-          targetId: 'post_123',
-          reason: 'crisis-risk',
-          description: 'User expressing suicidal thoughts in their post. Needs immediate intervention.',
-          severity: 'critical',
-          status: 'pending',
-          createdAt: new Date(Date.now() - 5 * 60000) // 5 minutes ago
-        },
-        {
-          id: 'report_2',
-          reporterSessionId: 'user_reporter_2',
-          targetType: 'message',
-          targetId: 'msg_456',
-          reason: 'harassment',
-          description: 'User sending aggressive messages to multiple peers.',
-          severity: 'high',
-          status: 'pending',
-          createdAt: new Date(Date.now() - 15 * 60000) // 15 minutes ago
-        },
-        {
-          id: 'report_3',
-          reporterSessionId: 'user_reporter_3',
-          targetType: 'post',
-          targetId: 'post_789',
-          reason: 'triggering-content',
-          description: 'Graphic description of self-harm without trigger warning.',
-          severity: 'medium',
-          status: 'reviewed',
-          moderatorNotes: 'Content edited to include trigger warning',
-          actionTaken: 'content-edited',
-          createdAt: new Date(Date.now() - 60 * 60000), // 1 hour ago
-          resolvedAt: new Date(Date.now() - 30 * 60000) // 30 minutes ago
-        },
-        {
-          id: 'report_4',
-          reporterSessionId: 'user_reporter_4',
-          targetType: 'user',
-          targetId: 'user_spam_1',
-          reason: 'spam',
-          description: 'User posting promotional links in multiple groups.',
-          severity: 'low',
-          status: 'resolved',
-          moderatorNotes: 'User warned and posts removed',
-          actionTaken: 'user-warned',
-          createdAt: new Date(Date.now() - 2 * 3600000), // 2 hours ago
-          resolvedAt: new Date(Date.now() - 3600000) // 1 hour ago
-        }
-      ];
-
-      // Apply filters
-      let filteredReports = [...mockReports];
+      const queryParams = new URLSearchParams();
+      if (filterStatus !== 'all') queryParams.append('status', filterStatus);
+      if (filterSeverity !== 'all') queryParams.append('severity', filterSeverity);
+      if (searchQuery.trim()) queryParams.append('search', searchQuery.trim());
       
-      if (filterStatus !== 'all') {
-        filteredReports = filteredReports.filter(r => r.status === filterStatus);
+      const response = await fetch(`/api/community/moderation/reports?${queryParams}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch moderation reports');
       }
       
-      if (filterSeverity !== 'all') {
-        filteredReports = filteredReports.filter(r => r.severity === filterSeverity);
-      }
-      
-      if (searchQuery) {
-        filteredReports = filteredReports.filter(r => 
-          r.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          r.reason.includes(searchQuery.toLowerCase())
-        );
-      }
-
-      // Sort by severity and time
-      filteredReports.sort((a, b) => {
-        const severityOrder = { critical: 4, high: 3, medium: 2, low: 1 };
-        const severityDiff = severityOrder[b.severity] - severityOrder[a.severity];
-        if (severityDiff !== 0) return severityDiff;
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-      });
-
-      setReports(filteredReports);
+      const data = await response.json();
+      setReports(data.reports || []);
 
       // Generate AI suggestions for pending reports
-      filteredReports.filter(r => r.status === 'pending').forEach(report => {
+      (data.reports || []).filter((r: ModerationReport) => r.status === 'pending').forEach((report: ModerationReport) => {
         generateAISuggestion(report);
       });
     } catch (error) {
@@ -222,15 +153,25 @@ const ModerationSystem: React.FC<ModerationSystemProps> = ({
   };
 
   const loadModerationStats = async () => {
-    // Mock statistics
-    setModerationStats({
-      totalReports: 147,
-      pendingReports: 12,
-      resolvedToday: 23,
-      averageResponseTime: 8.5, // minutes
-      crisisInterventions: 3,
-      falsePositiveRate: 12
-    });
+    try {
+      const response = await fetch('/api/community/moderation/stats');
+      if (!response.ok) {
+        throw new Error('Failed to fetch moderation statistics');
+      }
+      
+      const data = await response.json();
+      setModerationStats(data.stats || {
+        totalReports: 0,
+        pendingReports: 0,
+        resolvedToday: 0,
+        averageResponseTime: 0,
+        crisisInterventions: 0,
+        falsePositiveRate: 0
+      });
+    } catch (error) {
+      console.error('Failed to load moderation stats:', error);
+      // Keep default values on error
+    }
   };
 
   const generateAISuggestion = (report: ModerationReport) => {
@@ -268,7 +209,23 @@ const ModerationSystem: React.FC<ModerationSystemProps> = ({
 
   const handleTakeAction = async (report: ModerationReport, action: ModeratorAction) => {
     try {
-      // Update report status
+      const response = await fetch('/api/community/moderation/take-action', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          reportId: report.id,
+          action,
+          notes: `Action taken: ${actionDescriptions[action]}`
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to take moderation action');
+      }
+
+      // Update local state with the resolved report
       setReports(prev => prev.map(r => {
         if (r.id === report.id) {
           return {
@@ -285,8 +242,8 @@ const ModerationSystem: React.FC<ModerationSystemProps> = ({
       onActionTaken?.(report, action);
       setSelectedReport(null);
       
-      // Show success message
-      console.log(`Action taken: ${action} for report ${report.id}`);
+      // Reload stats to reflect changes
+      loadModerationStats();
     } catch (error) {
       console.error('Failed to take action:', error);
     }

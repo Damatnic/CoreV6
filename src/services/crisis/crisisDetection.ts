@@ -4,13 +4,13 @@
  * Target: 89% accuracy in identifying crisis situations
  */
 
-interface CrisisIndicator {
+export interface CrisisIndicator {
   type: "keyword" | "pattern" | "behavioral" | "temporal";
   severity: 1 | 2 | 3 | 4 | 5; // 1 = low concern, 5 = immediate danger
   confidence: number; // 0-1 confidence score
 }
 
-interface CrisisAssessment {
+export interface CrisisAssessment {
   isInCrisis: boolean;
   severity: number;
   confidence: number;
@@ -63,7 +63,7 @@ const CRISIS_KEYWORDS = {
 //   }
 // };
 
-class CrisisDetectionService {
+export class CrisisDetectionService {
   private static instance: CrisisDetectionService;
   
   private constructor() {}
@@ -306,4 +306,3 @@ class CrisisDetectionService {
 }
 
 export default CrisisDetectionService;
-export type { CrisisAssessment, CrisisIndicator };

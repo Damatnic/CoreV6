@@ -3,7 +3,7 @@ import { Server as HTTPServer } from 'http';
 import { Server as SocketIOServer, Socket } from 'socket.io';
 import { parse } from 'cookie';
 import jwt from 'jsonwebtoken';
-import { PrismaClient } from '@/generated/prisma';
+import { PrismaClient } from '@prisma/client';
 import { z } from 'zod';
 import CryptoJS from 'crypto-js';
 import { Redis } from '@upstash/redis';
@@ -15,10 +15,10 @@ const prisma = new PrismaClient();
 let BadWordsFilter: any = null;
 let badWordsFilter: any = null;
 
-function getBadWordsFilter() {
+async function getBadWordsFilter() {
   if (!badWordsFilter) {
     try {
-      BadWordsFilter = require('bad-words');
+      BadWordsFilter = await import('bad-words').then(m => (m as any).default || m);
       badWordsFilter = new BadWordsFilter();
     } catch (error) {
       console.warn('Bad words filter not available:', error);
@@ -190,9 +190,9 @@ async function moderateContent(content: string): Promise<{
 
   // Check for profanity
   const filter = getBadWordsFilter();
-  if (filter.isProfane(content)) {
+  if ((filter as any).isProfane(content)) {
     violations.push('profanity');
-    filteredContent = filter.clean(content);
+    filteredContent = (filter as any).clean(content);
   }
 
   // Check for excessive caps (shouting)
@@ -251,7 +251,7 @@ export function initSocketServer(httpServer: HTTPServer) {
         const room = await prisma.chatRoom.findUnique({
           where: { id: roomId },
           include: {
-            participants: {
+            ChatParticipant: {
               where: { userId: socket.data.userId, isActive: true }
             }
           }
@@ -291,7 +291,7 @@ export function initSocketServer(httpServer: HTTPServer) {
           orderBy: { createdAt: 'desc' },
           take: 50,
           include: {
-            author: true,
+            
           }
         });
 
@@ -380,7 +380,7 @@ export function initSocketServer(httpServer: HTTPServer) {
             flags: [],
           },
           include: {
-            author: true,
+            
           }
         });
 

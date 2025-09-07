@@ -1,7 +1,7 @@
 // Crisis Intervention Service
 // Handles crisis detection, intervention, and resource provision
 
-import { PrismaClient } from '@/generated/prisma';
+import { PrismaClient } from '@prisma/client';
 import { 
   CrisisProtocol, 
   CrisisAction, 
@@ -442,6 +442,7 @@ export class CrisisInterventionService {
   }): Promise<void> {
     await prisma.safetyAlert.create({
       data: {
+        id: `alert_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         type: params.severity === 'critical' ? 'crisis' : 'self_harm',
         severity: params.severity,
         userId: params.userId,
@@ -492,7 +493,7 @@ export class CrisisInterventionService {
     // Get all active moderators
     const moderators = await prisma.user.findMany({
       where: {
-        isHelper: true,
+        role: { in: ['HELPER', 'CRISIS_COUNSELOR', 'ADMIN', 'SUPER_ADMIN'] },
         lastActiveAt: {
           gte: new Date(Date.now() - 30 * 60 * 1000), // Active in last 30 minutes
         },
@@ -501,6 +502,7 @@ export class CrisisInterventionService {
 
     // Create notifications for moderators
     const notifications = moderators.map((mod: any) => ({
+      id: `crisis-${userId}-${mod.id}-${Date.now()}`,
       userId: mod.id,
       type: 'crisis_alert',
       title: `${priority.toUpperCase()} Crisis Alert`,

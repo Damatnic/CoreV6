@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Heart,
@@ -23,6 +23,8 @@ import {
   Milestone,
   AnonymousUser
 } from '@/types/community';
+import { VirtualPostFeed, Post } from '@/components/virtual/VirtualPostFeed';
+import { VirtualList } from '@/components/ui/VirtualList';
 
 interface CommunityFeedProps {
   currentUser?: AnonymousUser;
@@ -46,6 +48,124 @@ const CommunityFeed: React.FC<CommunityFeedProps> = ({
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [replyContent, setReplyContent] = useState('');
   const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [page, setPage] = useState(1);
+  const [useVirtualScrolling, setUseVirtualScrolling] = useState(true);
+
+  // Convert CommunityPost to Post format for virtual scrolling
+  const virtualPosts: Post[] = useMemo(() => {
+    return posts.map(post => ({
+      id: post.id,
+      title: post.title,
+      content: post.content,
+      author: {
+        id: post.author.id || 'anonymous',
+        name: post.author.displayName || 'Anonymous User',
+        avatar: post.author.avatar,
+        verified: false,
+        role: 'user'
+      },
+      timestamp: new Date(post.createdAt),
+      type: post.type === 'story' ? 'text' : post.type === 'milestone' ? 'milestone' : 'question',
+      category: post.category,
+      tags: post.tags || [],
+      engagement: {
+        likes: post.likes,
+        comments: post.comments?.length || 0,
+        shares: 0,
+        views: 0,
+        bookmarks: 0
+      },
+      userEngagement: {
+        liked: post.userInteraction?.liked,
+        bookmarked: false,
+        shared: false
+      },
+      isAnonymous: post.isAnonymous,
+      supportLevel: post.supportLevel === 'seeking-support' ? 'seeking' : 
+                    post.supportLevel === 'offering-support' ? 'offering' : 'celebrating'
+    }));
+  }, [posts]);
+
+  // Handle infinite scroll loading
+  const handleLoadMore = useCallback(async () => {
+    if (loading || !hasMore) return;
+    
+    setLoading(true);
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Add more posts (this would be an actual API call)
+      const newPosts = generateMockPosts(10, posts.length);
+      setPosts(prevPosts => [...prevPosts, ...newPosts]);
+      setPage(prev => prev + 1);
+      
+      // Check if we have more data
+      if (posts.length + 10 >= 100) { // Assume 100 total posts
+        setHasMore(false);
+      }
+    } catch (error) {
+      console.error('Failed to load more posts:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [loading, hasMore, posts.length]);
+
+  // Handle post interactions for virtual feed
+  const handleVirtualPostLike = useCallback((postId: string) => {
+    setPosts(prevPosts => 
+      prevPosts.map(post => 
+        post.id === postId 
+          ? { 
+              ...post, 
+              likes: post.userInteraction?.liked ? post.likes - 1 : post.likes + 1,
+              userInteraction: { 
+                ...post.userInteraction, 
+                liked: !post.userInteraction?.liked 
+              }
+            }
+          : post
+      )
+    );
+  }, []);
+
+  const handleVirtualPostComment = useCallback((postId: string) => {
+    setReplyingTo(postId);
+    // Scroll to comment form or open comment modal
+  }, []);
+
+  // Generate mock posts for demonstration
+  const generateMockPosts = useCallback((count: number, startIndex: number): CommunityPost[] => {
+    return Array.from({ length: count }, (_, i) => ({
+      id: `post-${startIndex + i + 1}`,
+      title: `Community Post ${startIndex + i + 1}`,
+      content: `This is the content of community post ${startIndex + i + 1}. It contains some meaningful discussion about mental health topics and community support.`,
+      type: ['story', 'milestone', 'question'][Math.floor(Math.random() * 3)] as CommunityPost['type'],
+      category: ['general', 'anxiety', 'depression', 'therapy'][Math.floor(Math.random() * 4)],
+      author: {
+        id: `user-${Math.floor(Math.random() * 100)}`,
+        displayName: `User ${Math.floor(Math.random() * 100)}`,
+        avatar: undefined
+      },
+      createdAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
+      updatedAt: new Date().toISOString(),
+      likes: Math.floor(Math.random() * 50),
+      isAnonymous: Math.random() > 0.7,
+      supportLevel: ['seeking-support', 'offering-support', 'celebrating'][Math.floor(Math.random() * 3)] as CommunityPost['supportLevel'],
+      tags: [`tag${Math.floor(Math.random() * 10)}`, `tag${Math.floor(Math.random() * 10)}`],
+      userInteraction: {
+        liked: Math.random() > 0.8
+      }
+    }));
+  }, []);
+
+  // Initialize with some mock data
+  useEffect(() => {
+    if (posts.length === 0) {
+      setPosts(generateMockPosts(20, 0));
+    }
+  }, [posts.length, generateMockPosts]);
 
   // Available tags for posts
   const availableTags = [
@@ -72,178 +192,24 @@ const CommunityFeed: React.FC<CommunityFeedProps> = ({
     setLoading(true);
     try {
       // Mock data - in production, fetch from API
-      const mockPosts: CommunityPost[] = [
-        {
-          id: 'post_1',
-          authorSessionId: 'user_1',
-          authorNickname: 'HopefulSoul',
-          content: `Today marks 30 days since I started my recovery journey. It hasn't been easy, but I'm proud of how far I've come. 
-
-Some things that have helped me:
-- Daily meditation (even just 5 minutes)
-- Journaling my feelings
-- Reaching out when I need support
-- Celebrating small wins
-
-To anyone struggling today: You're not alone. Keep going, one day at a time. 💜`,
-          type: 'milestone',
-          tags: ['recovery', 'progress', '30-days', 'gratitude'],
-          reactions: [
-            { type: 'heart', count: 47, sessionIds: [] },
-            { type: 'support', count: 23, sessionIds: [] },
-            { type: 'celebrate', count: 31, sessionIds: [] }
-          ],
-          replies: [
-            {
-              id: 'reply_1',
-              authorSessionId: 'user_2',
-              authorNickname: 'SunriseWarrior',
-              content: 'This is amazing! 30 days is huge. Thank you for sharing what works for you.',
-              createdAt: new Date('2024-01-20T10:30:00'),
-              helpfulVotes: 5,
-              moderationStatus: 'approved'
-            }
-          ],
-          isAnonymous: true,
-          createdAt: new Date('2024-01-20T09:00:00'),
-          updatedAt: new Date('2024-01-20T09:00:00'),
-          sentiment: 'positive',
-          helpfulVotes: 89,
-          reportCount: 0,
-          moderationStatus: 'approved'
-        },
-        {
-          id: 'post_2',
-          authorSessionId: 'user_3',
-          authorNickname: 'QuietStorm',
-          content: `Having a really tough day. The anxiety is overwhelming and I can't seem to catch my breath. 
-
-Does anyone have tips for getting through panic attacks when you're at work? I can't leave but I need to calm down.`,
-          type: 'question',
-          tags: ['anxiety', 'seeking-support', 'work-life'],
-          reactions: [
-            { type: 'heart', count: 12, sessionIds: [] },
-            { type: 'support', count: 34, sessionIds: [] },
-            { type: 'understand', count: 28, sessionIds: [] }
-          ],
-          replies: [
-            {
-              id: 'reply_2',
-              authorSessionId: 'user_4',
-              authorNickname: 'CalmHarbor',
-              content: 'Try the 5-4-3-2-1 grounding technique. Name 5 things you see, 4 you can touch, 3 you hear, 2 you smell, 1 you taste. It helps bring you back to the present.',
-              createdAt: new Date('2024-01-20T11:45:00'),
-              helpfulVotes: 15,
-              moderationStatus: 'approved'
-            },
-            {
-              id: 'reply_3',
-              authorSessionId: 'user_5',
-              authorNickname: 'BreatheDeep',
-              content: 'Box breathing helps me: Inhale for 4, hold for 4, exhale for 4, hold for 4. Repeat. You can do this quietly at your desk.',
-              createdAt: new Date('2024-01-20T11:50:00'),
-              helpfulVotes: 12,
-              moderationStatus: 'approved'
-            }
-          ],
-          isAnonymous: true,
-          createdAt: new Date('2024-01-20T11:30:00'),
-          updatedAt: new Date('2024-01-20T11:30:00'),
-          sentiment: 'struggling',
-          helpfulVotes: 42,
-          reportCount: 0,
-          moderationStatus: 'approved'
-        },
-        {
-          id: 'post_3',
-          authorSessionId: 'user_6',
-          authorNickname: 'PhoenixRising',
-          content: `I want to share something that changed my perspective on recovery:
-
-"Healing isn't linear. Some days you'll take 3 steps forward, others 2 steps back. But as long as you keep moving, you're making progress."
-
-My therapist told me this last week and it really helped me be kinder to myself on the hard days. Recovery isn't about being perfect - it's about not giving up.
-
-Sending strength to everyone on their journey today. 🌟`,
-          type: 'encouragement',
-          tags: ['recovery', 'therapy', 'self-care', 'gratitude'],
-          reactions: [
-            { type: 'heart', count: 67, sessionIds: [] },
-            { type: 'support', count: 19, sessionIds: [] }
-          ],
-          replies: [],
-          isAnonymous: true,
-          createdAt: new Date('2024-01-20T14:00:00'),
-          updatedAt: new Date('2024-01-20T14:00:00'),
-          sentiment: 'positive',
-          helpfulVotes: 103,
-          reportCount: 0,
-          moderationStatus: 'approved'
-        }
-      ];
-
-      const mockMilestones: Milestone[] = [
-        {
-          id: 'milestone_1',
-          userSessionId: 'user_7',
-          type: 'days-streak',
-          title: '100 Days of Recovery',
-          description: 'Reached 100 days on my healing journey!',
-          achievedAt: new Date('2024-01-19T18:00:00'),
-          celebrationCount: 156,
-          isPublic: true,
-          supportMessages: [
-            {
-              id: 'msg_1',
-              fromSessionId: 'user_8',
-              fromNickname: 'ProudFriend',
-              message: 'This is incredible! Your strength inspires me.',
-              timestamp: new Date('2024-01-19T18:30:00')
-            }
-          ]
-        },
-        {
-          id: 'milestone_2',
-          userSessionId: 'user_9',
-          type: 'first-share',
-          title: 'First Story Shared',
-          description: 'Took the brave step of sharing my experience',
-          achievedAt: new Date('2024-01-20T08:00:00'),
-          celebrationCount: 89,
-          isPublic: true,
-          supportMessages: []
-        }
-      ];
-
-      // Apply filters
-      let filteredPosts = [...mockPosts];
-      if (filterType !== 'all') {
-        if (filterType === 'milestones') {
-          filteredPosts = filteredPosts.filter(p => p.type === 'milestone');
-        } else if (filterType === 'stories') {
-          filteredPosts = filteredPosts.filter(p => p.type === 'story' || p.type === 'encouragement');
-        } else if (filterType === 'questions') {
-          filteredPosts = filteredPosts.filter(p => p.type === 'question');
-        }
+      // Fetch posts from API
+      const postsResponse = await fetch(`/api/community/feed?type=${filterType}&sort=${sortBy}&limit=20`);
+      if (!postsResponse.ok) {
+        throw new Error('Failed to fetch community posts');
       }
-
-      // Apply sorting
-      if (sortBy === 'popular') {
-        filteredPosts.sort((a, b) => {
-          const aScore = a.reactions.reduce((sum, r) => sum + r.count, 0);
-          const bScore = b.reactions.reduce((sum, r) => sum + r.count, 0);
-          return bScore - aScore;
-        });
-      } else if (sortBy === 'helpful') {
-        filteredPosts.sort((a, b) => b.helpfulVotes - a.helpfulVotes);
-      } else {
-        filteredPosts.sort((a, b) => 
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        );
+      
+      const postsData = await postsResponse.json();
+      
+      // Fetch milestones from API
+      const milestonesResponse = await fetch('/api/community/milestones');
+      if (!milestonesResponse.ok) {
+        throw new Error('Failed to fetch milestones');
       }
+      
+      const milestonesData = await milestonesResponse.json();
 
-      setPosts(filteredPosts);
-      setMilestones(mockMilestones);
+      setPosts(postsData.posts || []);
+      setMilestones(milestonesData.milestones || []);
     } catch (error) {
       console.error('Failed to load feed:', error);
     } finally {
@@ -251,32 +217,38 @@ Sending strength to everyone on their journey today. 🌟`,
     }
   };
 
-  const handleReaction = (postId: string, reactionType: string) => {
-    setPosts(prev => prev.map(post => {
-      if (post.id === postId) {
-        const existingReaction = post.reactions.find(r => r.type === reactionType);
-        if (existingReaction) {
-          // Toggle reaction
-          if (currentUser && existingReaction.sessionIds.includes(currentUser.sessionId)) {
-            existingReaction.sessionIds = existingReaction.sessionIds.filter(
-              id => id !== currentUser.sessionId
-            );
-            existingReaction.count--;
-          } else if (currentUser) {
-            existingReaction.sessionIds.push(currentUser.sessionId);
-            existingReaction.count++;
-          }
-        } else {
-          // Add new reaction
-          post.reactions.push({
-            type: reactionType as "heart" | "support" | "celebrate" | "understand",
-            count: 1,
-            sessionIds: currentUser ? [currentUser.sessionId] : []
-          });
-        }
+  const handleReaction = async (postId: string, reactionType: string) => {
+    if (!currentUser) return;
+
+    try {
+      const response = await fetch(`/api/community/posts/${postId}/reactions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          type: reactionType,
+          action: 'toggle' // Will toggle reaction on/off
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update reaction');
       }
-      return post;
-    }));
+
+      const data = await response.json();
+      
+      // Update local state with new reaction data
+      setPosts(prev => prev.map(post => {
+        if (post.id === postId) {
+          return { ...post, reactions: data.reactions };
+        }
+        return post;
+      }));
+    } catch (error) {
+      console.error('Failed to update reaction:', error);
+      // Could add toast notification here
+    }
   };
 
   const handleCreatePost = async () => {
@@ -458,37 +430,81 @@ Sending strength to everyone on their journey today. 🌟`,
                 <option value="helpful">Most Helpful</option>
               </select>
               
-              <button
-                onClick={() => setShowCreatePost(true)}
-                className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg
-                         font-medium transition-colors duration-200 flex items-center gap-2"
-              >
-                <PlusCircle className="w-5 h-5" />
-                Share
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setUseVirtualScrolling(!useVirtualScrolling)}
+                  className={`px-3 py-2 rounded-lg font-medium transition-colors duration-200 text-sm ${
+                    useVirtualScrolling 
+                      ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                      : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
+                  }`}
+                  title={useVirtualScrolling ? 'Virtual Scrolling Enabled' : 'Virtual Scrolling Disabled'}
+                >
+                  {useVirtualScrolling ? '⚡ Virtual' : '📜 Standard'}
+                </button>
+                
+                <button
+                  onClick={() => setShowCreatePost(true)}
+                  className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg
+                           font-medium transition-colors duration-200 flex items-center gap-2"
+                >
+                  <PlusCircle className="w-5 h-5" />
+                  Share
+                </button>
+              </div>
             </div>
           </div>
         </motion.div>
 
         {/* Posts Feed */}
-        <div className="space-y-6">
-          <AnimatePresence mode="popLayout">
-            {posts.map((post, index) => {
+        {useVirtualScrolling ? (
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
+            <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+              <div className="flex items-center justify-between">
+                <h3 className="font-semibold text-gray-900 dark:text-white">
+                  Community Posts ({posts.length})
+                </h3>
+                <div className="text-sm text-green-600 dark:text-green-400 flex items-center gap-1">
+                  ⚡ Virtual Scrolling Active
+                </div>
+              </div>
+            </div>
+            <VirtualPostFeed
+              posts={virtualPosts}
+              height={800}
+              onLoadMore={handleLoadMore}
+              onLike={handleVirtualPostLike}
+              onComment={handleVirtualPostComment}
+              onShare={(postId) => console.log('Share post:', postId)}
+              onBookmark={(postId) => console.log('Bookmark post:', postId)}
+              hasMore={hasMore}
+              loading={loading}
+              currentUserId={currentUser?.sessionId}
+              showEngagement={true}
+              showAuthor={true}
+              allowAnonymous={true}
+              className=""
+            />
+          </div>
+        ) : (
+          <div className="space-y-6">
+            <AnimatePresence mode="popLayout">
+              {posts.map((post, index) => {
               const isExpanded = expandedPosts.has(post.id);
               const truncated = post.content.length > 280 && !isExpanded;
               const displayContent = truncated 
                 ? post.content.substring(0, 280) + '...' 
                 : post.content;
 
-              return (
-                <motion.article
-                  key={post.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ delay: index * 0.05 }}
-                  className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden"
-                >
+                return (
+                  <motion.article
+                    key={post.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ delay: index * 0.05 }}
+                    className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden"
+                  >
                   {/* Post Header */}
                   <div className="p-6">
                     <div className="flex items-start justify-between mb-4">
@@ -685,6 +701,7 @@ Sending strength to everyone on their journey today. 🌟`,
             })}
           </AnimatePresence>
         </div>
+        )}
 
         {/* Loading State */}
         {loading && (

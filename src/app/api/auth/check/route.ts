@@ -1,35 +1,48 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth/next';
+import { Session } from 'next-auth';
+import { authOptions } from '../../../../lib/auth-simple';
 
 /**
- * Placeholder authentication check endpoint
- * Returns mock authentication status for development
+ * GET /api/auth/check
+ * Check current authentication status
  */
 export async function GET(request: NextRequest) {
   try {
-    // Placeholder authentication check
-    // In production, this would verify session/JWT tokens
-    const mockUser = {
-      id: 'placeholder-user-id',
-      email: 'user@example.com',
-      isAuthenticated: false, // Default to false for security
-      message: 'Authentication service not yet implemented'
-    };
+    const session = await getServerSession(authOptions) as Session | null;
 
-    return NextResponse.json({
-      success: true,
-      data: mockUser,
-      timestamp: new Date().toISOString()
-    }, { 
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-      }
-    });
+    if (session?.user) {
+      const user = session.user as any;
+      return NextResponse.json({
+        success: true,
+        data: {
+          isAuthenticated: true,
+          user: {
+            id: session.user.id,
+            email: session.user.email,
+            name: session.user.name,
+            role: user.role,
+            isEmailVerified: user.isEmailVerified,
+            onboardingCompleted: user.onboardingCompleted,
+          }
+        },
+        timestamp: new Date().toISOString()
+      });
+    } else {
+      return NextResponse.json({
+        success: true,
+        data: {
+          isAuthenticated: false,
+          message: 'Not authenticated'
+        },
+        timestamp: new Date().toISOString()
+      });
+    }
   } catch (error) {
     console.error('Auth check error:', error);
     return NextResponse.json({
       success: false,
-      error: 'Internal server error during authentication check',
+      error: 'Authentication check failed',
       timestamp: new Date().toISOString()
     }, { 
       status: 500 

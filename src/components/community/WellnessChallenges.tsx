@@ -101,198 +101,13 @@ const WellnessChallenges: React.FC<WellnessChallengesProps> = ({
   const loadChallenges = async () => {
     setLoading(true);
     try {
-      // Mock data - in production, fetch from API
-      const mockChallenges: WellnessChallenge[] = [
-        {
-          id: 'challenge_1',
-          title: '7-Day Mindfulness Journey',
-          description: 'Start your day with 10 minutes of mindfulness meditation. Build a habit that calms your mind and reduces anxiety.',
-          type: 'mindfulness',
-          difficulty: 'beginner',
-          duration: 7,
-          participants: [
-            {
-              sessionId: 'user_1',
-              nickname: 'PeacefulMind',
-              progress: 43,
-              joinedAt: new Date('2024-01-15'),
-              lastActivity: new Date(),
-              completedGoals: ['goal_1', 'goal_2']
-            },
-            {
-              sessionId: 'user_2',
-              nickname: 'CalmSoul',
-              progress: 71,
-              joinedAt: new Date('2024-01-14'),
-              lastActivity: new Date(),
-              completedGoals: ['goal_1', 'goal_2', 'goal_3', 'goal_4', 'goal_5']
-            }
-          ],
-          goals: [
-            {
-              id: 'goal_1',
-              title: 'Morning Meditation',
-              description: 'Complete 10 minutes of guided meditation',
-              points: 10,
-              repeatable: true,
-              frequency: 'daily'
-            },
-            {
-              id: 'goal_2',
-              title: 'Breathing Exercise',
-              description: 'Practice deep breathing for 5 minutes',
-              points: 5,
-              repeatable: true,
-              frequency: 'daily'
-            },
-            {
-              id: 'goal_3',
-              title: 'Mindful Walk',
-              description: 'Take a 15-minute mindful walk',
-              points: 15,
-              repeatable: true,
-              frequency: 'daily'
-            }
-          ],
-          rewards: [
-            {
-              id: 'reward_1',
-              type: 'badge',
-              title: 'Mindfulness Beginner',
-              description: 'Completed your first mindfulness challenge',
-              iconUrl: '/badges/mindfulness-beginner.svg',
-              rarity: 'common'
-            },
-            {
-              id: 'reward_2',
-              type: 'achievement',
-              title: 'Zen Master',
-              description: '7 days of consistent practice',
-              iconUrl: '/badges/zen-master.svg',
-              rarity: 'rare'
-            }
-          ],
-          startDate: new Date('2024-01-15'),
-          endDate: new Date('2024-01-22'),
-          isActive: true,
-          communityProgress: 62,
-          tags: ['meditation', 'anxiety-relief', 'beginner-friendly']
-        },
-        {
-          id: 'challenge_2',
-          title: '30-Day Gratitude Practice',
-          description: 'Transform your mindset by practicing gratitude daily. Write 3 things you\'re grateful for each day.',
-          type: 'gratitude',
-          difficulty: 'beginner',
-          duration: 30,
-          participants: Array(47).fill(null).map((_, i) => ({
-            sessionId: `user_${i + 10}`,
-            nickname: `Grateful${i + 1}`,
-            progress: Math.floor(Math.random() * 100),
-            joinedAt: new Date('2024-01-01'),
-            lastActivity: new Date(),
-            completedGoals: []
-          })),
-          goals: [
-            {
-              id: 'goal_4',
-              title: 'Gratitude Journal',
-              description: 'Write 3 things you\'re grateful for',
-              points: 10,
-              repeatable: true,
-              frequency: 'daily'
-            },
-            {
-              id: 'goal_5',
-              title: 'Share Gratitude',
-              description: 'Share one gratitude with the community',
-              points: 20,
-              repeatable: true,
-              frequency: 'weekly'
-            }
-          ],
-          rewards: [
-            {
-              id: 'reward_3',
-              type: 'badge',
-              title: 'Gratitude Warrior',
-              description: '30 days of gratitude',
-              iconUrl: '/badges/gratitude-warrior.svg',
-              rarity: 'epic'
-            }
-          ],
-          startDate: new Date('2024-01-01'),
-          endDate: new Date('2024-01-31'),
-          isActive: true,
-          communityProgress: 45,
-          tags: ['positivity', 'journaling', 'mental-health']
-        },
-        {
-          id: 'challenge_3',
-          title: 'Move Your Mood',
-          description: 'Boost your mood with daily movement. Just 20 minutes of any physical activity that makes you feel good.',
-          type: 'exercise',
-          difficulty: 'intermediate',
-          duration: 14,
-          participants: Array(89).fill(null).map((_, i) => ({
-            sessionId: `user_${i + 100}`,
-            nickname: `Active${i + 1}`,
-            progress: Math.floor(Math.random() * 100),
-            joinedAt: new Date('2024-01-10'),
-            lastActivity: new Date(),
-            completedGoals: []
-          })),
-          goals: [
-            {
-              id: 'goal_6',
-              title: 'Daily Movement',
-              description: '20 minutes of any physical activity',
-              points: 15,
-              repeatable: true,
-              frequency: 'daily'
-            },
-            {
-              id: 'goal_7',
-              title: 'Stretch Break',
-              description: '5-minute stretching session',
-              points: 5,
-              repeatable: true,
-              frequency: 'daily'
-            },
-            {
-              id: 'goal_8',
-              title: 'Dance It Out',
-              description: 'Dance to your favorite song',
-              points: 10,
-              repeatable: true,
-              frequency: 'daily'
-            }
-          ],
-          rewards: [
-            {
-              id: 'reward_4',
-              type: 'achievement',
-              title: 'Movement Champion',
-              description: '14 days of consistent movement',
-              iconUrl: '/badges/movement-champion.svg',
-              rarity: 'rare'
-            }
-          ],
-          startDate: new Date('2024-01-10'),
-          endDate: new Date('2024-01-24'),
-          isActive: true,
-          communityProgress: 78,
-          tags: ['exercise', 'mood-boost', 'energy']
-        }
-      ];
-
-      // Apply filter
-      let filteredChallenges = [...mockChallenges];
-      if (filterType !== 'all') {
-        filteredChallenges = filteredChallenges.filter(c => c.type === filterType);
+      const response = await fetch(`/api/wellness/challenges?type=${filterType}&active=true`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch wellness challenges');
       }
-
-      setChallenges(filteredChallenges);
+      
+      const data = await response.json();
+      setChallenges(data.challenges || []);
     } catch (error) {
       console.error('Failed to load challenges:', error);
     } finally {
@@ -301,26 +116,59 @@ const WellnessChallenges: React.FC<WellnessChallengesProps> = ({
   };
 
   const loadUserData = async () => {
-    // Mock user data
-    setStreakCount(7);
-    setUserChallenges(new Set(['challenge_1']));
-    setUserProgress(new Map([
-      ['challenge_1', 43]
-    ]));
-    setUserRewards([
-      {
-        id: 'reward_user_1',
-        type: 'badge',
-        title: 'Early Bird',
-        description: 'Completed morning routine 5 days in a row',
-        iconUrl: '/badges/early-bird.svg',
-        rarity: 'common'
+    try {
+      const [streakResponse, challengesResponse, progressResponse, rewardsResponse] = await Promise.all([
+        fetch('/api/wellness/user/streak'),
+        fetch('/api/wellness/user/challenges'),
+        fetch('/api/wellness/user/progress'),
+        fetch('/api/wellness/user/rewards')
+      ]);
+
+      if (streakResponse.ok) {
+        const streakData = await streakResponse.json();
+        setStreakCount(streakData.streak || 0);
       }
-    ]);
+
+      if (challengesResponse.ok) {
+        const challengesData = await challengesResponse.json();
+        setUserChallenges(new Set(challengesData.challengeIds || []));
+      }
+
+      if (progressResponse.ok) {
+        const progressData = await progressResponse.json();
+        const progressMap = new Map();
+        (progressData.progress || []).forEach((p: any) => {
+          progressMap.set(p.challengeId, p.progress);
+        });
+        setUserProgress(progressMap);
+      }
+
+      if (rewardsResponse.ok) {
+        const rewardsData = await rewardsResponse.json();
+        setUserRewards(rewardsData.rewards || []);
+      }
+    } catch (error) {
+      console.error('Failed to load user data:', error);
+    }
   };
 
   const handleJoinChallenge = async (challenge: WellnessChallenge) => {
     try {
+      const response = await fetch('/api/wellness/challenges/join', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          challengeId: challenge.id
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to join challenge');
+      }
+
+      // Update local state
       setUserChallenges(prev => new Set([...prev, challenge.id]));
       setUserProgress(prev => new Map([...prev, [challenge.id, 0]]));
       
@@ -347,17 +195,27 @@ const WellnessChallenges: React.FC<WellnessChallengesProps> = ({
 
   const handleCompleteGoal = async (challengeId: string, goalId: string) => {
     try {
-      // Update user progress
-      const challenge = challenges.find(c => c.id === challengeId);
-      const goal = challenge?.goals.find(g => g.id === goalId);
-      
-      if (goal) {
-        setUserProgress(prev => {
-          const currentProgress = prev.get(challengeId) || 0;
-          const newProgress = Math.min(100, currentProgress + (goal.points / 2));
-          return new Map([...prev, [challengeId, newProgress]]);
-        });
+      const response = await fetch('/api/wellness/challenges/complete-goal', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          challengeId,
+          goalId
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to complete goal');
       }
+
+      const data = await response.json();
+      
+      // Update user progress with actual progress from API
+      setUserProgress(prev => {
+        return new Map([...prev, [challengeId, data.newProgress || 0]]);
+      });
       
       onCompleteGoal?.(challengeId, goalId);
     } catch (error) {

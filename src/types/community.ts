@@ -83,6 +83,18 @@ export interface CommunityPost {
   helpfulVotes: number;
   reportCount: number;
   moderationStatus: ModerationStatus;
+  // Additional properties for UI components
+  title?: string;
+  author?: AnonymousIdentity;
+  category?: string;
+  likes?: number;
+  comments?: Reply[];
+  userInteraction?: {
+    liked?: boolean;
+    bookmarked?: boolean;
+    reported?: boolean;
+  };
+  supportLevel?: 'seeking-support' | 'offering-support' | 'celebrating';
 }
 
 export interface WellnessChallenge {
@@ -326,17 +338,8 @@ export interface CommunityMetrics {
   helpfulContentRate: number;
 }
 
-export interface UserEngagementMetrics {
-  sessionId: string;
-  postsCreated: number;
-  repliesGiven: number;
-  reactionsGiven: number;
-  groupsJoined: number;
-  challengesCompleted: number;
-  peerConnectionsMade: number;
-  helpfulnessScore: number;
-  lastActiveAt: Date;
-}
+// UserEngagementMetrics moved to analytics.ts to avoid conflicts
+// Import from analytics.ts if needed: import { UserEngagementMetrics } from './analytics';
 
 // Crisis Intervention Types
 export interface CrisisProtocol {

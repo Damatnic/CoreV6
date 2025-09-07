@@ -7,27 +7,55 @@ const createJestConfig = nextJest({
 
 // Add any custom config to be passed to Jest
 const customJestConfig = {
-  // Add more setup options before each test is run
+  // Setup files
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+  
+  // Test environment
+  testEnvironment: 'jest-environment-jsdom',
+  
+  // Module name mapping for path aliases
   moduleNameMapper: {
-    // Handle module aliases (this will be automatically configured for you soon)
     '^@/(.*)$': '<rootDir>/src/$1',
     '^@/components/(.*)$': '<rootDir>/src/components/$1',
     '^@/lib/(.*)$': '<rootDir>/src/lib/$1',
-    '^@/services/(.*)$': '<rootDir>/src/services/$1',
-    '^@/hooks/(.*)$': '<rootDir>/src/hooks/$1',
-    '^@/utils/(.*)$': '<rootDir>/src/utils/$1',
     '^@/types/(.*)$': '<rootDir>/src/types/$1',
+    '^@/generated/(.*)$': '<rootDir>/src/generated/$1',
+    '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
+    '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': '<rootDir>/__mocks__/fileMock.js',
   },
-  testEnvironment: 'jest-environment-jsdom',
-  testPathIgnorePatterns: ['/node_modules/', '/.next/'],
+  
+  // Test file patterns
+  testMatch: [
+    '<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}',
+    '<rootDir>/src/**/*.(test|spec).{js,jsx,ts,tsx}',
+    '<rootDir>/tests/**/*.(test|spec).{js,jsx,ts,tsx}',
+  ],
+  
+  // Files to ignore
+  testPathIgnorePatterns: [
+    '<rootDir>/.next/',
+    '<rootDir>/node_modules/',
+    '<rootDir>/e2e/',
+    '<rootDir>/playwright-tests/',
+  ],
+  
+  // Coverage configuration
   collectCoverageFrom: [
     'src/**/*.{js,jsx,ts,tsx}',
     '!src/**/*.d.ts',
-    '!src/**/types.ts',
-    '!src/**/*.stories.tsx',
-    '!src/app/api/**',
+    '!src/app/**/layout.tsx',
+    '!src/app/**/loading.tsx',
+    '!src/app/**/error.tsx',
+    '!src/app/**/not-found.tsx',
+    '!src/generated/**/*',
+    '!**/*.config.{js,ts}',
+    '!**/node_modules/**',
   ],
+  
+  coverageReporters: ['text', 'lcov', 'html', 'json'],
+  coverageDirectory: 'coverage',
+  
+  // Coverage thresholds
   coverageThreshold: {
     global: {
       branches: 70,
@@ -35,19 +63,75 @@ const customJestConfig = {
       lines: 70,
       statements: 70,
     },
+    './src/lib/auth/': {
+      branches: 80,
+      functions: 80,
+      lines: 80,
+      statements: 80,
+    },
+    './src/lib/encryption/': {
+      branches: 85,
+      functions: 85,
+      lines: 85,
+      statements: 85,
+    },
+    './src/lib/rbac/': {
+      branches: 80,
+      functions: 80,
+      lines: 80,
+      statements: 80,
+    },
   },
-  testMatch: [
-    '**/__tests__/**/*.[jt]s?(x)',
-    '**/?(*.)+(spec|test).[jt]s?(x)',
-  ],
-  moduleDirectories: ['node_modules', '<rootDir>/'],
+  
+  // Transform configuration
   transform: {
     '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }],
   },
+  
+  // Module file extensions
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+  
+  // Global setup and teardown
+  globalSetup: '<rootDir>/tests/setup/globalSetup.js',
+  globalTeardown: '<rootDir>/tests/setup/globalTeardown.js',
+  
+  // Test environment options
+  testEnvironmentOptions: {
+    url: 'http://localhost:3000',
+  },
+  
+  // Test timeout
+  testTimeout: 30000,
+  
+  // Clear mocks between tests
+  clearMocks: true,
+  restoreMocks: true,
+  
+  // Detect open handles
+  detectOpenHandles: true,
+  forceExit: true,
+  
+  // Max workers for parallel execution
+  maxWorkers: '50%',
+  
+  // Test result processors
+  reporters: [
+    'default',
+    [
+      'jest-junit',
+      {
+        outputDirectory: './coverage',
+        outputName: 'junit.xml',
+      },
+    ],
+  ],
+  
+  moduleDirectories: ['node_modules', '<rootDir>/'],
+  
   globals: {
     'ts-jest': {
       tsconfig: {
-        jsx: 'react',
+        jsx: 'react-jsx',
       },
     },
   },

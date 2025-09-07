@@ -1,16 +1,20 @@
 // API Routes for Support Groups
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@/generated/prisma';
-import { getServerSession } from 'next-auth';
+import { generatePrismaCreateFields } from "@/lib/prisma-helpers";
+import { PrismaClient } from '@prisma/client';
+import { getServerSession } from 'next-auth/next';
+import { Session } from 'next-auth';
+import { authOptions } from '@/lib/auth-simple';
 import { z } from 'zod';
 import { groupCreationSchema } from '@/types/community';
+import * as crypto from 'crypto';
 
 const prisma = new PrismaClient();
 
 // GET: Fetch all support groups
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession();
+    const session = await getServerSession(authOptions) as Session | null;
     
     if (!session?.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -40,7 +44,7 @@ export async function GET(request: NextRequest) {
     const groups = await prisma.supportGroup.findMany({
       where,
       include: {
-        members: {
+        GroupMembership: {
           where: {
             isActive: true,
           },
@@ -48,24 +52,9 @@ export async function GET(request: NextRequest) {
             userId: true,
           },
         },
-        sessions: {
-          where: {
-            scheduledAt: {
-              gte: new Date(),
-            },
-            status: 'scheduled',
-          },
-          orderBy: {
-            scheduledAt: 'asc',
-          },
-          take: 1,
-        },
-        activities: {
-          take: 3,
-        },
         _count: {
           select: {
-            members: {
+            GroupMembership: {
               where: {
                 isActive: true,
               },
@@ -81,9 +70,9 @@ export async function GET(request: NextRequest) {
     // Transform data for frontend
     const transformedGroups = groups.map((group: any) => ({
       ...group,
-      currentMembers: group.members.map((m: any) => m.userId),
+      currentMembers: group.GroupMembership.map((m: any) => m.userId),
       nextSession: group.sessions[0]?.scheduledAt || null,
-      memberCount: group._count.members,
+      memberCount: group._count.GroupMembership,
     }));
 
     return NextResponse.json(transformedGroups);
@@ -99,7 +88,7 @@ export async function GET(request: NextRequest) {
 // POST: Create a new support group
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession();
+    const session = await getServerSession(authOptions) as Session | null;
     
     if (!session?.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -113,7 +102,7 @@ export async function POST(request: NextRequest) {
     // Get user's anonymous identity
     const identity = await prisma.anonymousIdentity.findUnique({
       where: {
-        userId: (session.user as any).id,
+        userId: session.user.id!,
       },
     });
 
@@ -127,7 +116,7 @@ export async function POST(request: NextRequest) {
     // Check trust score requirement
     const trustMetric = await prisma.trustMetric.findUnique({
       where: {
-        userId: (session.user as any).id,
+        userId: session.user.id!,
       },
     });
 
@@ -139,15 +128,15 @@ export async function POST(request: NextRequest) {
     }
 
     // Create the group
-    const group = await prisma.supportGroup.create({
-      data: {
-        name: validatedData.name,
+    const group = await (prisma.supportGroup as any).create({
+        data: {
+          id: generatePrismaCreateFields().id,name: validatedData.name,
         topic: validatedData.topic,
         description: validatedData.description,
         maxMembers: validatedData.maxMembers,
         privacy: validatedData.privacy,
         type: body.type || 'peer_support',
-        facilitatorId: (session.user as any).id,
+        facilitatorId: session.user.id!,
         schedule: body.schedule || {},
         requirements: body.requirements || {
           languages: ['en'],
@@ -155,22 +144,23 @@ export async function POST(request: NextRequest) {
         },
         resources: [],
         tags: body.tags || [],
-        members: {
+        GroupMembership: {
           create: {
+            id: crypto.randomUUID(),
             userId: identity.id,
             role: 'facilitator',
           },
         },
       },
       include: {
-        members: true,
+        GroupMembership: true,
       },
     });
 
     // Update trust score for creating a group
     await prisma.trustMetric.update({
       where: {
-        userId: (session.user as any).id,
+        userId: session.user.id!,
       },
       data: {
         score: {

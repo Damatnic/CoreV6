@@ -1,0 +1,58 @@
+src/components/loading/index.ts(16,10): error TS1005: '>' expected.
+src/components/loading/index.ts(16,19): error TS1005: ')' expected.
+src/components/loading/index.ts(17,12): error TS1005: '>' expected.
+src/components/loading/index.ts(17,21): error TS1005: ';' expected.
+src/components/loading/index.ts(18,14): error TS1005: '>' expected.
+src/components/loading/index.ts(18,23): error TS1005: ';' expected.
+src/components/loading/index.ts(18,101): error TS1110: Type expected.
+src/components/loading/index.ts(19,12): error TS1005: ';' expected.
+src/components/loading/index.ts(19,56): error TS1161: Unterminated regular expression literal.
+src/components/loading/index.ts(21,16): error TS1005: '>' expected.
+src/components/loading/index.ts(21,25): error TS1005: ')' expected.
+src/components/loading/index.ts(23,15): error TS1005: '>' expected.
+src/components/loading/index.ts(23,24): error TS1005: ';' expected.
+src/components/loading/index.ts(24,22): error TS1136: Property assignment expected.
+src/components/loading/index.ts(25,13): error TS1109: Expression expected.
+src/components/loading/index.ts(25,15): error TS1110: Type expected.
+src/components/loading/index.ts(26,12): error TS1161: Unterminated regular expression literal.
+src/components/loading/index.ts(27,9): error TS1128: Declaration or statement expected.
+src/components/loading/index.ts(27,10): error TS1128: Declaration or statement expected.
+src/components/loading/index.ts(28,8): error TS1110: Type expected.
+src/components/loading/index.ts(29,6): error TS1161: Unterminated regular expression literal.
+src/components/loading/index.ts(30,3): error TS1128: Declaration or statement expected.
+src/components/loading/index.ts(31,1): error TS1128: Declaration or statement expected.
+src/components/loading/index.ts(35,10): error TS1005: '>' expected.
+src/components/loading/index.ts(35,19): error TS1005: ')' expected.
+src/components/loading/index.ts(36,12): error TS1005: '>' expected.
+src/components/loading/index.ts(36,21): error TS1005: ';' expected.
+src/components/loading/index.ts(36,55): error TS1110: Type expected.
+src/components/loading/index.ts(37,12): error TS1005: ';' expected.
+src/components/loading/index.ts(37,55): error TS1110: Type expected.
+src/components/loading/index.ts(38,12): error TS1005: ';' expected.
+src/components/loading/index.ts(38,55): error TS1110: Type expected.
+src/components/loading/index.ts(39,6): error TS1161: Unterminated regular expression literal.
+src/components/loading/index.ts(40,3): error TS1128: Declaration or statement expected.
+src/components/loading/index.ts(41,1): error TS1128: Declaration or statement expected.
+src/components/loading/index.ts(49,10): error TS1005: '>' expected.
+src/components/loading/index.ts(49,19): error TS1005: ')' expected.
+src/components/loading/index.ts(50,12): error TS1005: '>' expected.
+src/components/loading/index.ts(50,21): error TS1005: ';' expected.
+src/components/loading/index.ts(51,14): error TS1005: '>' expected.
+src/components/loading/index.ts(51,23): error TS1005: ';' expected.
+src/components/loading/index.ts(51,100): error TS1110: Type expected.
+src/components/loading/index.ts(52,12): error TS1005: ';' expected.
+src/components/loading/index.ts(52,56): error TS1161: Unterminated regular expression literal.
+src/components/loading/index.ts(54,16): error TS1005: '>' expected.
+src/components/loading/index.ts(54,25): error TS1005: ')' expected.
+src/components/loading/index.ts(56,15): error TS1005: '>' expected.
+src/components/loading/index.ts(56,24): error TS1005: ';' expected.
+src/components/loading/index.ts(57,22): error TS1136: Property assignment expected.
+src/components/loading/index.ts(58,13): error TS1109: Expression expected.
+src/components/loading/index.ts(58,15): error TS1110: Type expected.
+src/components/loading/index.ts(59,12): error TS1161: Unterminated regular expression literal.
+src/components/loading/index.ts(60,9): error TS1128: Declaration or statement expected.
+src/components/loading/index.ts(60,10): error TS1128: Declaration or statement expected.
+src/components/loading/index.ts(61,8): error TS1110: Type expected.
+src/components/loading/index.ts(62,6): error TS1161: Unterminated regular expression literal.
+src/components/loading/index.ts(63,3): error TS1128: Declaration or statement expected.
+src/components/loading/index.ts(64,1): error TS1128: Declaration or statement expected.

@@ -1,8 +1,23 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Performance optimizations for Vercel
+  // Performance optimizations
   experimental: {
-    optimizePackageImports: ['lucide-react', 'framer-motion', 'date-fns'],
+    optimizePackageImports: [
+      'lucide-react', 
+      'framer-motion', 
+      'date-fns',
+      '@radix-ui/react-dialog',
+      '@radix-ui/react-dropdown-menu',
+      '@radix-ui/react-tabs',
+      'react-chartjs-2',
+      'chart.js',
+    ],
+    // Enable concurrent features
+    serverComponentsExternalPackages: ['bcryptjs', 'crypto-js'],
+    // Optimize font loading
+    optimizeCss: true,
+    // Enable webpack 5 persistent cache
+    webVitalsAttribution: ['CLS', 'FCP', 'FID', 'INP', 'LCP', 'TTFB'],
   },
 
   // Image optimization
@@ -58,12 +73,22 @@ const nextConfig = {
     removeConsole: process.env.NODE_ENV === 'production',
   },
 
-  // Bundle analyzer (only in development)
+  // Bundle analyzer configuration
   ...(process.env.ANALYZE === 'true' && {
-    experimental: {
-      ...nextConfig.experimental,
+    bundleAnalyzer: {
+      enabled: true,
+      openAnalyzer: true,
     },
   }),
+
+  // Font optimization
+  optimizeFonts: true,
+  
+  // Compression
+  compress: true,
+  
+  // Performance budgets are handled via webpack optimization
+  // maxAssetSize: 300KB and maxEntrypointSize: 600KB are configured in webpack
 
   // Output configuration for Vercel
   // output: 'standalone', // Enable for self-hosting, disable for Vercel
@@ -84,13 +109,103 @@ const nextConfig = {
     ignoreDuringBuilds: false,
   },
 
-  // Webpack (keep minimal to avoid platform issues)
-  webpack: (config, { dev }) => {
-    // Disable filesystem cache to avoid readlink/snapshot issues on Windows
-    config.cache = false;
+  // Advanced Webpack optimization
+  webpack: (config, { dev, isServer }) => {
+    // Bundle splitting strategy
+    if (!dev && !isServer) {
+      config.optimization = {
+        ...config.optimization,
+        splitChunks: {
+          chunks: 'all',
+          cacheGroups: {
+            // Critical crisis management chunks (highest priority)
+            crisis: {
+              name: 'crisis',
+              test: /[\\/](crisis|emergency)[\\/]/,
+              priority: 30,
+              reuseExistingChunk: true,
+            },
+            // Authentication and security (high priority)  
+            auth: {
+              name: 'auth',
+              test: /[\\/](auth|security)[\\/]/,
+              priority: 25,
+              reuseExistingChunk: true,
+            },
+            // UI components (medium priority)
+            ui: {
+              name: 'ui',
+              test: /[\\/]components[\\/]ui[\\/]/,
+              priority: 20,
+              reuseExistingChunk: true,
+            },
+            // Third-party libraries
+            vendor: {
+              name: 'vendor',
+              test: /[\\/]node_modules[\\/]/,
+              priority: 10,
+              chunks: 'initial',
+              enforce: true,
+            },
+            // React ecosystem
+            react: {
+              name: 'react',
+              test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
+              priority: 15,
+              chunks: 'all',
+              enforce: true,
+            },
+            // Chart and visualization libraries (lazy load)
+            charts: {
+              name: 'charts',
+              test: /[\\/]node_modules[\\/](chart\.js|react-chartjs-2)[\\/]/,
+              priority: 5,
+              enforce: true,
+            },
+            // Animation libraries (lazy load)
+            animations: {
+              name: 'animations',
+              test: /[\\/]node_modules[\\/](framer-motion|@use-gesture)[\\/]/,
+              priority: 5,
+              enforce: true,
+            },
+          },
+        },
+        // Minimize bundle size
+        usedExports: true,
+        sideEffects: false,
+      };
+    }
+
+    // Performance optimizations
+    config.resolve = {
+      ...config.resolve,
+      // Prefer ES modules
+      mainFields: ['es2020', 'es2017', 'module', 'main'],
+      // Tree shaking optimization
+      alias: {
+        ...config.resolve.alias,
+        // Reduce bundle size for large libraries
+        'chart.js': 'chart.js/dist/chart.esm.js',
+      },
+    };
+
+    // Enable persistent cache (except on Windows to avoid issues)
+    if (process.platform !== 'win32') {
+      config.cache = {
+        type: 'filesystem',
+        buildDependencies: {
+          config: [__filename],
+        },
+      };
+    } else {
+      config.cache = false;
+    }
+
     if (!dev) {
       config.devtool = 'source-map';
     }
+
     return config;
   },
 

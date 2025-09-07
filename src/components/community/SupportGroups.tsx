@@ -121,76 +121,14 @@ const SupportGroups: React.FC<SupportGroupsProps> = ({
     setLoading(true);
     try {
       // In production, fetch from API
-      const mockGroups: SupportGroup[] = [
-        {
-          id: 'group_1',
-          name: 'Anxiety Warriors',
-          description: 'A safe space for those dealing with anxiety. Share experiences, coping strategies, and support each other.',
-          topic: 'anxiety',
-          language: 'en',
-          maxMembers: 50,
-          currentMembers: 23,
-          moderators: ['mod_1', 'mod_2'],
-          privacy: 'public',
-          requiresApproval: false,
-          guidelines: [
-            'Be respectful and supportive',
-            'No medical advice',
-            'Maintain anonymity',
-            'Report concerning content'
-          ],
-          createdAt: new Date('2024-01-15'),
-          lastActivity: new Date(),
-          tags: ['coping', 'meditation', 'breathing'],
-          supportLevel: 'peer'
-        },
-        {
-          id: 'group_2',
-          name: 'Depression Support Circle',
-          description: 'Understanding and support for those experiencing depression. You are not alone.',
-          topic: 'depression',
-          language: 'en',
-          maxMembers: 40,
-          currentMembers: 31,
-          moderators: ['mod_3'],
-          privacy: 'public',
-          requiresApproval: false,
-          guidelines: [
-            'Share at your comfort level',
-            'Celebrate small victories',
-            'No judgment zone',
-            'Crisis resources available'
-          ],
-          createdAt: new Date('2024-01-10'),
-          lastActivity: new Date(),
-          tags: ['recovery', 'hope', 'daily-check-in'],
-          supportLevel: 'guided'
-        },
-        {
-          id: 'group_3',
-          name: 'Trauma Survivors',
-          description: 'A private, moderated group for trauma survivors. Professional guidance available.',
-          topic: 'trauma',
-          language: 'en',
-          maxMembers: 25,
-          currentMembers: 18,
-          moderators: ['mod_4', 'mod_5'],
-          privacy: 'private',
-          requiresApproval: true,
-          guidelines: [
-            'Trigger warnings required',
-            'Respect boundaries',
-            'Professional moderators present',
-            'Weekly guided sessions'
-          ],
-          createdAt: new Date('2024-01-05'),
-          lastActivity: new Date(),
-          tags: ['healing', 'EMDR', 'therapy'],
-          supportLevel: 'professional'
-        }
-      ];
-
-      setGroups(mockGroups);
+      // Fetch support groups from API
+      const response = await fetch(`/api/community/groups?privacy=${privacyFilter}&topic=${topicFilter}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch support groups');
+      }
+      
+      const data = await response.json();
+      setGroups(data.groups || []);
     } catch (error) {
       console.error('Failed to load groups:', error);
     } finally {

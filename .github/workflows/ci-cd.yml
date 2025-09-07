@@ -1,16 +1,35 @@
-name: CI/CD Pipeline
+name: CI/CD Pipeline - HIPAA Compliant Mental Health Platform
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main, master, develop, staging]
   pull_request:
-    branches: [main, develop]
+    branches: [main, master, develop]
   schedule:
     - cron: '0 0 * * 0' # Weekly security scan
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - development
+          - staging
+          - production
+      skip_tests:
+        description: 'Skip test execution'
+        required: false
+        default: false
+        type: boolean
 
 env:
-  NODE_VERSION: '20.x'
+  NODE_VERSION: '20'
   POSTGRES_VERSION: '15'
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+  COVERAGE_THRESHOLD: 85
 
 jobs:
   # Security Scan
