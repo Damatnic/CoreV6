@@ -15,7 +15,7 @@ import { prisma } from '@/lib/prisma';
 export async function DELETE(request: NextRequest) {
   try {
     // Authenticate user
-    const user = req.user!;
+    const user = (request as any).user!;
     if (!user) {
       return NextResponse.json(createErrorResponse('Unauthorized'), { status: 401 });
     }
@@ -133,7 +133,7 @@ export async function DELETE(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     // Authenticate user
-    const user = req.user!;
+    const user = (request as any).user!;
     if (!user) {
       return NextResponse.json(createErrorResponse('Unauthorized'), { status: 401 });
     }

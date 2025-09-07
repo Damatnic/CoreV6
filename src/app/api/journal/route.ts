@@ -223,7 +223,7 @@ export async function POST(request: NextRequest) {
     // Create journal entry
     const entry = await prisma.journalEntry.create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
         userId: user.id,
         encryptedTitle,
         encryptedContent,

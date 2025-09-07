@@ -295,7 +295,7 @@ export const POST = withRoles(
       if (!moderatorAnonymousId) {
         moderatorAnonymousId = await (prisma.anonymousIdentity as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
             userId: moderatorId,
             displayName: `Moderator${Math.floor(Math.random() * 10000)}`,
             avatar: `https://api.dicebear.com/7.x/shapes/svg?seed=mod${moderatorId}`,
@@ -312,7 +312,7 @@ export const POST = withRoles(
       if (!targetAnonymousId) {
         targetAnonymousId = await (prisma.anonymousIdentity as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
             userId: validatedData.targetUserId,
             displayName: `User${Math.floor(Math.random() * 100000)}`,
             avatar: `https://api.dicebear.com/7.x/shapes/svg?seed=${validatedData.targetUserId}`,
@@ -334,7 +334,7 @@ export const POST = withRoles(
       // Create moderation action
       const action = await (prisma.moderationAction as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
           type: validatedData.type,
           targetUserId: targetAnonymousId.id,
           moderatorId: moderatorAnonymousId.id,
@@ -373,7 +373,7 @@ export const POST = withRoles(
           // Send warning notification
           await (prisma.notification as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
               userId: validatedData.targetUserId,
               type: "moderation_warning",
               title: "Community Guidelines Warning",
@@ -410,7 +410,7 @@ export const POST = withRoles(
       // Log the moderation action
       await (prisma.auditLog as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
           userId: moderatorId,
           action: `moderation_${validatedData.type}`,
           resource: "user",
@@ -553,7 +553,7 @@ export const PUT = withRoles(
       // Log the review action
       await (prisma.auditLog as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
           userId: moderatorId,
           action: `review_${validatedData.action}`,
           resource: validatedData.contentType,

@@ -324,7 +324,7 @@ export const POST = withAuth(async (req: AuthenticatedRequest) => {
       // Create safety alert
       await (prisma.safetyAlert as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
           type: "user_report",
           severity: urgency,
           userId: contentAuthorId || reporterId,
@@ -347,7 +347,7 @@ export const POST = withAuth(async (req: AuthenticatedRequest) => {
       for (const counselor of counselors) {
         await (prisma.notification as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
             userId: counselor.id,
             type: "urgent_report",
             title: "Urgent Content Report",
@@ -381,7 +381,7 @@ export const POST = withAuth(async (req: AuthenticatedRequest) => {
       for (const moderator of moderators) {
         await (prisma.notification as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
             userId: moderator.id,
             type: "content_report",
             title: "New Content Report",
@@ -418,7 +418,7 @@ export const POST = withAuth(async (req: AuthenticatedRequest) => {
     // Log the report
     await (prisma.auditLog as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
         userId: reporterId,
         action: "create_report",
         resource: validatedData.contentType,
@@ -498,7 +498,7 @@ export const PUT = withRoles(
       if (status === "resolved" || status === "dismissed") {
         await (prisma.notification as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
             userId: report.reporterId,
             type: "report_update",
             title: "Report Update",

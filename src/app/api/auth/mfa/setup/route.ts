@@ -14,7 +14,7 @@ import { convertZodIssuesToValidationErrors } from '@/lib/prisma-helpers';
 export async function POST(request: NextRequest) {
   try {
     // Authenticate user
-    const user = req.user!;
+    const user = (request as any).user!;
     if (!user) {
       return NextResponse.json(createErrorResponse('Unauthorized'), { status: 401 });
     }
@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     // Authenticate user
-    const user = req.user!;
+    const user = (request as any).user!;
     if (!user) {
       return NextResponse.json(createErrorResponse('Unauthorized'), { status: 401 });
     }

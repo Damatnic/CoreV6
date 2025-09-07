@@ -261,7 +261,7 @@ export async function POST(request: NextRequest) {
     // Log the action for audit trail
     await (prisma.auditLog as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
         userId: user.id ,
         action: 'CREATE_CLIENT',
         resource: 'TherapistClient',

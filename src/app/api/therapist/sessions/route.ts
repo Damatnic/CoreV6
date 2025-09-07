@@ -317,7 +317,7 @@ export async function POST(request: NextRequest) {
     // Log the action for audit trail
     await (prisma.auditLog as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
         userId: user.id ,
         action: 'CREATE_SESSION',
         resource: 'TherapistSession',
@@ -427,7 +427,7 @@ export async function PATCH(request: NextRequest) {
     // Log the action for audit trail
     await (prisma.auditLog as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
         userId: user.id ,
         action: 'UPDATE_SESSION_STATUS',
         resource: 'TherapistSession',

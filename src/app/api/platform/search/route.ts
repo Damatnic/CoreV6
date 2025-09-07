@@ -482,7 +482,7 @@ export async function GET(request: NextRequest) {
     /*
     await prisma.searchHistory.create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
         userId: user.id ,
         query: params.query,
         filters: params as any,

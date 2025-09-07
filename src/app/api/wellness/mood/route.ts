@@ -212,7 +212,7 @@ export async function POST(request: NextRequest) {
     // Create mood entry
     const entry = await prisma.moodEntry.create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
         userId: user.id,
         moodScore: body.moodScore,
         anxietyLevel: body.anxietyLevel || null,

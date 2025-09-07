@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
     const purpose = body.purpose || 'login'; // 'setup' or 'login'
 
     // Authenticate user
-    const user = req.user!;
+    const user = (request as any).user!;
     if (!user) {
       // Log unauthorized MFA verification attempt
       await auditService.logEvent({
@@ -190,7 +190,7 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     // Authenticate user
-    const user = req.user!;
+    const user = (request as any).user!;
     if (!user) {
       return NextResponse.json(createErrorResponse('Unauthorized'), { status: 401 });
     }

@@ -207,7 +207,7 @@ export const GET = withRateLimit(60, 60000)(
       // Log access
       await (prisma.auditLog as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
           userId: user.id,
           action: 'view_safety_plans',
           resource: 'safety_plan',
@@ -235,7 +235,7 @@ export const GET = withRateLimit(60, 60000)(
       
       await (prisma.auditLog as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
           userId: req.user!.id,
           action: 'view_safety_plans',
           resource: 'safety_plan',
@@ -303,7 +303,7 @@ export const POST = withRateLimit(5, 60000)(
       // Create safety plan
       const plan = await (prisma.safetyPlan as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
           userId: user.id,
           warningSignsEncrypted,
           copingStrategiesEncrypted,
@@ -319,7 +319,7 @@ export const POST = withRateLimit(5, 60000)(
       // Notify user
       await (prisma.notification as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
           userId: user.id,
           type: 'safety_plan_created',
           title: 'Safety Plan Created',
@@ -337,7 +337,7 @@ export const POST = withRateLimit(5, 60000)(
       // Log creation
       await (prisma.auditLog as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
           userId: user.id,
           action: 'create_safety_plan',
           resource: 'safety_plan',
@@ -376,7 +376,7 @@ export const POST = withRateLimit(5, 60000)(
       
       await (prisma.auditLog as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
           userId: req.user!.id,
           action: 'create_safety_plan',
           resource: 'safety_plan',
@@ -500,7 +500,7 @@ export const PUT = withRateLimit(30, 60000)(
         // Counselor updated user's plan
         await (prisma.notification as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
             userId: existingPlan.userId,
             type: 'safety_plan_updated',
             title: 'Safety Plan Updated',
@@ -518,7 +518,7 @@ export const PUT = withRateLimit(30, 60000)(
       // Log update
       await (prisma.auditLog as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
           userId: user.id,
           action: 'update_safety_plan',
           resource: 'safety_plan',
@@ -551,7 +551,7 @@ export const PUT = withRateLimit(30, 60000)(
       
       await (prisma.auditLog as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
           userId: req.user!.id,
           action: 'update_safety_plan',
           resource: 'safety_plan',
@@ -614,7 +614,7 @@ export const DELETE = withRateLimit(10, 60000)(
       // Log deletion
       await (prisma.auditLog as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
           userId: user.id,
           action: 'delete_safety_plan',
           resource: 'safety_plan',
@@ -639,7 +639,7 @@ export const DELETE = withRateLimit(10, 60000)(
       
       await (prisma.auditLog as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
           userId: req.user!.id,
           action: 'delete_safety_plan',
           resource: 'safety_plan',

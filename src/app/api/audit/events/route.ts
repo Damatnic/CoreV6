@@ -80,7 +80,7 @@ async function getAuditEvents(request: NextRequest) {
     // Query audit events
     const result = await auditService.queryEvents(filters);
 
-    return NextResponse.json(createSuccessResponse(result, 'Audit events retrieved successfully', { status: 200 }));
+    return NextResponse.json(createSuccessResponse(result, 'Audit events retrieved successfully'), { status: 200 });
 
   } catch (error) {
     console.error('Audit events query error:', error);
@@ -130,7 +130,7 @@ async function createAuditEvent(request: NextRequest) {
       riskLevel: z.nativeEnum(RiskLevel).optional(),
       resourceType: z.string().optional(),
       resourceId: z.string().uuid().optional(),
-      metadata: z.record(z.unknown()).optional(),
+      metadata: z.record(z.string(), z.unknown()).optional(),
     });
 
     const validationResult = eventSchema.safeParse(body);
@@ -178,7 +178,7 @@ async function createAuditEvent(request: NextRequest) {
     });
 
     return NextResponse.json(
-      createSuccessResponse(null, 'Audit event created successfully', { status: 200 })
+      createSuccessResponse(null, 'Audit event created successfully'), { status: 200 }
     );
 
   } catch (error) {

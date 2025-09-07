@@ -225,7 +225,7 @@ export const POST = withAuth(async (req: AuthenticatedRequest) => {
       // Create crisis alert
       await (prisma.safetyAlert as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
           type: "crisis_comment",
           severity: "high",
           userId,
@@ -265,7 +265,7 @@ export const POST = withAuth(async (req: AuthenticatedRequest) => {
 
         anonymousIdentity = await (prisma.anonymousIdentity as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
             userId,
             displayName: `${randomAdjective}${randomNoun}${randomNumber}`,
             avatar: `https://api.dicebear.com/7.x/shapes/svg?seed=${userId}`,
@@ -282,7 +282,7 @@ export const POST = withAuth(async (req: AuthenticatedRequest) => {
     // Create the comment
     const comment = await (prisma.comment as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
         postId: validatedData.postId,
         parentId: validatedData.parentId,
         authorId: userId,
@@ -515,7 +515,7 @@ export const DELETE = withAuth(async (req: AuthenticatedRequest) => {
     if (isAdmin && !isAuthor) {
       await (prisma.auditLog as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
           userId,
           action: "delete_comment",
           resource: "comment",

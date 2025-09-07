@@ -133,7 +133,7 @@ export const POST = withAdmin(async (req) => {
       // Create user
       const newUser = await tx.user.create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
           anonymousId: crypto.randomUUID(),
           email: data.email.toLowerCase(),
           hashedPassword,
@@ -156,7 +156,7 @@ export const POST = withAdmin(async (req) => {
       // Create user profile
       await tx.userProfile.create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
           userId: newUser.id,
           mentalHealthGoals: [],
           interestedTopics: [],
@@ -177,7 +177,7 @@ export const POST = withAdmin(async (req) => {
       if (data.role === UserRole.ADMIN || data.role === UserRole.SUPER_ADMIN) {
         await tx.adminProfile.create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
             userId: newUser.id,
             adminLevel: data.adminLevel || AdminLevel.MODERATOR,
             departments: data.departments || [],
@@ -316,7 +316,7 @@ export const PUT = withAdmin(async (req) => {
           // Create admin profile if it doesn't exist
           await tx.adminProfile.create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
               userId: user.id,
               adminLevel: data.adminLevel || AdminLevel.MODERATOR,
               departments: [],

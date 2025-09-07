@@ -160,7 +160,7 @@ export async function POST(req: NextRequest) {
     // Create audit log entry
     const log = await prisma.auditLog.create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
         userId: authCheck.adminId,
         action,
         resource: 'audit_log',
@@ -229,7 +229,7 @@ export async function PUT(req: NextRequest) {
     // Log the export action
     await prisma.auditLog.create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
         userId: authCheck.adminId,
         action: 'EXPORT_AUDIT_LOGS',
         resource: 'audit_logs',

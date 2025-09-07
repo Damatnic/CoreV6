@@ -216,7 +216,7 @@ export const POST = withRoles(
       // Create the chat room
       const room = await (prisma.chatRoom as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
           name: validatedData.name,
           topic: validatedData.topic,
           description: validatedData.description,
@@ -234,7 +234,7 @@ export const POST = withRoles(
       // Add the creator as the first moderator
       await (prisma.chatModerator as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
           roomId: room.id,
           userId,
           permissions: ["manage_participants", "delete_messages", "ban_users"],
@@ -244,7 +244,7 @@ export const POST = withRoles(
       // Log room creation
       await (prisma.auditLog as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
           userId,
           action: "create_chat_room",
           resource: "chat_room",
@@ -385,7 +385,7 @@ export const PUT = withAuth(async (req: AuthenticatedRequest) => {
     // Log the update
     await (prisma.auditLog as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
         userId,
         action: "update_chat_room",
         resource: "chat_room",
@@ -491,7 +491,7 @@ export const DELETE = withRoles(
         // Log the deletion
         await (prisma.auditLog as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
             userId,
             action: "delete_chat_room",
             resource: "chat_room",
@@ -533,7 +533,7 @@ export const DELETE = withRoles(
         // Log the deactivation
         await (prisma.auditLog as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
             userId,
             action: "deactivate_chat_room",
             resource: "chat_room",

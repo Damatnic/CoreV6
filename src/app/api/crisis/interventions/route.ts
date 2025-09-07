@@ -59,7 +59,7 @@ export const GET = withRateLimit(60, 60000)(
       // Log access
       await (prisma.auditLog as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
           userId: req.user!.id,
           action: 'view_interventions',
           resource: 'support_session',
@@ -115,7 +115,7 @@ export const POST = withRateLimit(10, 60000)(
       // Create intervention session
       const intervention = await (prisma.supportSession as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
           userId: data.userId,
           helperId: counselorId,
           sessionType: data.sessionType,
@@ -129,7 +129,7 @@ export const POST = withRateLimit(10, 60000)(
       if (data.priority >= 4) {
         await (prisma.safetyAlert as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
             type: 'intervention_initiated',
             severity: data.priority.toString(),
             userId: data.userId,
@@ -146,7 +146,7 @@ export const POST = withRateLimit(10, 60000)(
       // Notify user
       await (prisma.notification as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
           userId: data.userId,
           type: 'intervention_started',
           title: 'Support Session Started',
@@ -174,7 +174,7 @@ export const POST = withRateLimit(10, 60000)(
       // Log intervention
       await (prisma.auditLog as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
           userId: counselorId,
           action: 'create_intervention',
           resource: 'support_session',
@@ -199,7 +199,7 @@ export const POST = withRateLimit(10, 60000)(
       
       await (prisma.auditLog as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
           userId: req.user!.id,
           action: 'create_intervention',
           resource: 'support_session',
@@ -278,7 +278,7 @@ export const PUT = withRateLimit(30, 60000)(
         if (existing.userId) {
           await (prisma.notification as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
               userId: existing.userId,
               type: 'intervention_completed',
               title: 'Support Session Completed',
@@ -292,7 +292,7 @@ export const PUT = withRateLimit(30, 60000)(
       // Log update
       await (prisma.auditLog as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
           userId: req.user!.id,
           action: 'update_intervention',
           resource: 'support_session',

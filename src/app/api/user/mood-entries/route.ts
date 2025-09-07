@@ -188,7 +188,7 @@ export const POST = withAuth(async (req) => {
     // Create mood entry with encrypted data
     const moodEntry = await prisma.moodEntry.create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
         userId,
         moodScore: data.moodScore,
         anxietyLevel: data.anxietyLevel,
@@ -227,7 +227,7 @@ export const POST = withAuth(async (req) => {
     if (avgMood <= 3 || avgAnxiety >= 8 || data.moodScore <= 2) {
       await prisma.safetyAlert.create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
           type: 'mood_pattern',
           severity: data.moodScore <= 2 ? 'high' : 'medium',
           userId,

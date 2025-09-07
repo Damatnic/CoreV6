@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
       // Create new reset token
       await (prisma.passwordReset as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
           userId: user.id,
           token: resetToken,
           expires: new Date(Date.now() + 60 * 60 * 1000), // 1 hour
@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
       // Log audit event
       await (prisma.auditLog as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
           userId: user.id,
           action: "password_reset_requested",
           resource: "user",
@@ -112,7 +112,7 @@ export async function POST(request: NextRequest) {
       // Log audit event
       await (prisma.auditLog as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
           userId: resetRecord.userId,
           action: "password_reset_completed",
           resource: "user",

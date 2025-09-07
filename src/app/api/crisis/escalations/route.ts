@@ -110,7 +110,7 @@ export const POST = withRateLimit(5, 60000)(
       // Log escalation
       await (prisma.auditLog as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
           userId: escalatedBy,
           action: 'create_escalation',
           resource: 'safety_alert',
@@ -142,7 +142,7 @@ export const POST = withRateLimit(5, 60000)(
       
       await (prisma.auditLog as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
           userId: req.user!.id,
           action: 'create_escalation',
           resource: 'safety_alert',

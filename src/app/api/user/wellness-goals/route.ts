@@ -140,7 +140,7 @@ export const POST = withAuth(async (req) => {
     if (!userProfile) {
       userProfile = await prisma.userProfile.create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
           userId,
           mentalHealthGoals: [],
           interestedTopics: [],
@@ -231,7 +231,7 @@ export const POST = withAuth(async (req) => {
     // Create encouraging notification
     await prisma.notification.create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
         userId,
         type: 'goal_created',
         title: 'New wellness goal created!',
@@ -317,7 +317,7 @@ export const PUT = withAuth(async (req) => {
       // Create celebration notification
       await prisma.notification.create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
           userId,
           type: 'goal_completed',
           title: 'Congratulations! Goal Completed!',

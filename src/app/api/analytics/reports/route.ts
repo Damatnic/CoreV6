@@ -123,7 +123,7 @@ async function generateUserEngagementReport(startDate: Date, endDate: Date) {
   return {
     summary: {
       totalUsers: userActivity.length,
-      averageSessionsPerUser: sessionMetrics.reduce((sum: any) => sum + m._count, 0) / sessionMetrics.length,
+      averageSessionsPerUser: sessionMetrics.reduce((sum: any, m: any) => sum + (m._count || 0), 0) / (sessionMetrics.length || 1),
       // averageSessionDuration calculation removed - duration field doesn't exist in Session model
       averageSessionDuration: 0
     },

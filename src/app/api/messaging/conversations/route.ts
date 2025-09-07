@@ -299,7 +299,7 @@ export const POST = withAuth(async (req: AuthenticatedRequest) => {
 
           await prisma.anonymousIdentity.create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
               userId: participantId,
               displayName: `${randomTheme}${randomIcon}${randomNumber}`,
               avatar: `https://api.dicebear.com/7.x/shapes/svg?seed=${participantId}`,
@@ -317,7 +317,7 @@ export const POST = withAuth(async (req: AuthenticatedRequest) => {
     // Create the conversation
     const conversation = await prisma.conversation.create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
         type: validatedData.type,
         title: validatedData.title,
         isAnonymous: validatedData.isAnonymous,
@@ -358,7 +358,7 @@ export const POST = withAuth(async (req: AuthenticatedRequest) => {
     if (validatedData.type === "group") {
       await prisma.directMessage.create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
           conversationId: conversation.id,
           senderId: userId,
           content: `${validatedData.isAnonymous ? "Anonymous user" : "User"} created the group`,
@@ -455,7 +455,7 @@ export const PUT = withAuth(async (req: AuthenticatedRequest) => {
       // Add system message
       await prisma.directMessage.create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
           conversationId,
           senderId: userId,
           content: "Left the conversation",

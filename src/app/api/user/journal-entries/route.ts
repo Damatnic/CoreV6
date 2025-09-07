@@ -175,7 +175,7 @@ export const POST = withAuth(async (req) => {
     // Create journal entry with encrypted data
     const journalEntry = await prisma.journalEntry.create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
         userId,
         encryptedTitle: data.title ? encryptApiField(data.title) : null,
         encryptedContent: encryptApiField(data.content),
@@ -196,7 +196,7 @@ export const POST = withAuth(async (req) => {
       // Create safety alert
       await prisma.safetyAlert.create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
           type: 'journal_content',
           severity: 'high',
           userId,
@@ -212,7 +212,7 @@ export const POST = withAuth(async (req) => {
       // Create notification for user with resources
       await prisma.notification.create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
           userId,
           type: 'crisis_resources',
           title: 'We noticed you might be going through a difficult time',

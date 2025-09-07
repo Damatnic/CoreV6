@@ -203,7 +203,7 @@ export async function GET(req: NextRequest) {
     const session = await getServerSession(authOptions) as Session | null;
     await (prisma.auditLog as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
         userId: session?.user?.id || null,
         action: 'VIEW_ADMIN_METRICS',
         details: { timeRange },

@@ -156,7 +156,7 @@ export async function POST(req: NextRequest) {
     const actionId = crypto.randomUUID();
     const action = await (prisma.moderationAction as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: actionId,
+          id: actionId,
         targetUserId: userId,
         moderatorId: authCheck.adminId,
         type: type.toUpperCase(),
@@ -210,7 +210,7 @@ export async function POST(req: NextRequest) {
     const notificationId = crypto.randomUUID();
     await (prisma.notification as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: notificationId,
+          id: notificationId,
         userId,
         type: 'MODERATION_ACTION',
         title: `Moderation Action: ${type}`,
@@ -222,7 +222,7 @@ export async function POST(req: NextRequest) {
     const auditId = crypto.randomUUID();
     await (prisma.auditLog as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: auditId,
+          id: auditId,
         userId: authCheck.adminId,
         action: 'CREATE_MODERATION_ACTION',
         details: {
@@ -306,7 +306,7 @@ export async function PATCH(req: NextRequest) {
     const auditId2 = crypto.randomUUID();
     await (prisma.auditLog as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: auditId2,
+          id: auditId2,
         userId: authCheck.adminId,
         action: 'UPDATE_MODERATION_ACTION',
         details: {
@@ -399,7 +399,7 @@ export async function PUT(req: NextRequest) {
     const appealNotificationId = crypto.randomUUID();
     await (prisma.notification as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: appealNotificationId,
+          id: appealNotificationId,
         userId: action.targetUserId,
         type: 'APPEAL_DECISION',
         title: `Appeal ${decision === 'approved' ? 'Approved' : 'Denied'}`,
@@ -411,7 +411,7 @@ export async function PUT(req: NextRequest) {
     const auditId3 = crypto.randomUUID();
     await (prisma.auditLog as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: auditId3,
+          id: auditId3,
         userId: authCheck.adminId,
         action: 'REVIEW_APPEAL',
         details: {

@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
     // Create user
     const user = await (prisma.user as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
         anonymousId: crypto.randomUUID(),
         email: validatedData.email.toLowerCase(),
         hashedPassword,
@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
     // Create email verification record
     await (prisma.emailVerification as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
         userId: user.id,
         token: verificationToken,
         email: user.email!,
@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
     if (validatedData.role === UserRole.USER) {
       await (prisma.userProfile as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
           userId: user.id,
           mentalHealthGoals: [],
           interestedTopics: [],
@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
     } else if (validatedData.role === UserRole.HELPER || validatedData.role === UserRole.THERAPIST || validatedData.role === UserRole.CRISIS_COUNSELOR) {
       await (prisma.helperProfile as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
           userId: user.id,
           specializations: [],
           credentials: JSON.stringify({}),
@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
     } else if (validatedData.role === UserRole.ADMIN || validatedData.role === UserRole.SUPER_ADMIN) {
       await (prisma.adminProfile as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
           userId: user.id,
           adminLevel: validatedData.role === UserRole.SUPER_ADMIN ? "SUPER_ADMIN" : "MODERATOR",
           departments: [],
@@ -121,7 +121,7 @@ export async function POST(request: NextRequest) {
     // Log audit event
     await (prisma.auditLog as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
         userId: user.id,
         action: "user_registration",
         resource: "user",

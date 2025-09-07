@@ -250,7 +250,7 @@ export const POST = withAuth(async (req: AuthenticatedRequest) => {
         if (moderationResult.crisisLevel === "high") {
           await prisma.safetyAlert.create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
               type: "crisis_message",
               severity: "high",
               userId,
@@ -265,7 +265,7 @@ export const POST = withAuth(async (req: AuthenticatedRequest) => {
           if (conversation.type === "support") {
             await prisma.notification.create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
                 userId,
                 type: "crisis_intervention",
                 title: "Crisis Support Needed",
@@ -301,7 +301,7 @@ export const POST = withAuth(async (req: AuthenticatedRequest) => {
     // Create the message
     const message = await prisma.directMessage.create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
         conversationId: validatedData.conversationId,
         senderId: userId,
         content: processedContent,
@@ -349,7 +349,7 @@ export const POST = withAuth(async (req: AuthenticatedRequest) => {
       if (!participantSettings?.isMuted) {
         await prisma.notification.create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
             userId: participant.userId,
             type: "new_message",
             title: conversation.isAnonymous ? "New anonymous message" : `New message from ${message.Sender?.displayName}`,

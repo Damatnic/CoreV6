@@ -199,7 +199,7 @@ export async function POST(request: NextRequest) {
     // Create crisis report entry
     const crisisReport = await (prisma.crisisReport as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
         userId: body.userId || null,
         severityLevel,
         triggerType: validatedData.primaryConcern,
@@ -220,7 +220,7 @@ export async function POST(request: NextRequest) {
     if (validatedData.safetyPlan && body.userId) {
       await (prisma.safetyPlan as any).create({
         data: {
-          id: generatePrismaCreateFields().id, id: crypto.randomUUID(),
+          id: crypto.randomUUID(),
           userId: body.userId,
           warningSignsEncrypted: validatedData.safetyPlan.warningSigns,
           copingStrategiesEncrypted: validatedData.safetyPlan.copingStrategies,
